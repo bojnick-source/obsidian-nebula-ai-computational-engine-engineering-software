@@ -1,0 +1,30 @@
+# Cantilever beam golden fixture — known-answer test case.
+# Source: Shigley's Mechanical Engineering Design, 11th ed., Example 4-2
+#
+# Problem: A cantilever beam of length L with a point load P at the free end.
+# Material: AISI 1020 CD Steel, E = 207 GPa
+# Cross-section: Rectangular, b = 25 mm, h = 50 mm
+# Load: P = 1000 N at free end
+# Find: Maximum deflection and maximum bending stress
+#
+fixture:
+  id: "GF-001"
+  name: "cantilever_beam_point_load"
+  domain: "mechanical"
+  source: "textbook:Shigley:11th:Example4-2"
+
+input:
+  beam_type: "cantilever"
+  length_m: 1.0
+  load_n: 1000
+  material: "AISI_1020_CD"
+  elastic_modulus_pa: 207.0e9
+  cross_section:
+    shape: "rectangular"
+    width_m: 0.025
+    height_m: 0.050
+
+expected:
+  max_deflection_m: 0.006184
+  max_bending_stress_pa: 48.0e6
+  tolerance_pct: 2.0
