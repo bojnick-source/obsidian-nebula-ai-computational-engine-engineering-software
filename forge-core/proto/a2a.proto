@@ -1,0 +1,7 @@
+// FORGE — A2A Protocol Buffer definitions
+// Status: Scaffold (V1)
+
+syntax = "proto3";
+package forge.a2a;
+
+// Placeholder — A2A message definitions will be added in V1.

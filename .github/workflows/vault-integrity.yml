@@ -1,0 +1,19 @@
+name: Vault Integrity
+
+on:
+  push:
+    paths:
+      - "forge-vault/**"
+      - "vault/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Placeholder — validate vault frontmatter, link integrity, schema compliance
+      - run: echo "Vault integrity check placeholder — tooling TBD"
