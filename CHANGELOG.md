@@ -15,6 +15,19 @@ All notable changes to the FORGE project.
 - Test suite: 23 tests covering config, blackboard, router, CLI
 - 3 consolidated planning documents (FORGE_CATALOG.md, FORGE_EXECUTION_PLAN.md, DECISIONS.md)
 - Planning freeze protocol in effect
+- **Scaffolding skeleton** (Components A–L):
+  - A. Core Runtime: `runtime.py` — PipelineRun, StepResult, 12-step loop init
+  - B. Agent System: `agents/base.py` — BaseAgent ABC, AgentResult
+  - C. Memory System: `memory/vault.py` — VaultStore, VaultNote
+  - D. Tooling Layer: `tools/base.py` — ToolWrapper ABC, ToolResult
+  - E. Verification Layer: `verification/` — structural checks, adversarial verdict
+  - F. Data Contracts: `contracts.py` — AnalysisOutput, ToolResponse, TraceRecord
+  - G. Observability & Ops: `observability.py` — ErrorCode enum, MetricsCounter
+  - H. Build/Test Harness: `tests/fixtures/` — golden fixture YAML (cantilever beam)
+  - I. Project Pipelines: `pipelines/registry.py` — PipelineSpec, PipelineRegistry
+  - J. External Ecosystem Bridges: `bridges/base.py` — BaseBridge ABC, BridgeResult
+  - K. Planning Corpus: verified existing docs
+  - L. Recovery / Continuity: `recovery.py` — Snapshot, RecoveryManager
 
 ### Architecture Decisions
 - ADR-001: Python for MVP (C++ deferred to V1-17)
