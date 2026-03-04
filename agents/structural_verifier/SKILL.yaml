@@ -1,0 +1,29 @@
+# SKILL.yaml — Structural Verifier Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "V-STRUCT"
+  name: "Structural Verifier"
+  role: "Contract enforcement (T=0.0), unit checks, dimensional analysis"
+
+provider: "anthropic"
+model: "claude-opus-4-6"
+temperature: 0.0
+max_tokens: 4096
+
+capabilities:
+  - contract_enforcement
+  - unit_checking
+  - dimensional_analysis
+  - deterministic_verification
+
+inputs:
+  - analysis_results
+  - expected_contracts
+  - unit_specifications
+
+outputs:
+  - verification_verdict
+  - unit_check_report
+  - dimensional_analysis_report
+  - violations_list

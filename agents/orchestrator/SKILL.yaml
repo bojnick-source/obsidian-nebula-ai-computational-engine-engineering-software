@@ -1,0 +1,27 @@
+# SKILL.yaml — Orchestrator Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "ORCH-01"
+  name: "Orchestrator"
+  role: "Task decomposition, DAG construction, dispatch, 12-step loop"
+
+provider: "anthropic"
+model: "claude-opus-4-6"
+temperature: 0.4
+max_tokens: 4096
+
+capabilities:
+  - task_decomposition
+  - dag_construction
+  - agent_dispatch
+  - loop_management
+
+inputs:
+  - engineering_task_description
+  - context_from_vault
+
+outputs:
+  - execution_dag
+  - dispatch_plan
+  - final_report

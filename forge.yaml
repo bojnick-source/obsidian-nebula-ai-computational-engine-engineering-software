@@ -1,0 +1,111 @@
+# FORGE v0.1.0 — MVP Configuration
+# Classification: Python MVP | 7 Agents | 3 Providers
+# Planning Freeze: Effective as of 2026-03-02
+
+forge:
+  version: "0.1.0"
+  name: "FORGE — AI Computational Engine for Engineering Software"
+  mode: "mvp"  # mvp | v1
+
+# --- Logging ---
+logging:
+  format: "jsonl"
+  directory: "logs"
+  level: "INFO"
+  trace_ids: true
+
+# --- Provider Fleet (MVP: 3 providers) ---
+providers:
+  anthropic:
+    models:
+      - id: "claude-opus-4-6"
+        tier: "frontier"
+        roles: ["orchestrator", "materials_specialist", "structural_verifier"]
+      - id: "claude-sonnet-4-5"
+        tier: "mid"
+        roles: ["librarian", "pipeline_tester"]
+    api_base: "https://api.anthropic.com"
+    env_key: "ANTHROPIC_API_KEY"
+
+  openai:
+    models:
+      - id: "gpt-5.2"
+        tier: "frontier"
+        roles: ["me_specialist", "adversarial_verifier"]
+    api_base: "https://api.openai.com/v1"
+    env_key: "OPENAI_API_KEY"
+
+  deepseek:
+    models:
+      - id: "deepseek-reasoner"
+        tier: "mid"
+        roles: ["cost_saving_backup"]
+        validated: false  # Pending Week 2 validation experiment
+    api_base: "https://api.deepseek.com"
+    env_key: "DEEPSEEK_API_KEY"
+
+# --- MVP Agent Roster (7 agents only) ---
+agents:
+  orchestrator:
+    id: "ORCH-01"
+    role: "Task decomposition, DAG construction, dispatch, 12-step loop"
+    provider: "anthropic"
+    model: "claude-opus-4-6"
+
+  me_specialist:
+    id: "E-01"
+    role: "Structural/mechanical analysis, FEA setup, stress calcs"
+    provider: "openai"
+    model: "gpt-5.2"
+
+  materials_specialist:
+    id: "E-05"
+    role: "Material selection, properties, degradation. Doubles as ME Antagonist."
+    provider: "anthropic"
+    model: "claude-opus-4-6"
+
+  structural_verifier:
+    id: "V-STRUCT"
+    role: "Contract enforcement (T=0.0), unit checks, dimensional analysis"
+    provider: "anthropic"
+    model: "claude-opus-4-6"
+
+  adversarial_verifier:
+    id: "V-ADV"
+    role: "Falsification attempts (T=0.3), plausibility bounds"
+    provider: "openai"
+    model: "gpt-5.2"
+
+  librarian:
+    id: "LIB-01"
+    role: "Vault read/write, context assembly, gap detection"
+    provider: "anthropic"
+    model: "claude-sonnet-4-5"
+
+  pipeline_tester:
+    id: "TEST-01"
+    role: "End-to-end validation, golden fixture comparison, regression"
+    provider: "anthropic"
+    model: "claude-sonnet-4-5"
+
+# --- Memory Architecture ---
+memory:
+  mode: "degraded"  # "full" (Obsidian + Supermemory) | "degraded" (Obsidian only)
+  vault_path: "vault/"
+  supermemory:
+    enabled: false  # Attempted during M2; not required for MVP gate
+    endpoint: ""
+
+# --- Budget ---
+budget:
+  daily_ceiling_usd: null  # Set after Week 1 cost validation experiment
+  alert_threshold_pct: 80
+
+# --- Tool Wrappers (MVP) ---
+tools:
+  calculix:
+    id: "T-01"
+    status: "planned"  # M6 deliverable
+  gmsh:
+    id: "T-06"
+    status: "planned"  # M6 deliverable

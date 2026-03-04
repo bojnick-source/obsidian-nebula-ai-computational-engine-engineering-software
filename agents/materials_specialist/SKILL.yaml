@@ -1,0 +1,29 @@
+# SKILL.yaml — Materials Specialist Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "E-05"
+  name: "Materials Specialist"
+  role: "Material selection, properties, degradation. Doubles as ME Antagonist."
+
+provider: "anthropic"
+model: "claude-opus-4-6"
+temperature: 0.3
+max_tokens: 8192
+
+capabilities:
+  - material_selection
+  - property_lookup
+  - degradation_analysis
+  - me_antagonist_debate
+
+inputs:
+  - design_requirements
+  - environmental_conditions
+  - me_analysis_results
+
+outputs:
+  - material_recommendation
+  - property_data
+  - degradation_assessment
+  - antagonist_critique

@@ -1,0 +1,29 @@
+# SKILL.yaml — Librarian Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "LIB-01"
+  name: "Librarian"
+  role: "Vault read/write, context assembly, gap detection"
+
+provider: "anthropic"
+model: "claude-sonnet-4-5"
+temperature: 0.2
+max_tokens: 4096
+
+capabilities:
+  - vault_read_write
+  - context_assembly
+  - gap_detection
+  - knowledge_retrieval
+
+inputs:
+  - query_context
+  - agent_request
+  - vault_path
+
+outputs:
+  - assembled_context
+  - gap_report
+  - vault_entries
+  - retrieval_summary
