@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, ClassVar
 
 
 class PipelineStatus(Enum):
@@ -42,32 +42,25 @@ class PipelineRun:
         status: Overall pipeline status.
     """
 
+    # Step names matching the 12-step loop in FORGE_CATALOG §2.4
+    STEP_NAMES: ClassVar[list[str]] = [
+        "receive_query",
+        "vault_context_assembly",
+        "task_decomposition",
+        "dispatch_to_specialists",
+        "specialist_analysis",
+        "structural_verification",
+        "adversarial_verification",
+        "confidence_scoring",
+        "result_synthesis",
+        "vault_persistence",
+        "gap_detection",
+        "return_response",
+    ]
+
     run_id: str = ""
     steps: list[StepResult] = field(default_factory=list)
     status: PipelineStatus = PipelineStatus.PENDING
-
-    # -- step names matching the 12-step loop in FORGE_CATALOG §2.4 --
-    STEP_NAMES: list[str] = field(
-        default=None,  # type: ignore[assignment]
-        init=False,
-        repr=False,
-    )
-
-    def __post_init__(self) -> None:
-        self.STEP_NAMES = [
-            "receive_query",
-            "vault_context_assembly",
-            "task_decomposition",
-            "dispatch_to_specialists",
-            "specialist_analysis",
-            "structural_verification",
-            "adversarial_verification",
-            "confidence_scoring",
-            "result_synthesis",
-            "vault_persistence",
-            "gap_detection",
-            "return_response",
-        ]
 
     def init_steps(self) -> None:
         """Populate *steps* with pending entries for all 12 steps."""
