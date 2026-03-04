@@ -1,0 +1,30 @@
+# SKILL.yaml — Mechanical Engineering Specialist Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "E-01"
+  name: "ME Specialist"
+  role: "Structural/mechanical analysis, FEA setup, stress calcs"
+
+provider: "openai"
+model: "gpt-5.2"
+temperature: 0.2
+max_tokens: 8192
+
+capabilities:
+  - structural_analysis
+  - fea_setup
+  - stress_calculations
+  - load_path_analysis
+
+inputs:
+  - geometry_description
+  - loading_conditions
+  - material_properties
+  - boundary_conditions
+
+outputs:
+  - stress_results
+  - fea_configuration
+  - safety_factors
+  - analysis_report

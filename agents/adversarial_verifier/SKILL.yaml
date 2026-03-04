@@ -1,0 +1,29 @@
+# SKILL.yaml — Adversarial Verifier Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "V-ADV"
+  name: "Adversarial Verifier"
+  role: "Falsification attempts (T=0.3), plausibility bounds"
+
+provider: "openai"
+model: "gpt-5.2"
+temperature: 0.3
+max_tokens: 4096
+
+capabilities:
+  - falsification_attempts
+  - plausibility_checking
+  - bound_verification
+  - adversarial_analysis
+
+inputs:
+  - analysis_results
+  - claimed_conclusions
+  - reference_bounds
+
+outputs:
+  - falsification_report
+  - plausibility_verdict
+  - bound_violations
+  - challenge_questions

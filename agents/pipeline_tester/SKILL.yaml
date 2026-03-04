@@ -1,0 +1,29 @@
+# SKILL.yaml — Pipeline Tester Agent
+# FORGE MVP Agent Definition
+
+agent:
+  id: "TEST-01"
+  name: "Pipeline Tester"
+  role: "End-to-end validation, golden fixture comparison, regression"
+
+provider: "anthropic"
+model: "claude-sonnet-4-5"
+temperature: 0.1
+max_tokens: 4096
+
+capabilities:
+  - end_to_end_validation
+  - golden_fixture_comparison
+  - regression_testing
+  - pipeline_verification
+
+inputs:
+  - pipeline_output
+  - golden_fixtures
+  - regression_baselines
+
+outputs:
+  - validation_report
+  - fixture_diff
+  - regression_results
+  - pass_fail_verdict
