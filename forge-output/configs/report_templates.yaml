@@ -1,0 +1,37 @@
+# Report type → template mapping
+# Used by ReportRenderer to select the appropriate Jinja2 template.
+
+schema_version: "1"
+
+templates:
+  engineering_report:
+    file: "engineering_report.html.j2"
+    description: "Full engineering analysis report (FEA/CFD)"
+    sections:
+      - executive_summary
+      - verification_gates
+      - agent_findings
+      - tool_results
+      - adversarial_debate
+      - pipeline_trace
+
+  executive_summary:
+    file: "executive_summary.html.j2"
+    description: "One-page executive summary for stakeholders"
+    sections:
+      - executive_summary
+      - key_findings
+      - risk_flags
+
+  verification_section:
+    file: "verification_section.html.j2"
+    description: "Standalone verification and validation section"
+    sections:
+      - verification_gates
+      - dimensional_analysis
+      - mesh_convergence
+      - provenance_audit
+
+defaults:
+  primary: "engineering_report"
+  on_degraded_mode: "executive_summary"

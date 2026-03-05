@@ -1,0 +1,38 @@
+# GMSH learned parameter preferences
+
+schema_version: "1"
+tool_id: "gmsh"
+last_updated: "2026-03-05T00:00:00Z"
+
+mesh_settings:
+  algorithm_3d: 4  # Frontal-Delaunay 3D (best for mechanical parts)
+  algorithm_2d: 6  # Frontal-Delaunay 2D
+  optimize: true
+  optimize_netgen: true
+  optimization_passes: 3
+
+quality_targets:
+  min_quality: 0.3  # GMSH element quality metric (0=degenerate, 1=ideal)
+  max_aspect_ratio: 20.0
+
+known_failure_modes:
+  - description: "STEP import with zero-area faces"
+    trigger: "CATIA exported STEP with suppressed features"
+    fix: "Heal geometry with OCCT before meshing: model.occ.healShapes()"
+  - description: "Very thin features producing slivers"
+    trigger: "Sheet metal < 0.5mm thickness"
+    fix: "Increase Mesh.MinimumElementSize to 0.5"
+  - description: "Non-manifold edges from boolean operations"
+    trigger: "Multiple solid bodies sharing edges"
+    fix: "Fragment then mesh: model.occ.fragment()"
+
+recommended_api_sequence:
+  - "gmsh.initialize()"
+  - "gmsh.model.add(model_name)"
+  - "Import geometry (STEP or parametric)"
+  - "gmsh.option.setNumber('Mesh.Algorithm3D', 4)"
+  - "gmsh.option.setNumber('Mesh.Optimize', 1)"
+  - "gmsh.model.mesh.generate(3)"
+  - "gmsh.model.mesh.optimize('Netgen')"
+  - "gmsh.write(output_path)"
+  - "gmsh.finalize()"

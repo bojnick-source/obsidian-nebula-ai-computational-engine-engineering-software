@@ -1,0 +1,45 @@
+# CalculiX learned parameter preferences
+# Updated by the learning loop after each successful run.
+# Utility score = success_rate × recency × retrieval_frequency
+
+schema_version: "1"
+tool_id: "calculix"
+last_updated: "2026-03-05T00:00:00Z"
+
+mesh_parameters:
+  default_element_type: "C3D10"  # 10-node tetrahedral — better accuracy vs C3D4
+  min_element_size_mm: 2.0
+  max_element_size_mm: 10.0
+  refinement_regions:
+    - description: "Fillet radii and stress concentrations"
+      size_multiplier: 0.25
+  preferred_mesher: "gmsh"
+  gmsh_algorithm: "Delaunay"
+
+solver_settings:
+  default_analysis: "linear_static"
+  nlgeom_threshold_strain: 0.05  # Enable NLGEOM if expected strain > 5%
+  solver: "SPOOLES"  # More stable than default for large models
+  max_iterations_nonlinear: 30
+
+convergence:
+  target_residual: 1.0e-6
+  known_convergence_issues:
+    - description: "Rigid body modes when only symmetry BCs applied"
+      fix: "Add weak springs or check BC completeness"
+    - description: "Negative Jacobian elements from aggressive gmsh refinement"
+      fix: "Increase min element size in tight-radius regions"
+
+material_database_hints:
+  - material: "4130 steel"
+    E_gpa: 205.0
+    nu: 0.29
+    density_kg_m3: 7850
+    yield_mpa: 460.0  # normalized condition
+    source: "MMPDS-12 Table 2.3.1.0(a)"
+  - material: "Al 7075-T6"
+    E_gpa: 71.7
+    nu: 0.33
+    density_kg_m3: 2810
+    yield_mpa: 503.0
+    source: "MMPDS-12 Table 3.7.8.0"

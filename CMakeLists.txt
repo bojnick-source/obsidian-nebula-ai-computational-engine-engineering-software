@@ -29,6 +29,17 @@ endif()
 # find_package(yaml-cpp REQUIRED)
 # find_package(nlohmann_json REQUIRED)
 # find_package(spdlog REQUIRED)
+# find_package(cppzmq REQUIRED)  # ZeroMQ C++ bindings (for event bus)
+
+# ── forge-core: events subsystem ─────────────────────────────────────────────
+add_library(forge_events STATIC
+    forge-core/src/events/event_emitter.cpp
+)
+target_include_directories(forge_events PUBLIC
+    forge-core/include
+)
+# When ZMQ is available, link it:
+# target_link_libraries(forge_events PUBLIC libzmq)
 
 # ── forge-core library ────────────────────────────────────────────────────────
 # Populated when source files exist

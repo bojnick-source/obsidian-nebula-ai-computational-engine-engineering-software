@@ -1,0 +1,113 @@
+# Engineering Constitution — machine-readable 4-tier rule set
+# Used by QualityEvaluator and constitution_gates.py
+# Tier 1 and 2 violations halt the run. Tier 3 = warning. Tier 4 = log only.
+
+schema_version: "1"
+
+tiers:
+  - tier: 1
+    name: "Mathematical Inviolable"
+    description: "Laws of mathematics. Cannot be overridden by any engineering judgment."
+    enforcement: "halt_run"
+    checks:
+      - id: "MATH-001"
+        name: "Reaction equilibrium"
+        description: "Sum of reaction forces must balance applied loads within 1%"
+        function: "check_reaction_equilibrium"
+        tolerance_pct: 1.0
+      - id: "MATH-002"
+        name: "Energy balance"
+        description: "Strain energy must not exceed external work"
+        function: "check_energy_balance"
+        tolerance_pct: 5.0
+      - id: "MATH-003"
+        name: "Dimensional consistency"
+        description: "LHS and RHS of all equations must have matching SI dimensions"
+        function: "dimensional_check"
+        gate_ref: "ERR_UNIT_MISMATCH"
+
+  - tier: 2
+    name: "Physics — Must Not Violate"
+    description: "Established physical laws. Engineering models approximate but cannot contradict."
+    enforcement: "halt_run_with_review"
+    checks:
+      - id: "PHYS-001"
+        name: "Mesh convergence"
+        description: "GCI must be ≤ 5% (Richardson extrapolation, r=2)"
+        function: "check_mesh_convergence"
+        target_gci_pct: 5.0
+      - id: "PHYS-002"
+        name: "Stress singularity detection"
+        description: "Peak stress > 1000 MPa at < 5 elements: likely singularity, not real"
+        function: "check_stress_singularity"
+        threshold_mpa: 1000.0
+        min_element_count: 5
+      - id: "PHYS-003"
+        name: "CFD residual convergence"
+        description: "All residuals must drop below 1e-4"
+        function: "check_residual_convergence"
+        threshold: 1.0e-4
+      - id: "PHYS-004"
+        name: "CFD mass conservation"
+        description: "Mass flux imbalance ≤ 0.1%"
+        function: "check_mass_conservation"
+        tolerance_pct: 0.1
+      - id: "PHYS-005"
+        name: "y+ wall compatibility"
+        description: "Standard wall functions: 30 ≤ y+ ≤ 300; Low-Re: y+ ≤ 1"
+        function: "check_y_plus"
+
+  - tier: 3
+    name: "Engineering Code — Must Follow Unless Justified"
+    description: "Standards with legal/contractual force. Deviation requires documented engineering judgment."
+    enforcement: "warning_with_justification_required"
+    standards:
+      - id: "STD-001"
+        standard: "ASME BPVC VIII-2"
+        applies_to: "pressure_vessels"
+        key_requirement: "Design by analysis — plastic collapse, local failure, buckling"
+      - id: "STD-002"
+        standard: "ASTM E1820"
+        applies_to: "fracture_mechanics"
+        key_requirement: "KIC measurement and plane strain validity"
+      - id: "STD-003"
+        standard: "FAR 25.571"
+        applies_to: "aircraft_structure"
+        key_requirement: "Damage tolerance — inspection intervals, residual strength"
+      - id: "STD-004"
+        standard: "ISO 6892-1"
+        applies_to: "tensile_testing"
+        key_requirement: "Strain rate, extensometer class, specimen dimensions"
+      - id: "STD-005"
+        standard: "ASME V&V 10"
+        applies_to: "fea_verification"
+        key_requirement: "Verification and validation procedures for FEA models"
+      - id: "STD-006"
+        standard: "NAFEMS FENET"
+        applies_to: "fea_mesh"
+        key_requirement: "Element quality metrics: aspect ratio, Jacobian, skewness"
+
+  - tier: 4
+    name: "Best Practice — Should Follow"
+    description: "Industry conventions and quality heuristics. Logged if not followed."
+    enforcement: "log_only"
+    practices:
+      - id: "BEST-001"
+        name: "Safety factor documentation"
+        description: "Every safety factor must cite the standard it derives from"
+      - id: "BEST-002"
+        name: "Material data source"
+        description: "Material properties must cite datasheet, MMPDS, or MatWeb with date"
+      - id: "BEST-003"
+        name: "Mesh quality minimum"
+        description: "Minimum Jacobian > 0.3; aspect ratio < 20:1 for most elements"
+      - id: "BEST-004"
+        name: "Boundary condition documentation"
+        description: "All BCs must have physical justification in agent output"
+      - id: "BEST-005"
+        name: "Assumption explicitness"
+        description: "assumptions list must never be empty or null"
+
+# Tier 1+2 violation → ERR_VERIFY_CONSTITUTION
+error_code_on_violation: "ERR_VERIFY_CONSTITUTION"
+tactical_switch_on_violation: null  # No switch disables Tier 1/2

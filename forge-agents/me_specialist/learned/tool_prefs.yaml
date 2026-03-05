@@ -1,0 +1,13 @@
+# ME Specialist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "me_specialist"
+level: 1
+runs_completed: 0
+
+# Populated after first successful run
+calculix_preferences: {}
+gmsh_preferences: {}
+
+# Updated by learning loop
+last_updated: null

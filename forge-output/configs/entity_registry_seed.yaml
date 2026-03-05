@@ -1,0 +1,80 @@
+# Seed entities for vault auto-linking.
+# Loaded by AutoLinker on startup.
+# Runtime entities are added dynamically (not persisted here).
+
+schema_version: "1"
+
+entities:
+  # Materials
+  - term: "4130 steel"
+    note_id: "mat-4130-steel"
+    aliases: ["AISI 4130", "Cr-Mo steel"]
+    category: material
+
+  - term: "aluminium 7075"
+    note_id: "mat-al-7075"
+    aliases: ["Al 7075", "7075-T6", "aluminum 7075"]
+    category: material
+
+  - term: "Ti-6Al-4V"
+    note_id: "mat-ti64"
+    aliases: ["titanium 64", "Grade 5 titanium"]
+    category: material
+
+  - term: "Inconel 718"
+    note_id: "mat-inconel-718"
+    aliases: ["IN-718", "UNS N07718"]
+    category: material
+
+  # Analysis methods
+  - term: "finite element analysis"
+    note_id: "method-fea"
+    aliases: ["FEA", "FEM", "finite element method"]
+    category: method
+
+  - term: "computational fluid dynamics"
+    note_id: "method-cfd"
+    aliases: ["CFD"]
+    category: method
+
+  - term: "topology optimization"
+    note_id: "method-topo-opt"
+    aliases: ["topo-opt", "structural optimization"]
+    category: method
+
+  - term: "von Mises stress"
+    note_id: "concept-von-mises"
+    aliases: ["von Mises", "equivalent stress", "σ_eq"]
+    category: concept
+
+  - term: "safety factor"
+    note_id: "concept-safety-factor"
+    aliases: ["factor of safety", "FOS", "SF"]
+    category: concept
+
+  # Tools
+  - term: "CalculiX"
+    note_id: "tool-calculix"
+    aliases: ["ccx", "calculix solver"]
+    category: tool
+
+  - term: "GMSH"
+    note_id: "tool-gmsh"
+    aliases: ["gmsh mesher"]
+    category: tool
+
+  - term: "OpenFOAM"
+    note_id: "tool-openfoam"
+    aliases: ["openfoam"]
+    category: tool
+
+  # Projects
+  - term: "Aladdin-3B"
+    note_id: "project-aladdin-3b"
+    aliases: ["motor mount project", "Aladdin 3B"]
+    category: project
+
+  - term: "Project Vanguard"
+    note_id: "project-vanguard"
+    aliases: ["Vanguard"]
+    category: project
