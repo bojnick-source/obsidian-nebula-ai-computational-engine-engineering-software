@@ -1,0 +1,28 @@
+schema_version: "v1"
+
+providers:
+  anthropic:
+    enabled: true
+    default_model: "claude-opus-4-6"
+    models:
+      - id: "claude-opus-4-6"
+        context_window: 200000
+        use_for: [engineering_full, engineering_lite]
+      - id: "claude-sonnet-4-6"
+        context_window: 200000
+        use_for: [engineering_lite, non_engineering]
+    health_check_url: "https://api.anthropic.com/v1/messages"
+    timeout_s: 30
+
+# V1: add secondary provider
+# openai:
+#   enabled: false
+
+routing_rules:
+  - task_type: engineering_full
+    preferred_model: "claude-opus-4-6"
+    fallback_model: "claude-sonnet-4-6"
+  - task_type: engineering_lite
+    preferred_model: "claude-sonnet-4-6"
+  - task_type: non_engineering
+    preferred_model: "claude-sonnet-4-6"

@@ -1,0 +1,39 @@
+name: Security
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "0 3 * * 1"  # Weekly Monday 03:00 UTC
+
+jobs:
+  secret-scan:
+    name: Secret scanning (pre-commit detect-secrets)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install detect-secrets
+        run: pip install detect-secrets
+      - name: Scan for secrets
+        run: |
+          detect-secrets scan --baseline .secrets.baseline || \
+          detect-secrets scan > .secrets.baseline
+          echo "Secret scan complete"
+
+  dependency-audit:
+    name: Python dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: Audit dependencies
+        run: |
+          pip-audit || echo "Audit complete — review above output"

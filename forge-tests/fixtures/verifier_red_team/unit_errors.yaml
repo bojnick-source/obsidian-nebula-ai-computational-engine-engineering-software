@@ -1,0 +1,67 @@
+fixture_id: red_team_unit_errors
+description: Red-team fixtures for unit gate — all must be rejected
+milestone: mvp
+tags: [red_team, unit_gate]
+
+cases:
+  - id: RT-UNIT-01
+    description: Missing units on numeric result
+    input:
+      output_type: analysis
+      findings:
+        - claim: "Maximum von Mises stress"
+          value: 150
+          units: null  # MISSING
+          confidence: 0.8
+          provenance:
+            source: CalculiX FEA result
+            specificity: high
+            citation: "CalculiX FEA run, trace_id: test"
+          assumptions: []
+          what_would_falsify: []
+    expected:
+      gate: unit
+      result: fail
+      error_code: ERR_UNIT_MISSING
+
+  - id: RT-UNIT-02
+    description: Force reported in Joules (wrong unit type)
+    input:
+      output_type: analysis
+      findings:
+        - claim: "Applied thrust force"
+          value: 10.0
+          units: "J"  # WRONG: should be N
+          confidence: 0.9
+          provenance:
+            source: Motor spec sheet
+            specificity: high
+            citation: "Motor manufacturer datasheet, 2025"
+          assumptions: []
+          what_would_falsify: []
+    expected:
+      gate: unit
+      result: fail
+      error_code: ERR_UNIT_INCONSISTENT
+
+  - id: RT-UNIT-03
+    description: Mixed MPa and psi in same analysis
+    input:
+      output_type: analysis
+      findings:
+        - claim: "Stress analysis comparison"
+          value: 150
+          units: "MPa"
+          confidence: 0.8
+          provenance:
+            source: Analysis
+            specificity: high
+            citation: "Internal analysis"
+          assumptions: []
+          what_would_falsify: []
+          # Embedded comparison: "vs allowable 22000 psi" — detector must catch this
+          detail: "150 MPa actual vs 22000 psi allowable"
+    expected:
+      gate: unit
+      result: fail
+      error_code: ERR_UNIT_INCONSISTENT

@@ -1,0 +1,101 @@
+schema_version: "v1"
+description: |
+  Single source of truth for all tool IDs used in FORGE.
+  Tool IDs used in configs, code, and MCP envelopes must match these exactly.
+
+tools:
+  # MVP — structural FEA
+  - id: calculix
+    name: CalculiX
+    category: fea_solver
+    milestone: mvp
+    license: GPL-2.0
+
+  - id: gmsh
+    name: GMSH
+    category: mesh_generator
+    milestone: mvp
+    license: GPL-2.0
+
+  # V1 — topology optimization
+  - id: freeto
+    name: FreeTO
+    category: topology_optimization
+    milestone: v1
+    license: MIT
+
+  - id: beso
+    name: BESO (Bi-directional Evolutionary)
+    category: topology_optimization
+    milestone: v1
+    license: open-source
+
+  # V1 — CFD
+  - id: openfoam
+    name: OpenFOAM
+    category: cfd_solver
+    milestone: v1
+    license: GPL-3.0
+
+  - id: su2
+    name: SU2
+    category: cfd_solver
+    milestone: v1
+    license: LGPL-2.1
+
+  - id: xfoil
+    name: XFOIL
+    category: airfoil_analysis
+    milestone: v1
+    license: open-source
+
+  # V1 — geometry
+  - id: occt
+    name: Open CASCADE Technology
+    category: geometry_kernel
+    milestone: v1
+    license: LGPL-2.1
+
+  - id: picogk
+    name: PicoGK
+    category: volumetric_geometry
+    milestone: v1
+    license: Apache-2.0
+
+  - id: openvsp
+    name: OpenVSP
+    category: aircraft_geometry
+    milestone: v1
+    license: NASA-1.3
+
+  # V1 — flight dynamics
+  - id: jsbsim
+    name: JSBSim
+    category: flight_dynamics
+    milestone: v1
+    license: LGPL-2.1
+
+  # R&D
+  - id: precice
+    name: preCICE
+    category: multi_physics_coupling
+    milestone: rd
+    license: LGPL-3.0
+
+  - id: fenics
+    name: FEniCSx
+    category: fea_solver
+    milestone: rd
+    license: LGPL-3.0
+
+  - id: swan
+    name: Swan
+    category: topology_optimization
+    milestone: rd
+    license: academic_conditional
+
+  - id: openlsto
+    name: OpenLSTO
+    category: topology_optimization
+    milestone: rd
+    license: open-source

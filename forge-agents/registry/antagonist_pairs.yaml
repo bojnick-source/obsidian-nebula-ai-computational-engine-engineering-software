@@ -1,0 +1,25 @@
+schema_version: "v1"
+# V1 feature — antagonist pairs not active at MVP
+
+pairs:
+  - specialist: me_specialist
+    antagonist: materials_antagonist
+    debate_scope:
+      - material_selection_challenges
+      - structural_assumption_challenges
+      - manufacturing_feasibility_challenges
+
+  - specialist: thermal_fluids_specialist
+    antagonist: materials_antagonist
+    debate_scope:
+      - thermal_material_property_challenges
+
+  - specialist: controls_specialist
+    antagonist: safety_se_specialist
+    debate_scope:
+      - safety_margin_challenges
+      - failure_mode_challenges
+
+notes: |
+  Antagonist debate is V1 only. At MVP, single-specialist path with no debate.
+  Debate is activated by SWITCH_NO_ANTAGONIST being OFF (default in full mode).

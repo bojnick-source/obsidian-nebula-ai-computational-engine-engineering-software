@@ -1,0 +1,63 @@
+# Build artifacts
+build/
+dist/
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+*.egg-info/
+dist/
+
+# Secrets — never commit
+.env
+.env.*
+*.pem
+*.key
+*.p12
+secrets/
+vault-tokens/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Solver outputs (large binary artifacts)
+*.vtu
+*.vtk
+*.cgns
+*.h5
+*.hdf5
+forge-vault/backups/snapshots/*.tar.gz
+
+# Test reports (generated)
+forge-tests/reports/**/*.json
+forge-tests/reports/**/*.html
+
+# Logs
+*.jsonl
+logs/
+
+# Node (if any tooling)
+node_modules/

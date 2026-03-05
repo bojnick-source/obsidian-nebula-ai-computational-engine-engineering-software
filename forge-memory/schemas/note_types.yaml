@@ -1,0 +1,53 @@
+schema_version: "v1"
+
+note_types:
+  finding:
+    description: Established engineering result with provenance
+    required_frontmatter:
+      - provenance
+      - units  # if numeric result
+      - confidence
+    vault_path_pattern: "forge-vault/{domain}/{component or topic}/"
+    template: forge-memory/templates/finding.md
+
+  derivation:
+    description: Step-by-step mathematical derivation
+    required_frontmatter:
+      - provenance
+    vault_path_pattern: "forge-vault/mathematics/formulations/"
+    template: forge-memory/templates/derivation.md
+
+  decision:
+    description: Design decision with rationale and alternatives
+    required_frontmatter: []
+    vault_path_pattern: "forge-vault/engineering/design-decisions/"
+    template: forge-memory/templates/decision.md
+
+  gap:
+    description: Known unknown — unresolved question needing investigation
+    required_frontmatter:
+      - gap_flags
+    vault_path_pattern: "forge-vault/engineering/ (by domain)"
+    template: forge-memory/templates/gap.md
+
+  synthesis:
+    description: Higher-order note generated from knowledge cluster
+    required_frontmatter:
+      - provenance
+      - confidence
+    vault_path_pattern: "forge-vault/ilc/synthesis-proposals/"
+    template: forge-memory/templates/synthesis.md
+
+  agent-thinking:
+    description: Reasoning record from a specific agent on a specific task
+    required_frontmatter:
+      - trace_id  # already required globally
+    vault_path_pattern: "forge-vault/engineering/agent-thinking/"
+    template: forge-memory/templates/agent-thinking.md
+
+  ilc-link:
+    description: Inter-domain link candidate (V1)
+    required_frontmatter: []
+    vault_path_pattern: "forge-vault/ilc/links/"
+    template: forge-memory/templates/ilc-link.md
+    status: v1

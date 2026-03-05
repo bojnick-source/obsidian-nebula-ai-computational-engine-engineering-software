@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, "claude/**"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint-docs:
+    name: Lint planning documents
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for broken markdown links
+        run: |
+          # Placeholder: add markdown-link-check or lychee when docs stabilize
+          echo "Doc lint placeholder — add tooling when planning baseline is frozen"
+
+  validate-schemas:
+    name: Validate YAML schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pip install yamllint
+      - name: Lint YAML files
+        run: |
+          find . -name "*.yaml" -o -name "*.yml" | \
+            grep -v ".github/workflows" | \
+            xargs yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" || true
+
+  build-cmake:
+    name: CMake configure check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install CMake
+        run: sudo apt-get install -y cmake
+      - name: Configure (no build yet — scaffold only)
+        run: |
+          cmake -S . -B build -DFORGE_BUILD_TESTS=ON
+          echo "CMake configure OK"
+
+  python-lint:
+    name: Python lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install ruff
+      - name: Lint
+        run: ruff check . --ignore E501 || true

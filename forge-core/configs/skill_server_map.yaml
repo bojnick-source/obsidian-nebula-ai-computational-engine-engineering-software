@@ -1,0 +1,31 @@
+schema_version: "v1"
+
+# Maps task types and domains to skill workflows
+skill_routes:
+  engineering_full:
+    structural_analysis:
+      workflow: structural_full
+      required_agents: [me_specialist]
+      required_tools: [gmsh, calculix]
+      required_gates: [contract, unit, dimensional, provenance]
+
+    structural_analysis_degraded:
+      workflow: structural_degraded
+      required_agents: [me_specialist]
+      required_tools: []
+      required_gates: [contract, unit, dimensional, provenance]
+      flags: [SWITCH_STUB_SOLVER]
+
+  engineering_lite:
+    default:
+      workflow: lite_analysis
+      required_agents: [me_specialist]
+      required_tools: []
+      required_gates: [contract, unit]
+
+  non_engineering:
+    default:
+      workflow: non_eng_passthrough
+      required_agents: []
+      required_tools: []
+      required_gates: []

@@ -1,0 +1,62 @@
+fixture_id: red_team_provenance_errors
+description: Red-team fixtures for provenance gate — all must be caught
+milestone: mvp
+tags: [red_team, provenance_gate]
+
+cases:
+  - id: RT-PROV-01
+    description: Completely missing provenance
+    input:
+      output_type: analysis
+      findings:
+        - claim: "6061-T6 yield strength"
+          value: 276
+          units: "MPa"
+          confidence: 0.9
+          provenance: null  # MISSING
+          assumptions: []
+          what_would_falsify: []
+    expected:
+      gate: provenance
+      result: fail
+      error_code: ERR_PROVENANCE_MISSING
+
+  - id: RT-PROV-02
+    description: Vague provenance - standard engineering practice
+    input:
+      output_type: analysis
+      findings:
+        - claim: "Safety factor requirement"
+          value: 1.5
+          units: "dimensionless"
+          confidence: 0.85
+          provenance:
+            source: "standard engineering practice"
+            specificity: low
+            citation: "standard engineering practice"
+          assumptions: []
+          what_would_falsify: []
+    expected:
+      gate: provenance
+      result: fail
+      error_code: ERR_PROVENANCE_UNSPECIFIC
+
+  - id: RT-PROV-03
+    description: One-word citation (unparseable)
+    input:
+      output_type: analysis
+      findings:
+        - claim: "Material density"
+          value: 2700
+          units: "kg/m³"
+          confidence: 0.95
+          provenance:
+            source: "textbook"
+            specificity: low
+            citation: "textbook"
+          assumptions: []
+          what_would_falsify: []
+    expected:
+      gate: provenance
+      result: fail
+      error_code: ERR_PROVENANCE_UNSPECIFIC

@@ -1,0 +1,32 @@
+id: librarian
+name: Librarian (Memory Interface)
+version: "1.0.0"
+role: librarian
+domain: cross_domain
+status: mvp
+
+capabilities:
+  - vault_intake
+  - vault_retrieval
+  - gap_detection
+  - evidence_strengthening
+  - contradiction_flagging
+  - synthesis_proposal
+  - amnesia_check
+
+tools_allowed: []  # Librarian does not invoke external tools
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/librarian/v1.0.0.md
+
+mandatory_output_fields:
+  - operation
+  - note_ids_affected
+  - amnesia_check_result
+
+notes: |
+  Librarian is the only agent that writes to the vault directly.
+  All specialist outputs must go through Librarian for vault persistence.
+  Librarian is called:
+    1. Before specialist phase (memory pre-flight: retrieve context)
+    2. After verification phase (persistence: write verified outputs)

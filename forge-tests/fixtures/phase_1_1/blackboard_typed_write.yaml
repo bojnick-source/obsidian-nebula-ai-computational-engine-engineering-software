@@ -1,0 +1,51 @@
+fixture_id: phase_1_1_blackboard_typed_write
+description: Phase 1.1 fixtures — blackboard typed entry writes
+milestone: mvp
+tags: [unit, blackboard]
+
+cases:
+  - id: BB-WRITE-01
+    description: Write a string field successfully
+    input:
+      field: "task.type"
+      value: "engineering_full"
+      schema_type: "string"
+      agent_id: "orchestrator"
+    expected:
+      result: success
+      readable_after_write: true
+
+  - id: BB-WRITE-02
+    description: Write a float with units
+    input:
+      field: "specialist_output.max_stress"
+      value: 150.5
+      schema_type: "float"
+      units: "MPa"
+      agent_id: "me_specialist"
+    expected:
+      result: success
+      units_preserved: true
+
+  - id: BB-WRITE-03
+    description: Concurrent write conflict detection
+    input:
+      concurrent_writes:
+        - field: "specialist_output.max_stress"
+          value: 150.5
+          agent_id: "agent_1"
+        - field: "specialist_output.max_stress"
+          value: 155.0
+          agent_id: "agent_2"
+    expected:
+      # One write succeeds, one fails with concurrency error
+      one_success: true
+      one_failure: true
+
+  - id: BB-WRITE-04
+    description: Read non-existent field returns nullopt
+    input:
+      field: "nonexistent.field"
+      operation: read
+    expected:
+      result: null

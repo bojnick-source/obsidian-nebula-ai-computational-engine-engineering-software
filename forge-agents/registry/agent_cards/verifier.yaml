@@ -1,0 +1,33 @@
+id: structural_verifier
+name: Structural Verifier
+version: "1.0.0"
+role: verifier
+domain: cross_domain
+status: mvp
+
+capabilities:
+  - contract_gate
+  - unit_gate
+  - dimensional_gate
+  - provenance_gate
+
+# Adversarial and contradiction verifiers (V1)
+# id: adversarial_verifier
+# capabilities:
+#   - contradiction_gate
+#   - assumption_gate
+#   - adversarial_falsification
+#   - confidence_calibration
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+
+mandatory_output_fields:
+  - gate
+  - result
+  - error_code
+  - detail
+
+notes: |
+  Structural verifier runs all 4 mandatory MVP gates.
+  V1 adds adversarial, contradiction, assumption, and confidence calibration gates.
+  Any gate failure rejects the output — no vault write proceeds.

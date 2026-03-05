@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package forge.a2a.proto;
+
+option java_package = "com.forge.a2a";
+option go_package = "forge/a2a";
+
+// A2A message for agent-to-agent communication.
+message A2AMessage {
+    string message_id   = 1;
+    string trace_id     = 2;
+    string from_agent   = 3;
+    string to_agent     = 4;
+    string message_type = 5;  // "task_packet" | "agent_output" | "debate_msg" | "verification_req"
+    map<string, string> payload = 6;
+    string timestamp    = 7;  // ISO8601
+}
+
+// Response to an A2AMessage.
+message A2AResponse {
+    string message_id   = 1;  // echoed from request
+    map<string, string> payload = 2;
+    bool   success      = 3;
+    string error_code   = 4;
+}
+
+// A2A service definition.
+service A2AService {
+    // Send a message to an agent.
+    rpc Send(A2AMessage) returns (A2AResponse);
+
+    // Stream messages from an agent (for debate lifecycle).
+    rpc Stream(A2AMessage) returns (stream A2AResponse);
+}

@@ -1,0 +1,112 @@
+schema_version: "v1"
+
+agents:
+  # Orchestrator
+  - id: orchestrator
+    role: orchestrator
+    card: agent_cards/orchestrator.yaml
+    status: planned
+
+  # Librarian
+  - id: librarian
+    role: librarian
+    card: agent_cards/librarian.yaml
+    status: planned
+
+  # Specialists
+  - id: me_specialist
+    role: specialist
+    domain: mechanical_engineering
+    card: agent_cards/me.yaml
+    status: mvp
+
+  - id: materials_specialist
+    role: specialist
+    domain: materials
+    card: agent_cards/materials.yaml
+    status: v1
+
+  - id: ee_specialist
+    role: specialist
+    domain: electrical_engineering
+    card: agent_cards/ee.yaml
+    status: v1
+
+  - id: plasma_specialist
+    role: specialist
+    domain: plasma
+    card: agent_cards/plasma.yaml
+    status: v1
+
+  - id: magnetics_specialist
+    role: specialist
+    domain: magnetics
+    card: agent_cards/magnetics.yaml
+    status: v1
+
+  - id: controls_specialist
+    role: specialist
+    domain: controls
+    card: agent_cards/controls.yaml
+    status: v1
+
+  - id: thermal_fluids_specialist
+    role: specialist
+    domain: thermal_fluids
+    card: agent_cards/thermal_fluids.yaml
+    status: v1
+
+  - id: acoustics_specialist
+    role: specialist
+    domain: acoustics
+    card: agent_cards/acoustics.yaml
+    status: v1
+
+  - id: safety_se_specialist
+    role: specialist
+    domain: safety_se
+    card: agent_cards/safety_se.yaml
+    status: v1
+
+  - id: biomedical_specialist
+    role: specialist
+    domain: biomedical
+    card: agent_cards/biomedical.yaml
+    status: rd
+
+  # Mathematicians
+  - id: optimization_mathematician
+    role: mathematician
+    domain: optimization
+    card: mathematicians/optimization.yaml
+    status: v1
+
+  - id: pde_mathematician
+    role: mathematician
+    domain: pde
+    card: mathematicians/pde.yaml
+    status: v1
+
+  # Antagonists (V1)
+  - id: materials_antagonist
+    role: antagonist
+    domain: materials
+    card: agent_cards/materials.yaml
+    status: v1
+
+  # Verifiers
+  - id: structural_verifier
+    role: verifier
+    card: agent_cards/verifier.yaml
+    status: mvp
+
+  - id: adversarial_verifier
+    role: verifier
+    card: agent_cards/verifier.yaml
+    status: v1
+
+  # Prompt Engineer (meta)
+  - id: prompt_engineer
+    role: prompt_engineer
+    card: agent_cards/prompt_engineer.yaml
+    status: v1

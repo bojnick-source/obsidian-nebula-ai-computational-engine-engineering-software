@@ -1,0 +1,34 @@
+id: me_specialist
+name: Mechanical Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: mechanical_engineering
+status: mvp
+
+capabilities:
+  - structural_analysis
+  - stress_strain_analysis
+  - fatigue_analysis
+  - vibration_analysis
+  - thermal_mechanical_analysis
+  - mechanism_design
+  - manufacturing_constraints
+
+tools_allowed:
+  - gmsh
+  - calculix
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/me_specialist/v1.0.0.md
+
+antagonist_pair: materials_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions  # explicit list required; null not allowed
+  - what_would_falsify
+  - gaps_identified
+
+notes: |
+  MVP scope: structural analysis only. Fatigue, vibration, and thermal-mechanical
+  deferred to V1. At MVP, linear elastic, quasi-static analysis only.

@@ -1,0 +1,18 @@
+schema_version: "v1"
+
+router:
+  provider_chain:
+    - anthropic
+  health_check_interval_s: 30
+  max_retries_per_provider: 2
+  allow_degraded_mode: true
+
+orchestrator:
+  max_loop_iterations: 5
+  max_tool_retries: 3
+
+vault:
+  vault_path: "forge-vault"
+  git_auto_commit: true
+
+log_output: "stdout"

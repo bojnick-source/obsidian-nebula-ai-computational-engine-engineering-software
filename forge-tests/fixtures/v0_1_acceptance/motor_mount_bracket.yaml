@@ -1,0 +1,36 @@
+fixture_id: v0_1_acceptance_motor_mount_bracket
+description: v0.1 acceptance test — motor mount bracket structural analysis
+milestone: mvp
+tags: [acceptance, integration, structural]
+
+input:
+  task_type: engineering_full
+  project: aladdin-3b
+  component: motor_mount_bracket
+  description: |
+    Analyze structural integrity of the motor mount bracket under maximum thrust load.
+    Material: 6061-T6 aluminum.
+    Constraint: maximum von Mises stress < 0.6 × yield strength (165.6 MPa).
+  load_cases:
+    - name: max_thrust_static
+      force_n: 10.0
+      direction: [0, 0, -1]
+
+expected:
+  status: complete  # "degraded" not acceptable for this test
+  verification_gates:
+    contract: pass
+    unit: pass
+    dimensional: pass
+    provenance: pass
+  vault_write: true
+  amnesia_check: pass
+  result_contains:
+    - max_von_mises_mpa  # must be present and < 165.6
+    - safety_factor       # must be present and > 1.0
+    - artifact_refs       # non-empty
+  trace_id_propagated: true  # trace_id must appear in all artifacts
+  log_completeness: true     # all 9 phases logged with start/end
+
+acceptance_criteria_refs:
+  - docs/planning/mvp/v0.1-acceptance-test.md

@@ -1,0 +1,34 @@
+schema_version: "v1"
+
+schemas:
+  vault_frontmatter:
+    current_version: "v1"
+    versions:
+      v1:
+        file: forge-memory/schemas/vault_frontmatter.schema.yaml
+        frozen_at: "2026-03-05"
+        status: active
+
+  blackboard_entry:
+    current_version: "v1"
+    versions:
+      v1:
+        file: forge-memory/schemas/blackboard_entry.schema.yaml
+        frozen_at: "2026-03-05"
+        status: active
+
+  agent_thinking:
+    current_version: "v1"
+    versions:
+      v1:
+        file: forge-memory/schemas/agent_thinking.schema.yaml
+        frozen_at: "2026-03-05"
+        status: active
+
+  ilc_link:
+    current_version: "v1"
+    versions:
+      v1:
+        file: forge-memory/schemas/ilc_link.schema.yaml
+        frozen_at: "2026-03-05"
+        status: planned  # V1

@@ -1,0 +1,60 @@
+schema_version: "v1"
+
+wrappers:
+  calculix:
+    spec_written: true
+    input_schema_written: true
+    output_schema_written: true
+    errors_doc_written: true
+    fixtures_written: true
+    implementation_status: planned
+    milestone: mvp
+
+  gmsh:
+    spec_written: true
+    input_schema_written: false  # pending
+    output_schema_written: false  # pending
+    errors_doc_written: false  # pending
+    fixtures_written: false  # pending
+    implementation_status: planned
+    milestone: mvp
+
+  freeto:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  openfoam:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  su2:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  xfoil:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  occt:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  picogk:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  openvsp:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1
+
+  jsbsim:
+    spec_written: false
+    implementation_status: planned
+    milestone: v1

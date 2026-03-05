@@ -1,0 +1,54 @@
+schema_version: "v1"
+
+degraded_modes:
+  DEGRADED_PROVIDER:
+    trigger: "primary_provider_health_fail_30s"
+    action: "route_to_secondary"
+    re_entry: "primary_health_pass_60s"
+
+  DEGRADED_NO_LLM:
+    trigger: "all_providers_unavailable"
+    action: "halt_non_lite_queue"
+    re_entry: "any_provider_health_pass"
+
+  DEGRADED_SOLVER:
+    trigger: "calculix_subprocess_fail_2x"
+    action: "activate_stub_solver"
+    re_entry: "wrapper_smoke_test_pass"
+
+  DEGRADED_MESH:
+    trigger: "gmsh_subprocess_fail_2x"
+    action: "halt_solver_phase"
+    re_entry: "wrapper_smoke_test_pass"
+
+  DEGRADED_VAULT_WRITE:
+    trigger: "vault_write_fail_2x"
+    action: "halt_pipeline_escalate"
+    re_entry: "vault_write_test_pass"
+
+  DEGRADED_VAULT_READ:
+    trigger: "vault_read_fail"
+    action: "continue_empty_context"
+    re_entry: "vault_read_test_pass"
+
+tactical_switches:
+  SWITCH_NO_ANTAGONIST:
+    activation: "antagonist_phase_2x_budget"
+    disables: [antagonist_debate, a2a_debate]
+
+  SWITCH_NO_ILC:
+    activation: "ilc_generation_2x_budget"
+    disables: [ilc_link_generation]
+
+  SWITCH_LITE_VERIFY:
+    activation: "verification_phase_2x_budget"
+    disables: [adversarial_falsification, contradiction_gate, confidence_calibration]
+
+  SWITCH_STUB_SOLVER:
+    activation: "solver_subprocess_2x_timeout"
+    disables: [live_calculix, live_gmsh]
+    requires: [stub_result_flagged, gap_flags_added]
+
+  SWITCH_NO_SYNTHESIS:
+    activation: "synthesis_phase_2x_budget"
+    disables: [memory_synthesis_proposals]

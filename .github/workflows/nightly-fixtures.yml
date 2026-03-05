@@ -1,0 +1,26 @@
+name: Nightly Fixture Validation
+
+on:
+  schedule:
+    - cron: "0 2 * * *"  # Daily 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  validate-fixtures:
+    name: Validate test fixtures against schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install validation tools
+        run: pip install jsonschema pyyaml
+      - name: Validate blackboard fixtures
+        run: |
+          echo "Fixture validation placeholder"
+          echo "Fixtures: forge-tests/fixtures/"
+          ls forge-tests/fixtures/ || echo "Fixture directories not yet populated"
+      - name: Check fixture coverage report
+        run: |
+          echo "Coverage report placeholder: forge-tests/reports/fixture-coverage/"
