@@ -1,0 +1,91 @@
+id: assembly_specialist
+version: "1.0.0"
+role: specialist
+domain: assembly_dfa
+
+description: >
+  Places components into a global coordinate system, checks for geometric
+  interference and clearance violations, verifies physical tool access for
+  every fastener (DFA), generates a disassembly sequence DAG, classifies
+  maintenance access levels (L1/L2/L3), and produces a complete assembly
+  model ready for system-level FEA export.
+
+triggers:
+  - "assemble"
+  - "fit the parts together"
+  - "check for interference"
+  - "clearance check"
+  - "can these parts fit"
+  - "assembly model"
+  - "joint positions"
+  - "attach [X] to [Y]"
+  - "disassemble"
+  - "maintenance access"
+  - "tool clearance"
+  - "DFA"
+  - "design for assembly"
+  - "serviceability"
+
+preconditions:
+  - "All components in build wave have validated geometry (VDB/STL from picogk-geometry)"
+  - "Interface records (IF-XXX) exist from system-decomposition"
+  - "Coordinate system origin defined"
+  - "Moving parts identified"
+  - "Fastener types specified in interface records"
+
+tools_allowed:
+  - picogk        # Read component geometry
+  - trimesh       # Interference and tool access geometry (via forge-assembly)
+  - vault_write   # Write 5 assembly notes to Obsidian
+
+pipeline_steps:
+  1: "Define assembly coordinate system"
+  2: "Place all components via interface constraints"
+  3: "Geometric interference and clearance check"
+  4: "Center of mass and mass budget"
+  5: "Fastener specification and validation"
+  6: "DFA tool access volume check (physical tool clearance)"
+  7: "Disassembly sequence DAG (Kahn's algorithm)"
+  8: "Maintenance access classification (L1/L2/L3)"
+  9: "Vault write (5 notes)"
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence
+  - assembly_status   # "validated" | "issues_found"
+
+output_contract_type: "analysis"
+
+hard_failure_conditions:
+  - "Any interference (intersection volume > 0)"
+  - "Tool access blocked for any fastener (no candidate tool clears)"
+  - "Disassembly cycle detected"
+  - "Mass overrun (user approval required to continue)"
+
+warning_conditions:
+  - "Clearance violation 0.5–2.0 mm"
+  - "Visual access blocked (blind assembly required)"
+  - "Frequently-replaced component classified L3-factory"
+  - "Field-replaceable mass fraction < 30%"
+
+vault_outputs:
+  - "projects/{name}/assembly/assembly_model.md"
+  - "projects/{name}/assembly/interference_report.md"
+  - "projects/{name}/assembly/tool_access_report.md"
+  - "projects/{name}/assembly/disassembly_sequence.md"
+  - "projects/{name}/assembly/maintenance_access.md"
+
+status: v1
+milestone: v1
+
+does_not_do:
+  - "Generate component geometry — use picogk-geometry"
+  - "Validate individual component strength — use simulation-fea"
+  - "Run system-level structural FEA — use simulation-fea with assembly model"
+  - "Produce manufacturing drawings or G-code — use cad-export"
+  - "Determine fastener torque from first principles — use manufacturer specs"
+  - "Check electrical/fluid/thermal routing"
+  - "Replace physical assembly trials (first-article required)"

@@ -99,3 +99,25 @@ tools:
     category: topology_optimization
     milestone: rd
     license: open-source
+
+  # V1 — Assembly & DFA
+  - id: trimesh
+    name: trimesh
+    category: geometry_processing
+    milestone: v1
+    license: MIT
+    description: "Mesh loading, boolean intersection, tool access swept volumes, ray casting"
+
+  - id: picogk
+    name: PicoGK
+    category: geometry_kernel
+    milestone: v1
+    license: Apache-2.0
+    description: "VDB/STL component geometry generation (input to assembly)"
+
+  - id: assembly
+    name: forge-assembly
+    category: assembly_dfa
+    milestone: v1
+    license: internal
+    description: "9-step assembly skill: placement, interference, tool access, disassembly, maintenance"

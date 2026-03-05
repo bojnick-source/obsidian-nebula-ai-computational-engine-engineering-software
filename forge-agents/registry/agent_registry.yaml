@@ -14,6 +14,12 @@ agents:
     status: planned
 
   # Specialists
+  - id: assembly_specialist
+    role: specialist
+    domain: assembly_dfa
+    card: agent_cards/assembly.yaml
+    status: v1
+
   - id: me_specialist
     role: specialist
     domain: mechanical_engineering
