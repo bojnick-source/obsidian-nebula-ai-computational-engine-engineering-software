@@ -25,9 +25,11 @@ import yaml
 
 from forge_agent.core.container_state import ContainerState
 from forge_agent.core.context_assembler import ObsidianAwareContextAssembler
+from forge_agent.core.intelligence_router import IntelligenceRouter
 from forge_agent.core.logger import AgentLogger
 from forge_agent.core.loop_guard import AgentLoopGuard, LoopDivergenceError, LoopLimitError
 from forge_agent.core.mcp_manager import MCPManager
+from forge_agent.core.provider_clients import clients as provider_clients
 from forge_agent.core.ptc_engine import PTCEngine
 from forge_agent.core.retry import RetryConfig, retry_api_call
 from forge_agent.core.shutdown import GracefulShutdown
@@ -67,14 +69,23 @@ def _build_anthropic_client(api_key: str | None = None):
 
 
 def _resolve_model(router_cfg: dict, role: str, tier: str) -> tuple[str, str]:
-    """Returns (model_id, provider) for a given role."""
+    """Returns (model_id, provider) for a given role, using new providers block."""
     role_cfg = router_cfg.get("roles", {}).get(role, {})
     preferred_tier = role_cfg.get("model_tier", tier)
     preferred_provider = role_cfg.get("preferred_provider", "anthropic")
 
     providers_cfg = router_cfg.get("providers", {})
-    provider_cfg = providers_cfg.get(preferred_provider, {})
-    model = provider_cfg.get(preferred_tier, "claude-sonnet-4-6")
+    provider_models = providers_cfg.get(preferred_provider, {}).get("models", {})
+    model = provider_models.get(preferred_tier)
+
+    if not model:
+        # Fallback provider
+        fb_provider = role_cfg.get("fallback_provider", "anthropic")
+        fb_tier = role_cfg.get("fallback_tier", "secondary")
+        provider_models = providers_cfg.get(fb_provider, {}).get("models", {})
+        model = provider_models.get(fb_tier, "claude-sonnet-4-6")
+        preferred_provider = fb_provider
+
     return model, preferred_provider
 
 
@@ -118,6 +129,7 @@ class UnifiedAgent:
             vault_top_k=agent_cfg.get("vault_top_k", 5),
         )
         self.mcp = MCPManager()
+        self.intelligence_router = IntelligenceRouter()
         self.logger = AgentLogger(
             log_path=Path(log_dir) / f"{self.run_id}.jsonl",
             run_id=self.run_id,
@@ -147,7 +159,32 @@ class UnifiedAgent:
     async def solve(self, problem: str, role: str = "orchestrator") -> str:
         """Run the agent loop for a problem; return final answer text."""
         self.loop_guard.reset()
-        self._messages = [{"role": "user", "content": problem}]
+
+        # Phase 0: Intelligence pre-tasks (Gemini/Perplexity/OpenAI math)
+        pre_tasks = self.intelligence_router.plan(problem)
+        if pre_tasks:
+            self.logger.log_phase("intelligence_routing", "started", {
+                "pre_tasks": [t.task_type for t in pre_tasks]
+            })
+            pre_results = await self.intelligence_router.execute(pre_tasks)
+            context_injection = self.intelligence_router.format_context(pre_results)
+            self.logger.log_phase("intelligence_routing", "completed", {
+                "providers": [r.provider for r in pre_results],
+                "errors": [r.error for r in pre_results if r.error],
+            })
+        else:
+            context_injection = ""
+
+        # Inject pre-task context into the user message
+        if context_injection:
+            augmented_problem = (
+                f"{problem}\n\n"
+                f"---\n## Pre-gathered Intelligence\n{context_injection}\n---"
+            )
+        else:
+            augmented_problem = problem
+
+        self._messages = [{"role": "user", "content": augmented_problem}]
 
         routing = await self.skill_router.route(problem, self._client)
         self.logger.log_phase("routing", "completed", {"skills": routing.skills, "agents": routing.agents})

@@ -1,45 +1,245 @@
-# Role → preferred provider → model tier mapping.
-# Fallback chain: primary → secondary → routing (never fail silently).
+# forge_agent/config/model_router.yaml
+# Role → provider → model
+# All roles, all providers, all model tiers in one place.
+
+providers:
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+    models:
+      primary:   "claude-opus-4-6"
+      secondary: "claude-sonnet-4-6"
+      routing:   "claude-haiku-4-5-20251001"
+
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+    models:
+      primary:   "o3"
+      secondary: "gpt-4o"
+      routing:   "o4-mini"
+
+  gemini:
+    api_key: "${GEMINI_API_KEY}"
+    models:
+      primary:   "gemini-2.5-pro"
+      secondary: "gemini-2.5-flash"
+      routing:   "gemini-2.5-flash"
+
+  perplexity:
+    api_key: "${PERPLEXITY_API_KEY}"
+    base_url: "https://api.perplexity.ai"
+    models:
+      primary:   "sonar-pro"
+      secondary: "sonar"
+      routing:   "sonar"
+
+# ── Role assignments ──────────────────────────────────────────
 
 roles:
+
+  # ── Core loop roles ──────────────────────────────────────────
+
   router:
-    preferred_provider: null          # Any — cheapest wins
-    model_tier: routing
+    preferred_provider: anthropic
+    model_tier: routing           # haiku — cheapest skill selection
     temperature: 0.0
     max_tokens: 512
-    fallback_tier: routing
+    fallback_provider: openai
+    fallback_tier: routing        # o4-mini if haiku down
 
   orchestrator:
-    preferred_provider: anthropic     # Claude for decomposition reasoning
-    model_tier: primary
+    preferred_provider: anthropic
+    model_tier: primary           # opus — best decomposition + judgment
     temperature: 0.2
     max_tokens: 8192
-    fallback_tier: secondary
+    fallback_provider: openai
+    fallback_tier: secondary      # gpt-4o fallback
 
   verifier:
-    preferred_provider: anthropic     # Consistent rejection behavior
-    model_tier: primary
-    temperature: 0.0                  # Zero — no creative verdicts
-    max_tokens: 2048
-    fallback_tier: secondary
+    preferred_provider: anthropic
+    model_tier: primary           # opus — consistent rejection behavior
+    temperature: 0.0              # zero — no creative verdicts
+    max_tokens: 1024
+    fallback_provider: openai
+    fallback_tier: primary        # o3 fallback for verification
 
   librarian:
-    preferred_provider: null
+    preferred_provider: anthropic
     model_tier: routing
     temperature: 0.1
-    max_tokens: 2048
+    max_tokens: 512
+    fallback_provider: openai
     fallback_tier: routing
 
-  specialist_engineer:
-    preferred_provider: null          # Best available math model
-    model_tier: primary
-    temperature: 0.2
-    max_tokens: 8192
-    fallback_tier: secondary
+  # ── Intelligence gathering ────────────────────────────────────
 
-  mathematician:
-    preferred_provider: null
+  intelligence_gatherer:
+    preferred_provider: perplexity
+    model_tier: primary           # sonar-pro — cited, real-time
+    temperature: null             # Perplexity doesn't use temperature
+    max_tokens: 2048
+    fallback_provider: openai
+    fallback_tier: secondary
+    use_for:
+      - current_specifications
+      - recent_papers
+      - regulatory_status
+      - component_availability
+      - price_and_lead_time
+      - any_time_sensitive_fact
+
+  video_intelligence:
+    preferred_provider: gemini
+    model_tier: primary           # gemini-2.5-pro for quality
+    temperature: 0.2
+    max_tokens: 4096
+    fallback_provider: gemini
+    fallback_tier: secondary      # flash for speed/cost
+    use_for:
+      - youtube_video_analysis
+      - multimodal_diagram_extraction
+      - video_transcript_with_timestamps
+      - multi_video_comparison
+      - manufacturer_demo_analysis
+
+  # ── Engineering specialists ───────────────────────────────────
+  # Math-heavy: OpenAI o3 primary; judgment-heavy: Claude primary
+
+  specialist_me:
+    preferred_provider: openai
+    model_tier: primary           # o3 — formal mechanics derivations
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_ee:
+    preferred_provider: openai
     model_tier: primary
     temperature: 0.1
-    max_tokens: 8192
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_controls:
+    preferred_provider: openai
+    model_tier: primary           # o3 excels at control theory math
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_se:
+    preferred_provider: anthropic
+    model_tier: primary           # claude for systems decomposition / judgment
+    temperature: 0.2
+    max_tokens: 4096
+    fallback_provider: openai
+    fallback_tier: secondary
+
+  specialist_thermal:
+    preferred_provider: openai
+    model_tier: primary
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_materials:
+    preferred_provider: anthropic
+    model_tier: primary           # claude for nuanced material judgment
+    temperature: 0.2
+    max_tokens: 4096
+    fallback_provider: openai
+    fallback_tier: secondary
+
+  specialist_acoustics:
+    preferred_provider: openai
+    model_tier: primary
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_plasma:
+    preferred_provider: openai
+    model_tier: primary           # o3 for complex plasma physics math
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  specialist_biomedical:
+    preferred_provider: anthropic
+    model_tier: primary           # claude for nuanced safety/regulatory judgment
+    temperature: 0.2
+    max_tokens: 4096
+    fallback_provider: openai
+    fallback_tier: secondary
+
+  # ── Mathematician agents ──────────────────────────────────────
+
+  math_optimization:
+    preferred_provider: openai
+    model_tier: primary           # o3 — best at formal optimization
+    temperature: 0.0
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  math_pde:
+    preferred_provider: openai
+    model_tier: primary           # o3 — best at PDE analysis
+    temperature: 0.0
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  math_numerical:
+    preferred_provider: openai
+    model_tier: primary           # o3 — best for numerical stability
+    temperature: 0.0
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: primary
+
+  math_geometry_topology:
+    preferred_provider: openai
+    model_tier: secondary         # gpt-4o for symbolic manipulation
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: secondary
+
+  math_probability_stats:
+    preferred_provider: openai
+    model_tier: secondary
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: anthropic
+    fallback_tier: secondary
+
+  # ── Production / synthesis roles ──────────────────────────────
+
+  math_synthesizer:
+    preferred_provider: anthropic
+    model_tier: primary           # claude for synthesis + unification
+    temperature: 0.1
+    max_tokens: 4096
+    fallback_provider: openai
+    fallback_tier: primary
+
+  context_compressor:
+    preferred_provider: anthropic
+    model_tier: routing           # haiku for fast compression
+    temperature: 0.0
+    max_tokens: 512
+    fallback_provider: openai
+    fallback_tier: routing
+
+  knowledge_extractor:
+    preferred_provider: anthropic
+    model_tier: secondary         # sonnet — extracts durable knowledge
+    temperature: 0.1
+    max_tokens: 2048
+    fallback_provider: openai
     fallback_tier: secondary

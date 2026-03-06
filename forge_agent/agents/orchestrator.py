@@ -237,8 +237,26 @@ class MultiAgentOrchestrator:
         self, role: str, problem: str, blackboard: dict
     ) -> str:
         model = self._resolve_model(role)
+        provider = self._resolve_provider(role)
         prompt = _specialist_prompt(role, problem, blackboard)
 
+        if provider == "openai":
+            import openai as _oai
+            import os
+            oai = _oai.AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+            response = await retry_api_call(
+                oai.chat.completions.create,
+                model=model,
+                messages=[
+                    {"role": "system", "content": "You are a FORGE engineering specialist. Follow the Agent Output Contract exactly."},
+                    {"role": "user", "content": prompt},
+                ],
+                max_completion_tokens=4096,
+                config=RetryConfig(),
+            )
+            return response.choices[0].message.content or ""
+
+        # Default: Anthropic
         msg = await retry_api_call(
             self._client.messages.create,
             model=model,
@@ -248,6 +266,15 @@ class MultiAgentOrchestrator:
             config=RetryConfig(),
         )
         return msg.content[0].text
+
+    def _resolve_provider(self, role: str) -> str:
+        """Returns the preferred provider for a role."""
+        roles_cfg = self.router_cfg.get("roles", {})
+        canonical = role.replace("-", "_")
+        for key in roles_cfg:
+            if key in canonical or canonical in key:
+                return roles_cfg[key].get("preferred_provider", "anthropic")
+        return "anthropic"
 
     async def _synthesise(
         self, blackboard: dict, specialist_outputs: dict[str, str]
@@ -310,15 +337,24 @@ class MultiAgentOrchestrator:
 
     def _resolve_model(self, role: str) -> str:
         roles_cfg = self.router_cfg.get("roles", {})
-        # Normalise role name
+        providers_cfg = self.router_cfg.get("providers", {})
         canonical = role.replace("-", "_")
+
         for key in roles_cfg:
             if key in canonical or canonical in key:
                 rc = roles_cfg[key]
-                tier = rc.get("model_tier", "primary")
                 provider = rc.get("preferred_provider", "anthropic")
-                providers_cfg = self.router_cfg.get("providers", {})
-                return providers_cfg.get(provider, {}).get(tier, "claude-sonnet-4-6")
+                tier = rc.get("model_tier", "primary")
+                model = providers_cfg.get(provider, {}).get("models", {}).get(tier)
+                if model:
+                    return model
+                # Fallback provider
+                fb_provider = rc.get("fallback_provider", "anthropic")
+                fb_tier = rc.get("fallback_tier", "secondary")
+                model = providers_cfg.get(fb_provider, {}).get("models", {}).get(fb_tier)
+                if model:
+                    return model
+
         return "claude-sonnet-4-6"
 
 
