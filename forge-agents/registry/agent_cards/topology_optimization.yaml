@@ -1,6 +1,6 @@
 id: topology_optimization
 name: Topology Optimization
-version: "1.0.0"
+version: "1.1.0"
 role: workflow
 domain: structural_analysis
 status: v1
@@ -32,20 +32,43 @@ blocked_if:
   - block_action: return_to_component_generation
 
 solvers:
-  preferred: swan               # FEniCS-based, density + level-set, 3D
-  fallback_1: topy              # 2D and simple 3D
-  fallback_2: openmdao          # gradient-based, constrained multi-load-case
-  fallback_3: scipy_simp        # Sigmund (2001) reference implementation
+  preferred: swan               # MATLAB, level-set + density + AM constraints + anisotropy
+  fallback_1: freeto            # MATLAB/Octave, MIT, Ibhadode/U of Alberta, SIMP+SEMDOT
+  fallback_2: topy              # Python, 2D and simple 3D
+  fallback_3: openmdao          # Python, gradient-based, constrained multi-load-case
+  fallback_4: scipy_simp        # Python, Sigmund (2001), 2D only, last resort
   selection_logic: |
-    Check availability in order: swan → topy → openmdao → scipy_simp.
+    Check availability in order: swan → freeto → topy → openmdao → scipy_simp.
+    Swan requires MATLAB. FreeTO requires MATLAB or Octave.
     Flag chosen solver in vault frontmatter.
-    scipy_simp is acceptable for 2D; for 3D > 10k elements use Swan/ToPy.
+    scipy_simp is 2D only; for 3D use Swan or FreeTO.
+
+swan_capabilities:
+  - level_set_topology_optimization      # sharper solid/void boundaries vs density SIMP
+  - additive_manufacturing_constraints   # overhang angle, support minimization, min feature
+  - anisotropic_material_optimization    # CFRP fibre orientation + topology simultaneously
+  - metamaterial_microstructure_design   # lattice unit cell optimization
+  - compliant_mechanism_synthesis
+  - unstructured_mesh_support            # complex geometry domains (Gmsh, .inp)
+  - density_based_simp                   # standard penalization p=3.0
+
+freeto_capabilities:
+  - density_simp_2d_and_3d
+  - semdot_method                        # smooth-edged, better boundary than SIMP
+  - octave_compatible                    # no MATLAB commercial license required
+  - mit_license                          # open source, Ibhadode/U of Alberta, 1263 LOC
+  does_not_support:
+    - level_set
+    - am_manufacturing_constraints
+    - anisotropic_materials
+    - unstructured_meshes
 
 capabilities:
   - design_space_definition          # non-design solid/void from IF-XXX records
-  - solver_selection                 # 4-tier with availability check
-  - simp_implementation              # complete Sigmund (2001) scipy fallback
-  - swan_integration                 # FEniCS mesh + density/level-set method
+  - solver_selection                 # 5-tier with availability check
+  - simp_implementation              # complete Sigmund (2001) scipy fallback (2D)
+  - swan_integration                 # MATLAB, level-set + density + AM + anisotropy
+  - freeto_integration               # MATLAB/Octave, SIMP + SEMDOT, MIT license
   - density_field_interpretation     # solid/lattice/void classification
   - load_path_connectivity_check     # scipy.ndimage.label on solid region
   - vault_write                      # _topology.md + _density.npy
@@ -56,11 +79,13 @@ tools_allowed:
   - bash                     # run Swan/ToPy/OpenMDAO, pip install, numpy I/O
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/topology_optimization/v1.0.0.md
+prompt_ref: forge-agents/prompts/topology_optimization/v1.1.0.md
 
 mandatory_output_fields:
   - component_id
   - solver_used
+  - swan_method                  # density | levelset (Swan only; omit for other solvers)
+  - am_constraints_applied       # true | false (Swan only)
   - volume_fraction_target
   - volume_fraction_achieved
   - iterations
@@ -88,9 +113,20 @@ load_path_connectivity_policy: >
   topology to picogk-geometry under any circumstances.
 
 swan_policy: >
-  Swan is the preferred solver. Always check for Swan before ToPy or
-  OpenMDAO. If Swan is available, use it for all 3D problems. Record
-  Swan version in vault frontmatter.
+  Swan (CIMNE/UPC Barcelona, MATLAB) is the preferred solver. Always check for
+  Swan before FreeTO, ToPy, or OpenMDAO. Swan is the only solver that supports
+  level-set TO, AM constraints (overhang, feature size), anisotropic CFRP
+  optimization, and metamaterial design. For Aladdin-3B CFRP components, Swan
+  is mandatory for production runs; FreeTO is acceptable for validation.
+  Record solver + version in vault frontmatter. If Swan is unavailable, note
+  solver_downgrade: swan→freeto (or further) in vault.
+
+freeto_policy: >
+  FreeTO (Osezua Ibhadode, University of Alberta, MIT license, 1263 LOC) is
+  the Tier-2 fallback. Octave-compatible — use when MATLAB is unavailable or
+  Swan license is not confirmed. Supports SIMP and SEMDOT. Does not support
+  level-set, AM constraints, or anisotropy. Acceptable for 2D validation,
+  quick sanity checks, and Octave-only environments.
 
 predecessor_skills:
   - component-generation    # provides component spec + load cases (IF-XXX)
@@ -113,19 +149,28 @@ checkerboard_prevention: >
   mesh and the density field is numerically unstable.
 
 error_recovery:
-  swan_topy_openmdao_unavailable: use_scipy_simp_flag_solver_in_vault
+  swan_unavailable: fall_back_to_freeto_flag_solver_downgrade_in_vault
+  freeto_unavailable: fall_back_to_topy_then_scipy_flag_in_vault
+  all_solvers_unavailable: use_scipy_simp_2d_flag_3d_limitation
   checkerboard_pattern: increase_rmin_to_3x_voxel_size
   load_path_disconnected: increase_volfrac_or_check_bcs_or_revise_design_space
   no_convergence: check_rigid_body_motion_bc_error_then_increase_filter_radius
-  scipy_simp_too_slow_3d: reduce_mesh_for_first_pass_use_swan_for_production
+  am_constraints_diverge: relax_overhang_5deg_increments_check_build_direction
+  cfrp_anisotropy_not_converging: reduce_to_0_90_then_add_45_after_convergence
   volume_fraction_off_by_2pct: accept_and_note_in_vault
   qualitative_loads: flag_TO_BLOCKED_return_to_component_generation
 
 notes: |
-  v1.0 scope: SIMP density-based method via Swan (preferred), ToPy, OpenMDAO,
-  or scipy fallback. Swan is the Leap71/FEniCS-based framework — same origin
-  as Noyron for PicoGK lattice generation, ensuring consistent density-to-
-  geometry translation.
+  v1.1 scope: Swan (CIMNE/UPC Barcelona, MATLAB) is the primary solver.
+  Key correction from v1.0: Swan is MATLAB-based, not Python/FEniCS-based.
+  Swan's differentiating capabilities vs FreeTO: level-set method, AM
+  manufacturing constraints (overhang, feature size), anisotropic CFRP
+  fibre orientation optimization, metamaterial microstructure design,
+  compliant mechanism synthesis. These require Swan — FreeTO does not
+  support them.
+
+  FreeTO (MIT, Octave-compatible) is the Tier-2 fallback — appropriate when
+  MATLAB is unavailable or for quick SIMP/SEMDOT validation runs.
 
   The topology_handoff.picogk_instruction field is the critical handoff
   artifact — it tells picogk-geometry exactly which density thresholds map
