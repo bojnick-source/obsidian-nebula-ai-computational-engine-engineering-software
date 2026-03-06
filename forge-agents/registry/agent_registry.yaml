@@ -8,6 +8,13 @@ agents:
     card: agent_cards/system_decomposition.yaml
     status: v1
 
+  # Workflow (component design, runs after system-decomposition)
+  - id: component_generation
+    role: workflow
+    domain: component_design
+    card: agent_cards/component_generation.yaml
+    status: v1
+
   # Orchestrator
   - id: orchestrator
     role: orchestrator

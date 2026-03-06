@@ -1,0 +1,131 @@
+# Prompt test: component_generation — [LOADS REQUIRED] gate
+#
+# Verifies that the agent refuses to enter DESIGN or HYBRID mode when
+# load conditions are absent, and produces only a placeholder SPECIFY-mode
+# spec with a [LOADS REQUIRED] flag.
+#
+# Run:  forge prompt-test run component_generation test_loads_required_gate
+
+id: test_loads_required_gate
+agent: component_generation
+version: "1.0.0"
+description: >
+  Agent must not generate parametric geometry or a PicoGK params file when
+  load_conditions are absent. It must switch to SPECIFY mode, write a
+  placeholder spec, and flag [LOADS REQUIRED].
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-002
+  component_name: "Main wing (×2, foldable)"
+  project_name: Aladdin-3B
+  mass_budget_kg: 0.55
+  material_hint: carbon_fiber_epoxy
+  method_hint: layup
+  geometric_envelope:
+    span_m: 0.60
+    chord_m: 0.14
+    max_thickness_m: 0.018
+  load_conditions: null   # deliberately absent
+  interfaces:
+    - id: IF-002
+      description: "Wing ↔ Airframe — wing root spar to fuselage spar box, 2× M4 bolts"
+  mode: null   # no override — agent must determine mode from inputs
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must NOT produce parametric geometry
+  - type: output_absent
+    field: parametric_geometry
+    description: >
+      No geometry params class should be generated without a load envelope.
+      Geometry produced without loads cannot be validated by simulation-fea.
+
+  # Must NOT produce a PicoGK params file path
+  - type: output_absent
+    field: component_handoff.vault_params_path
+    description: >
+      vault_params_path in the handoff block must be absent — no params.py
+      file should be committed to vault without a verifiable load basis.
+
+  # Must NOT set ready_for_picogk = true
+  - type: field_value
+    field: component_handoff.ready_for_picogk
+    expected: "false"
+    description: >
+      ready_for_picogk must be false. The picogk-geometry skill must not
+      be triggered with unverified geometry.
+
+  # Must NOT set ready_for_fea = true
+  - type: field_value
+    field: component_handoff.ready_for_fea
+    expected: "false"
+    description: >
+      ready_for_fea must be false. simulation-fea cannot run without a
+      geometry to mesh.
+
+  # Must report mode as SPECIFY
+  - type: field_value
+    field: mode
+    expected: "SPECIFY"
+    description: >
+      Agent must switch to SPECIFY mode when load_conditions is null.
+
+  # Must flag [LOADS REQUIRED] in the open_flags
+  - type: output_contains
+    target: component_handoff.open_flags
+    one_of:
+      - "LOADS REQUIRED"
+      - "loads required"
+    description: >
+      The handoff block open_flags must contain a LOADS REQUIRED flag so
+      the orchestrator knows to route simulation-fea (system-level) before
+      returning for DESIGN mode.
+
+  # Must still produce a material spec (SPECIFY mode proceeds)
+  - type: output_present
+    field: material_spec
+    description: >
+      SPECIFY mode should still produce material_spec even without loads —
+      material selection does not depend on knowing the load envelope.
+
+  # Must still produce a quality plan
+  - type: output_present
+    field: quality_plan
+    description: Dimensional and mass acceptance checks are load-independent.
+
+  # Must write vault path for spec (not params)
+  - type: field_contains_all
+    field: vault_paths_written
+    values:
+      - "projects/Aladdin-3B/components/C-002_spec.md"
+    description: >
+      Spec file must still be written to vault as a placeholder.
+
+  - type: output_absent_pattern
+    target: vault_paths_written
+    pattern: "C-002_params\\.py"
+    description: >
+      params.py must NOT be written to vault without geometry verification.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent reads load_conditions: null, selects SPECIFY mode, and:
+    1. Notes [LOADS REQUIRED] — geometry cannot be defined without a load envelope.
+    2. Proceeds with material selection (carbon_fiber_epoxy → T300/3501-6 or
+       equivalent) and manufacturing spec (vacuum bag layup).
+    3. Produces dimensional quality plan from envelope: span, chord, thickness,
+       spar cutout tolerance matching IF-002.
+    4. Writes only C-002_spec.md to vault (no params.py).
+    5. Handoff block: ready_for_picogk=false, ready_for_fea=false,
+       open_flags contains LOADS REQUIRED.
+
+failure_mode_tested: >
+  If the agent generates parametric geometry without loads, then PicoGK produces
+  a solid model that gets meshed and fed to simulation-fea with no reference
+  stress target. The FEA will "pass" against a null criterion, producing a false
+  green status. The structural verifier has no basis to stamp confidence, but
+  may not catch the missing load case if it is not explicitly flagged.

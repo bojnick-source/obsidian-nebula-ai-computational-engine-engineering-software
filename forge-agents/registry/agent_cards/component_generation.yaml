@@ -1,0 +1,103 @@
+id: component_generation
+name: Component Generation
+version: "1.0.0"
+role: workflow
+domain: component_design
+status: v1
+
+description: |
+  Produces a fully-specified component definition: parametric geometry,
+  material selection with sourced properties, manufacturing method with
+  process parameters, and a quality inspection plan. Works symbiotically
+  with system-decomposition — decomposition provides the tree and budgets;
+  component-generation fills in each leaf node with enough precision to
+  manufacture or simulate it. Required input to simulation-fea and assembly.
+
+triggers:
+  - decomposition_handoff_present_and_user_says_proceed
+  - phrases: ["generate the component", "design the part", "spec out the",
+              "create geometry for", "generate geometry"]
+
+preconditions:
+  - component_id        # from decomposition_handoff (e.g. C-001)
+  - component_name      # from decomposition_handoff
+  - mass_budget_kg      # hard upper limit
+  - material_hint       # drives entire design space; minimum "carbon fiber"
+  - geometric_envelope  # max L × W × H or diameter × length
+  - load_conditions     # what loads + direction; required for DESIGN/HYBRID
+  - interface_records   # IF-XXX records for all connections
+
+modes:
+  DESIGN:
+    use_when: geometry does not exist; define shape and dimensions
+    output: parametric geometry (Python dataclass) + PicoGK script
+    default_for: novel structural components
+  SPECIFY:
+    use_when: geometry already exists (COTS or provided)
+    output: material property sheet + process card + quality plan
+    default_for: COTS items (motors, fasteners, bearings)
+  HYBRID:
+    use_when: generate geometry AND select material/process
+    output: both DESIGN and SPECIFY outputs
+    default_for: novel structural components (same as DESIGN default)
+
+capabilities:
+  - load_conditions_analysis     # via specialist_ME; establishes load envelope
+  - parametric_geometry_design   # PicoGK Python params (DESIGN/HYBRID)
+  - material_specification       # sourced mechanical properties (SPECIFY/HYBRID)
+  - manufacturing_process_card   # cure cycle, tooling, surface finish
+  - quality_inspection_plan      # dimensional checks, proof load, mass acceptance
+  - mass_verification            # compare as-designed mass to budget; escalate >15%
+  - vault_write                  # writes _spec.md and _params.py per component
+  - handoff_block_production     # XML block for simulation-fea and assembly
+
+tools_allowed:
+  - authorized_vault_write   # agent: Librarian
+  - specialist_ME            # load conditions analysis (Step 1)
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/component_generation/v1.0.0.md
+
+mandatory_output_fields:
+  - component_id
+  - mode                  # DESIGN | SPECIFY | HYBRID
+  - load_cases            # from specialist_ME or [LOADS REQUIRED] flag
+  - material_spec         # with sourced mechanical properties
+  - manufacturing_spec    # method, cure/process params, tooling
+  - quality_plan          # dimensional, structural, mass acceptance
+  - mass_verification     # as_designed_kg vs budget_kg, margin, resolution if needed
+  - vault_paths_written   # confirmed paths
+  - component_handoff     # XML block
+
+predecessor_skills:
+  - system-decomposition  # provides decomposition_handoff
+
+successor_skills:
+  - simulation-fea        # consumes component_handoff.ready_for_fea
+  - assembly              # consumes component_handoff
+  - picogk-geometry       # consumes component_handoff.ready_for_picogk
+
+does_not_do:
+  - run_fea               # simulation-fea skill
+  - check_assembly_fit    # assembly skill
+  - generate_stl_step     # cad-export skill
+  - topology_optimization # topology-optimization skill
+
+error_recovery:
+  mass_over_budget: present_3_options_ask_user
+  unsourceable_material_properties: flag_needs_test_data_use_knockdown_0_85
+  interface_dimension_conflict: stop_show_conflict_never_resolve_silently
+  indeterminate_load_case: switch_to_specify_only_flag_loads_tbd
+  non_manufacturable_geometry: flag_suggest_design_change_halt_fea
+  cots_no_datasheet: use_worst_case_handbook_mark_spec_unconfirmed
+
+mass_escalation_threshold_pct: 15  # stop and escalate if over by more than this
+
+notes: |
+  v1.0 scope: all three modes (DESIGN/SPECIFY/HYBRID). Load analysis
+  delegated to specialist_ME — component_generation does not perform
+  structural analysis itself, it only formats and routes load cases.
+  Material properties without citations are rejected; knockdown factor
+  of 0.85 applied when only handbook values are available.
+  Vault confidence 0.75 (draft) — simulation-fea must pass before
+  status changes to validated.
