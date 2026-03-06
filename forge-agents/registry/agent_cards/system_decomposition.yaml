@@ -1,0 +1,65 @@
+id: system_decomposition
+name: System Decomposition
+version: "1.0.0"
+role: workflow
+domain: project_kickoff
+status: v1
+
+description: |
+  Transforms a high-level system description into a structured component
+  hierarchy with interfaces, mass/volume/power budgets, and a sequenced
+  build plan. Always the first skill run in a new FORGE engineering project.
+  No geometry generation or simulation runs until this produces a verified
+  component tree and writes it to the vault.
+
+triggers:
+  - new_project_kickoff
+  - phrases: ["break this down", "what are the subsystems", "build plan",
+              "component tree", "WBS", "work breakdown structure"]
+
+preconditions:
+  - system_description   # what the system does + primary performance goal
+  - top_level_requirements  # ≥3 measurable requirements with units
+  - project_name         # derived from system name if not provided; confirm with user
+
+capabilities:
+  - system_context_extraction    # parse description → structured XML context block
+  - component_tree_generation    # 3-level hierarchy with mass/material/method budgets
+  - interface_definition         # per-subsystem-pair interface records (mech/elec/thermal)
+  - build_sequence_planning      # wave-ordered build plan with parallel tracks
+  - vault_write                  # writes requirements.md, component-tree.md, open-questions.md
+  - handoff_block_production     # structured XML for component-generation skill
+
+tools_allowed:
+  - authorized_vault_write   # agent: Librarian — writes to projects/{project_name}/
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/system_decomposition/v1.0.0.md
+
+mandatory_output_fields:
+  - system_context          # filled XML block with no empty fields
+  - component_tree          # indented tree with mass budgets summing correctly
+  - interfaces              # one record per SS-to-SS connection
+  - build_waves             # ordered wave sequence; [ORDER TBD] items flagged
+  - vault_paths_written     # list of paths confirmed written
+  - decomposition_handoff   # XML block for downstream component-generation
+
+successor_skills:
+  - component-generation    # consumes decomposition_handoff
+
+error_recovery:
+  mass_budget_mismatch: rebalance_proportionally_ask_approval
+  no_subsystem_for_part: create_unassigned_bucket_flag_user
+  unitless_requirement: ask_never_assume
+  conflicting_requirements: list_conflict_propose_options
+  gt30_components: confirm_scope_before_proceeding
+
+does_not_do:
+  - generate_geometry        # component-generation skill
+  - validate_physics         # simulation-fea skill
+  - select_vendors_part_numbers  # user responsibility unless asked
+
+notes: |
+  v1.0 scope: full 6-step pipeline. Confidence on vault write is set to 0.7
+  (draft) because mass budgets and interfaces are estimates until specialist
+  agents run analysis. The Verifier stamps confidence higher after validation.

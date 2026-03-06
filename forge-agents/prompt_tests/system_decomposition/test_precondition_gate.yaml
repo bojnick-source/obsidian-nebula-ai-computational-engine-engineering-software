@@ -1,0 +1,86 @@
+# Prompt test: system_decomposition — precondition gate
+#
+# Verifies that the agent STOPS and asks clarifying questions when the
+# minimum inputs are missing, rather than producing a speculative tree.
+#
+# Run:  forge prompt-test run system_decomposition test_precondition_gate
+
+id: test_precondition_gate
+agent: system_decomposition
+version: "1.0.0"
+description: >
+  Agent must request clarification when top-level requirements are vague or
+  missing units. It must NOT produce a component tree with assumed values.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  system_description: >
+    A small surveillance drone for border monitoring. Should be lightweight
+    and fly for a long time. Must be easy to carry.
+  top_level_requirements: []   # deliberately empty
+  hard_constraints:
+    - electric propulsion
+  project_name: BorderEye-1
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # The agent must NOT produce a component tree
+  - type: output_absent
+    field: component_tree
+    description: >
+      No component tree should be emitted before requirements are confirmed.
+
+  # The agent must NOT produce a handoff block
+  - type: output_absent
+    field: decomposition_handoff
+    description: >
+      Handoff block must not be produced when preconditions are unmet.
+
+  # The agent must ask for measurable requirements
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "units"
+      - "measurable"
+      - "requirement"
+    description: >
+      Agent must ask for quantified requirements (with units) before proceeding.
+
+  # The agent must offer candidate interpretations for vague requirements
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "candidate"
+      - "interpretation"
+      - "option"
+    description: >
+      For vague requirements, agent must propose 2-3 candidate interpretations
+      for the user to pick from, not silently assume values.
+
+  # The agent must not assume a mass budget
+  - type: output_absent_pattern
+    target: response_text
+    pattern: "mass_budget:"
+    description: >
+      No mass budget values should appear in the response before requirements
+      are confirmed — agent must not guess.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent stops at Step 1 (Extract System Context), recognizes that
+  top_level_requirements is empty and the constraints ("lightweight", "fly
+  for a long time", "easy to carry") lack units. It produces three candidate
+  requirement interpretations, e.g.:
+    Option A: mass ≤ 1.5 kg, endurance ≥ 45 min, transport envelope ≤ 0.5×0.3×0.15 m
+    Option B: mass ≤ 3.0 kg, endurance ≥ 60 min, transport envelope ≤ 0.8×0.5×0.2 m
+    Option C: mass ≤ 5.0 kg, endurance ≥ 90 min, transport envelope ≤ 1.0×0.6×0.3 m
+  Then asks the user to select or modify before proceeding.
+
+failure_mode_tested: >
+  If the agent produces a component tree with guessed mass budgets, downstream
+  specialist agents (ME, EE, thermal) will receive phantom constraints that
+  propagate unchecked through the entire solve. A unitless "lightweight" could
+  mean 0.5 kg or 50 kg — the difference is the entire design space.

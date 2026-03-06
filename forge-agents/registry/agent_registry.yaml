@@ -1,6 +1,13 @@
 schema_version: "v1"
 
 agents:
+  # Workflow (project-kickoff, runs before any specialist)
+  - id: system_decomposition
+    role: workflow
+    domain: project_kickoff
+    card: agent_cards/system_decomposition.yaml
+    status: v1
+
   # Orchestrator
   - id: orchestrator
     role: orchestrator

@@ -1,0 +1,146 @@
+# Prompt test: system_decomposition — mass budget enforcement
+#
+# Verifies that:
+#   1. The agent flags a sum mismatch when component budgets exceed the
+#      system-level budget.
+#   2. It proposes a proportional reallocation and asks for approval.
+#   3. It does NOT silently proceed with a violated budget.
+#
+# Run:  forge prompt-test run system_decomposition test_mass_budget_enforcement
+
+id: test_mass_budget_enforcement
+agent: system_decomposition
+version: "1.0.0"
+description: >
+  Agent must detect when subsystem mass budgets sum to more than the
+  top-level constraint, report the delta, propose reallocation, and
+  halt pending user approval.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  system_description: >
+    A two-stage sounding rocket for atmospheric research. Solid-fueled first
+    stage, liquid-fueled second stage with a 5 kg scientific payload bay.
+  top_level_requirements:
+    - id: R001
+      type: mass
+      value: "≤25"
+      units: kg
+      description: Total launch mass including propellant
+    - id: R002
+      type: altitude
+      value: "≥80"
+      units: km
+      description: Minimum apogee (Kármán line approach)
+    - id: R003
+      type: payload
+      value: "5"
+      units: kg
+      description: Scientific instruments bay
+  hard_constraints:
+    - two-stage configuration
+    - solid first stage
+    - liquid (LOx/ethanol) second stage
+  project_name: Sonde-Alpha
+
+  # Intentionally oversized subsystem budgets (sum = 27.5 kg > 25 kg limit)
+  proposed_subsystem_budgets:
+    - id: SS-01
+      name: First stage structure + motor
+      mass_kg: 9.5
+    - id: SS-02
+      name: Second stage structure + engine
+      mass_kg: 7.0
+    - id: SS-03
+      name: Propellant (first stage)
+      mass_kg: 4.5
+    - id: SS-04
+      name: Propellant (second stage LOx/ethanol)
+      mass_kg: 3.0
+    - id: SS-05
+      name: Avionics + recovery
+      mass_kg: 2.0
+    - id: SS-06
+      name: Payload bay
+      mass_kg: 5.5   # over payload requirement of 5 kg
+    # Sum: 31.5 kg — 6.5 kg over the 25 kg limit
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Agent must not proceed to Step 3 (interfaces) without approval
+  - type: output_absent
+    field: interfaces
+    description: >
+      Interface records must not be generated while budget is violated.
+
+  # Agent must not produce a handoff block
+  - type: output_absent
+    field: decomposition_handoff
+    description: >
+      Handoff block must not be produced until budget is approved.
+
+  # Agent must report the delta explicitly
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "6.5 kg"
+      - "over budget"
+      - "exceeds"
+      - "delta"
+    description: >
+      Agent must report the magnitude of the budget violation numerically.
+
+  # Agent must propose proportional reallocation
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "reallocation"
+      - "proportional"
+      - "reduce"
+    description: >
+      Agent must propose how to bring budgets into compliance rather than
+      simply blocking.
+
+  # Agent must ask for approval before continuing
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "approve"
+      - "confirm"
+      - "proceed"
+    description: >
+      Agent must explicitly ask the user to approve the reallocation.
+
+  # Agent must flag payload budget anomaly specifically
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "payload"
+      - "SS-06"
+      - "5 kg"
+    description: >
+      The payload bay at 5.5 kg exceeds the R003 constraint of 5 kg — this
+      specific conflict must be called out separately from the total sum error.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent completes Steps 1-2 (context + tree structure), then during budget
+  validation detects:
+    - Total proposed: 31.5 kg > R001 limit 25 kg  (delta: +6.5 kg)
+    - SS-06 payload bay: 5.5 kg > R003 constraint 5 kg  (delta: +0.5 kg)
+  Agent then:
+    1. Reports both violations with explicit kg deltas
+    2. Proposes a proportional reallocation (scale non-payload SS by 6.5/26.5)
+    3. Flags SS-06 as a separate R003 conflict requiring a design decision
+    4. Halts and asks the user to approve a revised budget before writing to vault
+       or producing interfaces/build sequence
+
+failure_mode_tested: >
+  If the agent silently accepts an overweight tree and proceeds to generate
+  interfaces and a build plan, every downstream simulation (FEA load cases,
+  thrust-to-weight ratio, propellant fractions) will be calibrated to a
+  design that violates its own requirements from iteration 0. The error will
+  compound through every specialist agent without a traceable audit trail.

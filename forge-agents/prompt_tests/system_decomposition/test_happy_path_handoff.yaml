@@ -1,0 +1,183 @@
+# Prompt test: system_decomposition — happy path end-to-end
+#
+# Verifies that with valid, well-specified inputs the agent:
+#   1. Produces a complete system_context block
+#   2. Generates a component tree with budgets that sum correctly
+#   3. Defines at least one interface per subsystem pair
+#   4. Produces a build wave sequence with no [ORDER TBD] items
+#   5. Enumerates vault paths to be written
+#   6. Produces a valid decomposition_handoff XML block
+#
+# Run:  forge prompt-test run system_decomposition test_happy_path_handoff
+
+id: test_happy_path_handoff
+agent: system_decomposition
+version: "1.0.0"
+description: >
+  Full happy-path run with a well-specified hybrid-electric VTOL drone.
+  Verifies all six steps complete and the handoff block is machine-parseable.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  system_description: >
+    A hybrid gasoline-electric VTOL fixed-wing drone for 1 kg cargo delivery
+    at 5 km range. Four electric lift rotors for vertical take-off and landing,
+    gasoline engine driving a pusher propeller for cruise. Vehicle must fold
+    for transport in a standard Pelican 1510 carry-on case.
+  top_level_requirements:
+    - id: R001
+      type: mass
+      value: "≤6.1"
+      units: kg
+      description: Total aircraft mass including 1 kg payload
+    - id: R002
+      type: endurance
+      value: "≥30"
+      units: min
+      description: Minimum mission endurance at cruise
+    - id: R003
+      type: envelope
+      value: "0.56×0.35×0.23"
+      units: m
+      description: Folded envelope to fit Pelican 1510 interior
+    - id: R004
+      type: range
+      value: "≥5"
+      units: km
+      description: One-way delivery range
+  hard_constraints:
+    - gasoline-electric hybrid propulsion
+    - foldable for Pelican 1510 carry-on
+    - four electric lift rotors for VTOL
+    - pusher gasoline propeller for cruise
+  project_name: Aladdin-3B
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Step 1: system_context block must be present and non-empty
+  - type: output_present
+    field: system_context
+    description: system_context XML block must be produced.
+
+  - type: field_value
+    field: system_context.project_name
+    expected: "Aladdin-3B"
+    description: project_name must match input.
+
+  - type: field_non_empty
+    field: system_context.system_type
+    description: system_type must be filled.
+
+  - type: field_count_gte
+    field: system_context.top_level_requirements.req
+    min: 3
+    description: At least 3 requirements must appear in the context block.
+
+  # Step 2: component tree mass budget sums correctly
+  - type: budget_sum_valid
+    description: >
+      All C-level mass_budget values must sum to ≤ the system-level mass_budget
+      (6.1 kg). If any reallocation was needed, a delta report must be present.
+
+  - type: field_count_gte
+    field: component_tree.subsystems
+    min: 3
+    description: At least 3 subsystems required for a hybrid VTOL drone.
+
+  - type: all_components_have_fields
+    required_fields: [mass_budget, material_hint, manufacturing_method_hint]
+    description: Every C-level component must carry all three required fields.
+
+  # Step 3: interface definitions
+  - type: field_count_gte
+    field: interfaces
+    min: 2
+    description: >
+      A VTOL drone has at minimum Airframe↔Propulsion and
+      Propulsion↔Avionics interfaces — both must be defined.
+
+  - type: all_interfaces_have_mechanical
+    description: >
+      Every interface record must define a mechanical connection type.
+      Interfaces where mechanical cannot be defined must appear in
+      OPEN INTERFACES, not be silently omitted.
+
+  # Step 4: build sequence
+  - type: output_present
+    field: build_waves
+    description: Build wave sequence must be produced.
+
+  - type: output_absent_pattern
+    target: build_waves
+    pattern: "\\[ORDER TBD\\]"
+    description: >
+      No [ORDER TBD] items allowed in a fully-specified happy-path run.
+      If any exist, they must be in open-questions.md and approved by user.
+
+  # Step 5: vault write paths
+  - type: field_contains_all
+    field: vault_paths_written
+    values:
+      - "projects/Aladdin-3B/requirements.md"
+      - "projects/Aladdin-3B/component-tree.md"
+      - "projects/Aladdin-3B/open-questions.md"
+    description: All three required vault paths must be declared as written.
+
+  # Step 6: handoff block structure
+  - type: output_present
+    field: decomposition_handoff
+    description: decomposition_handoff XML block must be produced.
+
+  - type: field_value
+    field: decomposition_handoff.project_name
+    expected: "Aladdin-3B"
+    description: Handoff project_name must match system context.
+
+  - type: field_value
+    field: decomposition_handoff.vault_path
+    expected: "projects/Aladdin-3B"
+    description: Handoff vault_path must match project naming convention.
+
+  - type: field_count_gte
+    field: decomposition_handoff.components_ready_for_generation.component
+    min: 2
+    description: At least two Wave-1 components must be ready for generation.
+
+  - type: all_handoff_components_have_fields
+    required_fields: [id, name, mass_budget_kg, material_hint, method_hint]
+    description: >
+      Every component in the handoff block must have all five required
+      attributes so component-generation can start without further queries.
+
+  - type: field_value
+    field: decomposition_handoff.build_wave
+    expected: "1"
+    description: First handoff block must be Wave 1.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent runs all six steps cleanly:
+    Step 1: system_context filled — project Aladdin-3B, fixed-wing_VTOL_hybrid,
+            cargo_delivery, 4 requirements with units, 4 hard constraints.
+    Step 2: Component tree — ≥3 subsystems (Airframe, Propulsion, Avionics
+            at minimum), all C-level components carry mass/material/method,
+            budgets sum to ≤ 6.1 kg.
+    Step 3: Interface records for at minimum Airframe↔Propulsion and
+            Propulsion↔Avionics, each with mechanical connection defined.
+            Fold-hinge/motor-arc clearance flagged as [RISK] in open-questions.
+    Step 4: Build wave sequence — Wave 1 includes COTS procurements (engine,
+            motors) and composite layups (fuselage, wings) which can start in
+            parallel. No [ORDER TBD] items.
+    Step 5: Three vault paths declared and written.
+    Step 6: Handoff block lists Wave-1 components with all five required
+            attributes (id, name, mass_budget_kg, material_hint, method_hint).
+
+failure_mode_tested: >
+  If the handoff block is missing component attributes (e.g., material_hint
+  omitted), the component-generation skill will start geometry work without
+  material constraints, producing CAD that cannot be validated by the ME
+  specialist's FEA setup. The decomposition→generation interface is a
+  critical serialization boundary — all fields must be present.
