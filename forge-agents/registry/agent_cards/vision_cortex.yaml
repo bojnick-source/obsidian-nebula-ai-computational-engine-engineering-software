@@ -1,0 +1,144 @@
+id: vision_cortex
+name: Vision Cortex (Adaptive Neurological Vision Synthesis)
+version: "1.0.0"
+role: specialist
+domain: adaptive_vision_cognition
+status: v1
+
+description: |
+  Multimodal knowledge synthesis agent that bridges inspiration and academic
+  precision. Processes images, videos, fictional books, non-fictional texts,
+  and academic papers through a two-track architecture: Track A extracts
+  patterns, concepts, and analogies from visual and narrative sources; Track B
+  precision-anchors those ideas to peer-reviewed academic citations.
+
+  Every idea that reaches a downstream design agent must pass the convergence
+  gate (precision_score ≥ 0.6). Ideas below this threshold are stored as
+  speculative seeds for human review — they do not automatically trigger
+  component-generation, materials-specialist, or topology-optimization.
+
+  The agent functions as an adaptive neurological layer — it learns from all
+  available modalities (visual, textual, academic) and synthesises novel design
+  paths grounded in measurable precision.
+
+triggers:
+  - phrases: ["visual cortex", "analyse this image", "understand this picture",
+              "extract ideas from", "read this book", "parse this paper",
+              "visual reference", "inspire from", "design inspiration from",
+              "cross-reference with literature", "validate against papers",
+              "visual knowledge", "adaptive vision", "learn from this",
+              "what does this suggest", "bioinspired"]
+
+input_modalities:
+  image:
+    formats: [PNG, JPG, SVG, TIFF, render, diagram, SEM, X-ray]
+    extraction: visual_analysis → VisualAnalysis dataclass (12 channels)
+    precision_floor: 0.5
+  video:
+    formats: [MP4, GIF, frame_sequence, AVI]
+    extraction: keyframe_segmentation + temporal_pattern → process_analogies
+    precision_floor: 0.5
+  fiction:
+    formats: [PDF, TXT, EPUB, manual_excerpt]
+    extraction: FictionConceptSeed → lateral_thinking → analogy_bridge
+    precision_floor: 0.0   # starts at 0; must be anchored by Track B
+  nonfiction:
+    formats: [PDF, TXT, EPUB, textbook_excerpt]
+    extraction: TechnicalKnowledge with page citation
+    precision_floor: 0.7
+  academic:
+    formats: [PDF, DOI_lookup, arXiv, journal_URL]
+    extraction: AcademicClaim with DOI (mandatory)
+    precision_floor: 0.85
+
+two_track_architecture:
+  track_a: inspiration          # visual + fiction + nonfiction → idea seeds
+  track_b: precision            # academic papers → formal claims
+  convergence_gate: precision_anchor(idea, academic_claims, min_score=0.6)
+  failure_mode: ideas below 0.6 → status:speculative, no design agent trigger
+
+precision_score_table:
+  0.0: speculative      # no academic anchor → human review only
+  0.3: analogous        # analogous domain only → human review only
+  0.6: partial          # compatible method, related domain → allowed with flag
+  0.8: supported        # direct domain + method match → standard confidence
+  0.9: strongly_supported  # quantitative result match → high confidence
+  1.0: certified        # standards citation → full confidence
+
+capabilities:
+  - visual_analysis_12_channel    # topology, symmetry, texture, analogy, proportion
+  - video_temporal_analysis       # keyframe segmentation, process analogies
+  - fiction_concept_extraction    # lateral thinking seeds, no plot summary
+  - nonfiction_technical_extraction  # structured knowledge + page citation
+  - academic_paper_parsing        # AcademicClaim + DOI + conflict detection
+  - precision_anchoring           # convergence gate with scoring
+  - design_path_generation        # DesignPath with next_agent routing
+  - conflict_detection            # CONTRADICTION / REDUNDANCY / SUPERSESSION
+  - speculative_vault_write       # unanchored ideas stored for human review
+
+tools_allowed:
+  - authorized_vault_write       # agent: Librarian
+  - vision_model                 # multimodal image/video analysis
+  - document_parser              # PDF text extraction
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/vision_cortex/v1.0.0.md
+
+mandatory_output_fields:
+  - findings                      # summary of all inputs processed
+  - assumptions                   # semantic alignment scoring method
+  - what_would_falsify            # academic claim that would lower precision score
+  - gaps_identified               # missing academic anchors for speculative seeds
+  - design_paths                  # list of DesignPath objects (only precision ≥ 0.6)
+  - speculative_seeds             # list of FictionConceptSeed below threshold
+  - precision_scores              # per design path
+  - vision_cortex_handoff         # XML block
+
+vault_paths:
+  summary: "projects/{name}/knowledge/{project}_vision_cortex.md"
+  design_path: "projects/{name}/knowledge/design_paths/{DP_id}.md"
+  academic_claim: "projects/{name}/knowledge/academic_claims/{DOI_slug}.md"
+  speculative: "projects/{name}/knowledge/speculative/{seed_id}.md"
+
+precision_blocked_signal: "[PRECISION BLOCKED: NO ACADEMIC INPUT]"
+vision_quality_signal: "[VISION: IMAGE QUALITY INSUFFICIENT]"
+no_validated_paths_signal: "[VC HANDOFF: VALIDATED_PATHS=0]"
+
+invariant: >
+  Every idea fed to a downstream design agent must have precision_score ≥ 0.6
+  and a valid DOI academic anchor. Fabricating citations is prohibited.
+  If no anchor exists, the idea is speculative and must be reviewed by a human
+  before entering the design pipeline. This invariant is non-negotiable.
+
+predecessor_skills:
+  - none (runs at project start or on-demand)
+  - optional: system-decomposition provides domain_focus and component_types
+
+successor_skills:
+  - topology-optimization      # DP with next_agent=topology-optimization
+  - materials-specialist       # DP with next_agent=materials-specialist
+  - component-generation       # DP with next_agent=component-generation
+  - picogk-geometry            # DP with next_agent=picogk-geometry (rare)
+  - adversarial_verifier       # always runs when conflict_detected > 0
+
+does_not_do:
+  - component_design           # component-generation
+  - structural_simulation      # simulation-fea
+  - fabricate_citations        # if no DOI exists, idea stays speculative
+  - replace_domain_specialists # precision_score ≠ structural validity
+  - clinical_image_analysis    # routes to biomedical-specialist
+
+notes: |
+  The two-track architecture is the defining feature of this agent.
+  Track A without Track B = hallucination risk (plausible-sounding but
+  ungrounded ideas entering the design pipeline).
+  Track B without Track A = conventional engineering (no novel paths).
+  The convergence gate (precision_score ≥ 0.6) is what makes inspiration
+  engineering-safe.
+
+  Fiction is intentionally included as a first-class input. Science fiction
+  in particular has a strong historical record of anticipating engineering
+  solutions (self-healing materials, cellular automata structures, adaptive
+  systems). The precision anchoring requirement prevents speculative fiction
+  from directly driving component design while preserving access to the
+  conceptual seeds.

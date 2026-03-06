@@ -1,0 +1,229 @@
+# Prompt test: vision_cortex — happy path: bone SEM image + papers → validated design path
+#
+# Full happy-path run: SEM image of cancellous bone provides structural topology
+# inspiration (Track A). Three academic papers on CFRP topology optimisation and
+# bone-inspired lattice structures provide direct anchoring (Track B).
+# Convergence gate produces precision_score=0.82 → validated design path routed
+# to topology-optimization.
+#
+# Run:  forge prompt-test run vision_cortex test_happy_path_image_to_design_path
+
+id: test_happy_path_image_to_design_path
+agent: vision_cortex
+version: "1.0.0"
+description: >
+  Happy path: SEM image of bone cross-section + 3 academic papers.
+  Track A extracts trabecular topology. Track B anchors it to quantitative
+  CFRP mass reduction results. Convergence gate produces precision_score ≥ 0.8.
+  One validated DesignPath routed to topology-optimization with concrete
+  picogk_instruction.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  project_name: Aladdin-3B
+  domain_focus: structural_materials
+  target_components: ["fuselage_shell", "wing_spar"]
+  min_precision_score: 0.6
+
+  visual_inputs:
+    - source_path: "references/cancellous_bone_SEM_crosssection.png"
+      modality: image
+      domain_hint: structural
+      query: "load path topology, density gradient, structural efficiency"
+
+  academic_papers:
+    - doi: "10.1016/j.jmps.2018.06.001"
+      title: "Optimal trabecular topology for minimum compliance"
+      authors: ["Morin C.", "Bhanu T."]
+      year: 2018
+      journal: "Journal of the Mechanics and Physics of Solids"
+      domain: structural_materials
+      key_result: "Trabecular-inspired 30% volume fraction achieves 68% mass
+        reduction vs. solid at equivalent bending stiffness in CFRP"
+      quantitative: "E_eff / E_solid = 0.31 at volume_fraction=0.30"
+    - doi: "10.1007/s00707-020-02721-4"
+      title: "Bioinspired gradient-density CFRP shells under aerodynamic loads"
+      authors: ["Zhao W.", "Liu X.", "Chen H."]
+      year: 2020
+      journal: "Acta Mechanica"
+      domain: structural_materials
+      key_result: "Gradient density (dense cortex + porous core) outperforms
+        uniform density by 23% specific stiffness for cylindrical shells"
+    - doi: "10.1115/1.4047385"
+      title: "SIMP topology optimisation replicating bone remodelling under Wolff's law"
+      authors: ["Carter D.R.", "Beaupré G.S."]
+      year: 2020
+      journal: "Journal of Biomechanical Engineering"
+      domain: structural_biology_bridge
+      key_result: "SIMP with density exponent p=3 reproduces Wolff's law principal
+        stress trajectories; convergence in 150–200 iterations"
+
+  # No fiction or non-fiction books in this run — image + papers only
+
+# ── Simulated Vision Cortex Results ──────────────────────────────────────────
+
+simulated_visual_analysis:
+  bone_SEM:
+    structural_topology: "branching trabecular lattice with gradient density —
+      dense cortical periphery, porous cancellous interior"
+    symmetry_type: "approximately radial"
+    load_path_analogy: "cortical ring carries hoop stress; trabeculae align with
+      principal compression/tension trajectories under axial load"
+    surface_texture: "porous trabecular, apparent porosity ~70% interior"
+    apparent_density: "gradient: dense shell, porous core"
+    bio_analogy: "cancellous bone — Wolff's law principal stress alignment"
+    engineering_analogy: "stressed skin shell with internal minimal-surface lattice"
+    design_principle: "gradient density optimises stiffness-to-mass under
+      multi-directional loading; places material only where stresses demand it"
+    wall_fraction: 0.07    # estimated cortex wall / total diameter
+    analysis_confidence: 0.88   # high-resolution SEM, distinct features
+
+simulated_precision_anchoring:
+  idea: bone_trabecular_topology
+  best_matching_paper: "10.1016/j.jmps.2018.06.001"
+  alignment_score: 0.82
+  reasoning: "Same domain (CFRP structural), same method (SIMP/topology-opt),
+    quantitative result directly applicable (30% volfrac → 68% mass reduction).
+    Gradient density (cortex+core) confirmed by Zhao 2020. Wolff's law
+    computational replication confirmed by Carter 2020."
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Precision score in supported range
+  - type: field_value_in_range
+    field: design_paths[0].precision_score
+    min: 0.78
+    max: 0.92
+    description: >
+      With 3 directly supporting papers (same domain, same method, quantitative
+      result), precision_score should be in the 0.8–0.9 range (supported /
+      strongly_supported). A score outside this range indicates the alignment
+      computation is not working correctly.
+
+  # Status: validated
+  - type: field_value
+    field: design_paths[0].status
+    expected: "validated"
+    description: >
+      precision_score ≥ 0.6 → status must be validated, not speculative.
+
+  # Next agent: topology-optimization (correct routing)
+  - type: field_value
+    field: design_paths[0].next_agent
+    expected: "topology-optimization"
+    description: >
+      A density-prescription design path (trabecular topology → volume fraction
+      → SIMP) must be routed to topology-optimization, not to
+      materials-specialist or component-generation.
+
+  # Primary DOI anchor recorded
+  - type: field_value
+    field: design_paths[0].academic_anchor_doi
+    expected: "10.1016/j.jmps.2018.06.001"
+    description: >
+      The primary anchor (best alignment score) must be recorded. This makes
+      the precision score auditable — a human reviewer can look up the paper
+      and verify the claimed 68% mass reduction figure.
+
+  # Quantified benefit stated
+  - type: output_contains
+    target: design_paths[0].quantified_benefit
+    one_of: ["68%", "0.30", "30%", "mass reduction"]
+    description: >
+      The design path must carry a quantified benefit from the academic paper,
+      not a vague "improved performance". Topology-optimization needs to know
+      what volume fraction to target (0.30) and what mass reduction to expect
+      (68%).
+
+  # Visual analysis produced (all 12 channels attempted)
+  - type: output_present
+    field: visual_analysis.structural_topology
+    description: Visual analysis structural_topology must be populated.
+
+  - type: output_present
+    field: visual_analysis.bio_analogy
+    description: Bio analogy must be populated for bone SEM input.
+
+  - type: output_present
+    field: visual_analysis.design_principle
+    description: Design principle must be extracted and recorded.
+
+  # Vault paths — all three expected
+  - type: field_contains_all
+    field: vault_paths_written
+    values:
+      - "knowledge/design_paths/DP-"
+      - "knowledge/academic_claims/"
+      - "knowledge/Aladdin-3B_vision_cortex.md"
+    description: >
+      Design path, academic claim nodes, and summary all written to vault.
+
+  # handoff block complete
+  - type: output_present
+    field: vision_cortex_handoff
+    description: Handoff XML block must be produced.
+
+  - type: field_value
+    field: vision_cortex_handoff.ready_for_design_agents
+    expected: "true"
+
+  - type: field_value_gte
+    field: vision_cortex_handoff.design_paths_generated
+    min: 1
+    description: At least one validated design path in handoff.
+
+  - type: field_value
+    field: vision_cortex_handoff.academic_papers_parsed
+    expected: "3"
+    description: All 3 provided papers must be parsed and stored as AcademicClaim nodes.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Track A — bone SEM image:
+    structural_topology: "branching trabecular lattice, gradient density"
+    bio_analogy: "cancellous bone, Wolff's law principal stress alignment"
+    design_principle: "gradient density → minimum compliance material placement"
+    analysis_confidence: 0.88 (high-res SEM, distinct features)
+    inspiration precision_score: 0.0 pre-anchor
+
+  Track B — 3 papers parsed:
+    Morin 2018 (JMPS): CFRP trabecular, 30% volfrac → 68% mass reduction
+    Zhao 2020 (Acta Mech): gradient-density cylindrical shells, +23% specific stiffness
+    Carter 2020 (J Biomech Eng): SIMP replicates Wolff's law, p=3, 150–200 iterations
+
+  Convergence gate:
+    Idea domain: structural (CFRP shell)
+    Paper domain: structural_materials (CFRP, cylindrical, trabecular) — direct match
+    Method: SIMP topology optimisation — direct match
+    Quantitative: 68% mass reduction at volfrac=0.30 — directly applicable
+    precision_score = 0.82 → validated
+
+  DesignPath DP-001:
+    concept: "Gradient-density trabecular CFRP fuselage shell — dense cortex,
+      Wolff's-law-aligned porous core"
+    inspiration_source: "cancellous_bone_SEM_crosssection.png"
+    academic_anchor_doi: "10.1016/j.jmps.2018.06.001"
+    precision_score: 0.82
+    predicted_benefit: 68% mass reduction vs. solid at equivalent bending stiffness
+    quantified_benefit: "30% volume fraction → C_eff/C_solid = 0.31; mass = 0.32 × solid"
+    next_agent: topology-optimization
+    uncertainty_note: "Scale: bone micro (100–500 µm trabeculae) vs. CFRP voxel
+      (0.3 mm). Noyron gyroid approximates trabecular topology but not exact
+      Wolff's-law trajectory — topology-optimization must confirm via SIMP."
+
+  Handoff: ready_for_design_agents=true, design_paths=1, papers_parsed=3
+
+failure_mode_tested: >
+  If the design_path carries no quantified_benefit and no DOI, topology-
+  optimization receives "apply bone-inspired topology" without guidance on
+  volume fraction. The optimizer selects a default volfrac=0.50 (50% material),
+  which is above the 0.30 that produces the mass-efficient trabecular topology
+  studied in Morin 2018. The resulting structure is heavier than necessary — it
+  does not achieve the anticipated 68% mass reduction. Since no quantitative
+  prediction was stated in the design path, the mass overrun is not immediately
+  detectable (there's no expected value to compare against). The mass budget
+  overrun is discovered during assembly-specialist's CoM calculation, by which
+  point picogk-geometry has already committed the solid model to vault.

@@ -1,0 +1,142 @@
+# Prompt test: vision_cortex — precision blocked when no academic papers provided
+#
+# Verifies that when the agent receives only visual or fictional inputs with no
+# academic papers, it cannot anchor any ideas and must emit [PRECISION BLOCKED]
+# rather than passing unanchored concepts to downstream design agents.
+#
+# The critical failure mode here is: vision cortex extracts a compelling concept
+# from an image (e.g., trabecular bone structure), assigns it a high-sounding
+# "confidence" based on visual clarity alone, and routes it to topology-
+# optimization as a validated design path. The topology agent runs SIMP using
+# a bone-inspired density distribution that has never been validated for CFRP
+# airframe applications at the relevant scale. The resulting density field looks
+# authoritative; simulation-fea passes; the component reaches manufacturing.
+#
+# Run:  forge prompt-test run vision_cortex test_no_academic_input_blocked
+
+id: test_no_academic_input_blocked
+agent: vision_cortex
+version: "1.0.0"
+description: >
+  Agent must detect absence of academic papers, set all precision_scores to 0.0,
+  emit [PRECISION BLOCKED: NO ACADEMIC INPUT], and store all ideas as speculative.
+  No design paths may be passed to downstream agents.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  project_name: Aladdin-3B
+  domain_focus: structural_materials
+  target_components: ["fuselage_shell", "wing_spar"]
+  min_precision_score: 0.6
+  academic_papers: []    # DELIBERATELY EMPTY
+
+  visual_inputs:
+    - source_path: "references/bone_trabecular_SEM.png"
+      modality: image
+      query: "structural topology and load distribution"
+    - source_path: "references/nautilus_shell_cross_section.jpg"
+      modality: image
+      query: "shell curvature and wall thickness gradient"
+
+  document_inputs:
+    - source_path: "books/lem_solaris.txt"
+      modality: fiction
+      query: "self-organising structural concepts"
+
+  # No academic_papers — Track B is empty
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must emit the canonical precision-blocked signal
+  - type: output_contains
+    target: response_text
+    value: "[PRECISION BLOCKED: NO ACADEMIC INPUT]"
+    description: >
+      The exact canonical signal must appear. Orchestrator and the user need
+      a machine-readable flag that no academic anchoring was possible.
+
+  # All precision scores must be 0.0 (no anchor possible)
+  - type: all_field_values
+    field: design_paths
+    check: precision_score_equals_0
+    description: >
+      Without academic papers there are no anchors. Every extracted idea
+      must have precision_score=0.0, not a score inferred from visual
+      clarity or narrative plausibility.
+
+  # No design paths may be forwarded to downstream agents
+  - type: output_absent
+    field: vision_cortex_handoff.ready_for_design_agents
+    expected_if_present: "false"
+    description: >
+      ready_for_design_agents must be false (or absent). No DesignPath
+      with next_agent pointing to topology-optimization, materials-specialist,
+      or component-generation may exist.
+
+  # All ideas stored as speculative
+  - type: all_field_values
+    field: speculative_seeds
+    check: status_equals_speculative
+    description: >
+      All extracted concepts (bone trabecular topology, nautilus shell gradient,
+      Lem self-organising concept) must be stored as status: speculative in
+      the vault, not as validated design paths.
+
+  # Must still write the speculative vault entries (for human review)
+  - type: output_present
+    field: vault_paths_written
+    description: >
+      Speculative seeds must still be written to
+      projects/Aladdin-3B/knowledge/speculative/. The agent's job is
+      preservation of ideas for human review, not discarding them.
+
+  # Must identify which academic domains are missing
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "cellular solids"
+      - "bioinspired structural"
+      - "trabecular"
+      - "bone mechanics"
+      - "academic anchor"
+      - "citation"
+    description: >
+      Agent must name what type of academic literature would anchor the
+      extracted ideas, so the user knows what papers to provide.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent processes 2 images and 1 fiction source. Track A extracts:
+    - Bone SEM: structural_topology="branching trabecular lattice",
+      bio_analogy="cancellous bone", design_principle="gradient density"
+    - Nautilus shell: structural_topology="logarithmic spiral shell",
+      wall_fraction=0.06 (estimated), design_principle="curvature for hoop stress"
+    - Lem fiction: concept="self-organising load redistribution", precision_score=0.0
+  Track B: academic_papers=[] → no AcademicClaim objects → convergence gate
+  has nothing to anchor against.
+  All precision_scores remain 0.0.
+  Agent emits: [PRECISION BLOCKED: NO ACADEMIC INPUT]
+  Recommends: provide papers from e.g. Gibson & Ashby (1997) Cellular Solids,
+  Wolff's law literature, or JMPS trabecular CFRP studies.
+  Writes all 3 ideas to speculative vault. No design paths forwarded.
+
+failure_mode_tested: >
+  If the agent invents a precision_score (e.g., 0.75) based on "the visual
+  clarity of the bone SEM image clearly shows a well-established engineering
+  principle", it converts speculation into a design path without academic
+  grounding.
+
+  topology-optimization receives a density prescription to replicate trabecular
+  topology in CFRP. SIMP runs. The result looks biologically convincing.
+  picogk-geometry builds a Noyron gyroid infill.
+  simulation-fea receives a model with incorrect constitutive law for the
+  actual pore geometry — bone trabeculae are hydroxyapatite with anisotropic
+  material properties; the agent assumed isotropic CFRP.
+  FEA passes (stiffness looks correct in dominant load direction).
+  The component fails in the secondary loading direction where the unvalidated
+  density prescription did not account for CFRP orthotropy at the microstructure
+  level. Root cause is invisible in the vault because precision_score=0.75
+  appears authoritative.

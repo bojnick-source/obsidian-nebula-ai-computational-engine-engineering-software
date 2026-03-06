@@ -1,6 +1,13 @@
 schema_version: "v1"
 
 agents:
+  # Knowledge synthesis (runs before or alongside system-decomposition; feeds design paths)
+  - id: vision_cortex
+    role: specialist
+    domain: adaptive_vision_cognition
+    card: agent_cards/vision_cortex.yaml
+    status: v1
+
   # Workflow (project-kickoff, runs before any specialist)
   - id: system_decomposition
     role: workflow

@@ -1,0 +1,167 @@
+# Prompt test: vision_cortex — fictional concept requires academic anchor before routing
+#
+# Verifies that a conceptually compelling idea extracted from science fiction
+# cannot reach downstream design agents unless it is anchored to a real
+# academic paper with a valid DOI. The test provides both the fiction source
+# and academic papers — but the papers do NOT directly support the fictional
+# concept. The agent must correctly score the alignment as < 0.6 and store
+# the concept as speculative rather than forcing an anchor.
+#
+# Run:  forge prompt-test run vision_cortex test_fiction_requires_paper_anchor
+
+id: test_fiction_requires_paper_anchor
+agent: vision_cortex
+version: "1.0.0"
+description: >
+  Fiction-derived concept must remain speculative (precision_score < 0.6) when
+  available academic papers are in an analogous but non-matching domain.
+  Agent must not force an anchor to inflate the precision score.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  project_name: Aladdin-3B
+  domain_focus: materials_structural
+  target_components: ["fuselage_shell"]
+  min_precision_score: 0.6
+
+  document_inputs:
+    - source_path: "books/lem_invincible_excerpt.txt"
+      modality: fiction
+      query: "self-healing distributed micro-structure"
+      # The Invincible: metallic micro-cloud that reorganises under damage
+
+  # Academic papers provided — but they cover CIVIL concrete self-healing,
+  # not polymer composite self-healing. Analogous domain, not direct match.
+  academic_papers:
+    - doi: "10.1617/s11527-016-0843-1"
+      title: "Bacterial self-healing concrete: CaCO3 precipitation in cracks"
+      authors: ["Jonkers H.M.", "Schlangen E."]
+      year: 2010
+      journal: "Materials and Structures"
+      domain: civil_concrete
+      key_result: "Crack widths < 0.5 mm sealed within 28 days by Bacillus bacteria"
+    - doi: "10.1098/rsta.2012.0459"
+      title: "Self-healing geopolymer concrete: autogenous crack sealing"
+      authors: ["Van Tittelboom K.", "De Belie N."]
+      year: 2013
+      journal: "Philosophical Transactions of the Royal Society A"
+      domain: civil_concrete
+      key_result: "Autogenous sealing effective for cracks < 0.2 mm"
+
+  # No polymer composite self-healing papers provided (those would be a direct match)
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Precision score must be in the analogous range (0.3), not partial (0.6)
+  - type: field_value_in_range
+    field: speculative_seeds[0].precision_score
+    min: 0.2
+    max: 0.45
+    description: >
+      The concrete self-healing papers are in an analogous domain (cementitious
+      matrix healing, not CFRP polymer composite healing). Precision score must
+      reflect analogous-only support: ~0.3. Scoring it at 0.6 or higher would
+      misrepresent the quality of the academic anchor.
+
+  # Must NOT generate a design path (below 0.6 threshold)
+  - type: output_absent
+    field: design_paths
+    description: >
+      No DesignPath object may be created from a concept with precision_score < 0.6.
+      This idea must remain in speculative_seeds only.
+
+  # Must identify the gap: polymer composite self-healing papers needed
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "polymer composite"
+      - "CFRP"
+      - "hollow fibre"
+      - "microencapsulated"
+      - "White et al"
+      - "vascular network"
+      - "direct domain"
+    description: >
+      Agent must identify what academic literature would upgrade the idea from
+      analogous (0.3) to partial or supported (0.6–0.8). The user should know
+      exactly what to search for. "Self-healing concrete" papers are analogous;
+      White (2001) Nature or Trask (2006) Smart Materials are the direct anchors.
+
+  # Must not force the concrete papers as a direct anchor
+  - type: output_absent_pattern
+    target: response_text
+    pattern: "precision_score.*0\\.[6-9]|strongly_supported|validated"
+    description: >
+      The agent must not claim validated or strongly_supported status for this
+      concept. Concrete self-healing ≠ CFRP self-healing — the healing agent
+      (bacterial CaCO3 vs. liquid epoxy resin), the matrix (cementitious vs.
+      polymer), and the crack geometry (tensile vs. delamination) are all
+      different.
+
+  # Speculative seed must still be written to vault
+  - type: output_contains
+    target: vault_paths_written
+    value: "speculative"
+    description: >
+      The Lem-derived concept must be vaulted as speculative for future use.
+      When the user later provides polymer composite self-healing papers
+      (White 2001 DOI:10.1038/35059232), the agent can re-run the anchor
+      step and upgrade the concept to precision_score=0.78.
+
+  # Should note which DOIs would anchor this idea
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "10.1038/35059232"        # White et al Nature 2001
+      - "10.1088/0964-1726"       # Trask & Bond Smart Materials 2006
+      - "White"
+      - "Trask"
+    description: >
+      Ideally the agent identifies the exact papers that would anchor this
+      concept. This transforms a block into actionable guidance — the user
+      knows exactly which papers to provide to activate this design path.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent processes Lem fiction extract → FictionConceptSeed:
+    concept: "distributed micro-components reorganise under damage → self-healing"
+    engineering_domain: materials
+    analogy_bridge: "self-healing polymer composite with healing agent"
+    precision_score: 0.0 (Track A, pre-anchor)
+
+  Track B processes 2 academic papers:
+    Paper 1: Jonkers 2010 — bacterial concrete healing, civil domain
+    Paper 2: Van Tittelboom 2013 — geopolymer concrete, civil domain
+
+  Convergence gate:
+    Semantic alignment: concrete matrix healing ↔ CFRP polymer healing
+    Domain: civil_concrete ≠ polymer_composite
+    Method: bacterial CaCO3 ≠ liquid epoxy microencapsulation
+    Alignment score: ~0.30 (analogous: healing mechanism concept matches;
+      matrix and healing agent are fundamentally different)
+    precision_score = 0.30 → below min_precision_score=0.6
+
+  Result:
+    status: analogous → stored in speculative_seeds (not design_paths)
+    Agent notes: "Direct anchor would be White et al. (2001) DOI:10.1038/35059232
+    (autonomic healing of polymer composites) or Trask & Bond (2006) for
+    CFRP-specific vascular network healing. Provide these papers to upgrade
+    this concept to precision_score ≈ 0.78."
+
+failure_mode_tested: >
+  If the agent forces a concrete-paper anchor onto a CFRP concept (because
+  "they're both self-healing materials"), the design path DP-00X reaches
+  materials-specialist with precision_score=0.65 and a citation from a
+  concrete engineering journal.
+
+  materials-specialist sees an academically-cited design path and begins
+  specifying a healing agent for CFRP. It attempts to apply bacterial concrete
+  healing (Bacillus spores + calcium lactate) to a polymer composite — which
+  is biologically and chemically incompatible. The incompatibility is subtle
+  (the agent finds no explicit rule against it), so it proceeds. The specified
+  material fails biocompatibility testing in the CFRP cure environment (130°C
+  autoclave kills bacterial spores). The project loses one component design
+  cycle before the cause is identified.
