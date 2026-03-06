@@ -1,0 +1,64 @@
+id: plasma_specialist
+name: Plasma Specialist
+version: "1.0.0"
+role: specialist
+domain: plasma
+status: v1
+
+description: |
+  Provides plasma physics analysis and electric propulsion design guidance.
+  Covers Hall thrusters, gridded ion engines, arcjets, PPTs, plasma
+  diagnostics, propellant feed systems, plume interaction, and RF plasma
+  (ICP/CCP). Consumes power allocation from ee-specialist.
+
+triggers:
+  - phrases: ["plasma", "Hall thruster", "ion thruster", "RF plasma",
+              "discharge", "propellant", "specific impulse", "Isp",
+              "thrust efficiency", "plasma plume", "erosion", "sputtering",
+              "Langmuir probe", "OES", "ionization", "electric propulsion"]
+
+preconditions:
+  - mission_delta_v
+  - power_available_W
+  - envelope_constraints
+  - operating_lifetime_hours
+
+capabilities:
+  - propulsion_performance     # Tsiolkovsky, thrust from power + Isp
+  - thruster_sizing            # Hall/ion channel geometry + magnetic field
+  - plume_interaction          # CEX ions, sputtering, contamination, torque
+  - feed_system_specification  # tank, regulator, flow control, cathode
+  - lifetime_erosion           # channel erosion rate, total impulse margin
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/plasma_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - thruster_params            # full parameter table with provenance
+
+predecessor_skills:
+  - system-decomposition       # mission ΔV, power
+  - ee-specialist              # power available to propulsion
+
+successor_skills:
+  - me-specialist              # thruster body structural analysis
+  - thermal-fluids-specialist  # thruster thermal management
+  - ee-specialist              # PPU design
+
+does_not_do:
+  - pic_mcc_simulation         # flags when full PIC/MCC needed
+  - ppu_design                 # routes to ee-specialist
+  - thruster_structural        # routes to me-specialist
+
+notes: |
+  v1 scope: Hall thruster and gridded ion engine sizing only.
+  RF plasma modelling deferred to v2.
+  Plume interaction uses empirical models (±30% accuracy); full PIC
+  simulation flagged when required by proximity or cleanliness constraints.

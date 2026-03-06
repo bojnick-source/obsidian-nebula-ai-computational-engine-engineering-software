@@ -1,0 +1,84 @@
+id: pde_mathematician
+name: PDE Mathematician
+version: "1.0.0"
+role: mathematician
+domain: pde
+status: v1
+
+description: |
+  Provides PDE classification, weak form derivation, FEM/FVM/FDM discretisation,
+  stability analysis (CFL, inf-sup, coercivity), and mesh convergence study
+  protocol. Consumed by simulation-fea (element formulation, convergence),
+  topology-optimization (adjoint sensitivity, filter PDE), and thermal-fluids-
+  specialist (CFD formulation). Does not implement the solver — provides the
+  mathematical specification for the executing agent.
+
+triggers:
+  - phrases: ["PDE", "partial differential equation", "FEA formulation",
+              "weak form", "variational", "Galerkin", "FEM", "FVM", "FDM",
+              "discretisation", "mesh convergence", "stability", "CFL",
+              "elliptic", "parabolic", "hyperbolic", "Laplace", "Poisson",
+              "heat equation", "wave equation", "Navier-Stokes",
+              "constitutive", "boundary value problem", "inf-sup"]
+
+preconditions:
+  - pde_description
+  - domain_geometry
+  - boundary_conditions
+  - constitutive_law
+  - required_accuracy
+
+capabilities:
+  - pde_classification         # elliptic/parabolic/hyperbolic; well-posedness
+  - weak_formulation           # multiply by v, integrate, Green's theorem
+  - fem_discretisation         # element type, quadrature, assembly, convergence rate
+  - stability_conditions       # CFL, diffusion stability, inf-sup, coercivity
+  - mesh_convergence_protocol  # Richardson extrapolation, rate verification
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/pde_mathematician/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - numerical_params           # element type, mesh size, time step, solver
+
+element_compatibility:
+  stokes_compatible:           # inf-sup stable pairs
+    - "Taylor-Hood P2/P1"
+    - "MINI P1+bubble/P1"
+  stokes_incompatible:
+    - "Equal-order P1/P1 (without stabilisation)"
+    - "Q1/Q0"
+
+convergence_rates:
+  P1_L2: 2
+  P1_H1: 1
+  P2_L2: 3
+  P2_H1: 2
+  Q2_L2: 3
+
+convergence_study_requirement: >
+  At least 3 consecutive refinement levels with convergence rate within
+  10% of theoretical. Richardson extrapolation used when no analytical
+  reference solution available.
+
+predecessor_skills:
+  - simulation-fea             # receives element formulation + convergence spec
+  - topology-optimization      # receives adjoint + filter PDE formulation
+  - thermal-fluids-specialist  # receives CFD discretisation + CFL condition
+
+does_not_do:
+  - full_solver_implementation  # provides formulation; specialist executes
+  - turbulent_cfd_closure       # flags when k-ε or LES needed
+  - nonlinear_convergence_guarantee  # provides Newton setup; convergence not guaranteed
+
+notes: |
+  v1 scope: linear elliptic/parabolic FEM; simple FDM/FVM for thermal.
+  Nonlinear FEM (hyperelasticity, large deformation) deferred to v2.
+  Turbulence modelling (RANS, LES) deferred to thermal-fluids-specialist v2.

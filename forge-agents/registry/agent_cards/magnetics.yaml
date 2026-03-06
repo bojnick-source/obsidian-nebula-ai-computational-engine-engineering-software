@@ -1,0 +1,69 @@
+id: magnetics_specialist
+name: Magnetics Specialist
+version: "1.0.0"
+role: specialist
+domain: magnetics
+status: v1
+
+description: |
+  Provides magnetic field design and analysis. Covers reluctance circuit
+  modelling, permanent magnet sizing, eddy current and core loss estimation,
+  magnetic shielding, and flags when full 3D FEA (FEMM, Elmer) is needed.
+  Interacts with plasma-specialist for magnetised plasma systems.
+
+triggers:
+  - phrases: ["magnetics", "magnetic field", "coil", "electromagnet",
+              "permanent magnet", "Halbach", "flux", "inductance",
+              "reluctance", "transformer", "magnetic bearing", "shielding",
+              "mu-metal", "B field", "H field", "Maxwell stress",
+              "eddy current", "hysteresis", "saturation"]
+
+preconditions:
+  - required_B_field_T
+  - geometry_constraints
+  - power_available_for_electromagnets
+  - operating_frequency_range
+  - magnetic_cleanliness_requirement_if_any
+
+capabilities:
+  - reluctance_circuit_model   # lumped R_m, flux, B, L, saturation margin
+  - permanent_magnet_sizing    # grade selection, demagnetisation check
+  - core_loss_estimation       # Steinmetz, eddy current, temperature rise
+  - magnetic_shielding         # mu-metal thickness, saturation check
+  - fea_flag                   # [MAGNETICS FEA REQUIRED] with spec
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/magnetics_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - magnetic_params            # B, H, L, N, losses with provenance
+
+fea_flag_trigger: >
+  Flag [MAGNETICS FEA REQUIRED] when: complex geometry, field uniformity
+  < ±5%, saturation distribution critical, or fringing effects significant.
+  Specify FEMM (2D) or OpenFOAM/Elmer (3D) and mesh requirement.
+
+predecessor_skills:
+  - system-decomposition       # field requirements
+  - ee-specialist              # power for electromagnets
+
+successor_skills:
+  - ee-specialist              # motor drive for actuator electromagnets
+  - thermal-fluids-specialist  # core loss → thermal management
+  - plasma-specialist          # B field for magnetised plasma
+
+does_not_do:
+  - full_3d_fea                # flags; uses FEMM/Elmer
+  - motor_winding_design       # routes to ee-specialist
+  - plasma_magnetics           # routes to plasma-specialist
+
+notes: |
+  v1 scope: lumped reluctance model and PM sizing. FEMM integration planned
+  for v2 for automated 2D field computation.

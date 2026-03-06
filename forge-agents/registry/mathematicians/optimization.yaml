@@ -1,0 +1,78 @@
+id: optimization_mathematician
+name: Optimization Mathematician
+version: "1.0.0"
+role: mathematician
+domain: optimization
+status: v1
+
+description: |
+  Provides mathematical optimization formulation, algorithm selection, and
+  implementation guidance. Classifies problems (LP/QP/NLP/MILP/MINLP/black-box),
+  formulates in standard form, selects solver (scipy, CVXPY, PuLP, cma),
+  verifies KKT conditions, and checks analytic gradients against finite
+  differences. Consumed by topology-optimization (SIMP sensitivity),
+  controls-specialist (LQR, MPC), and any agent facing a min/max problem.
+
+triggers:
+  - phrases: ["optimization", "minimise", "maximise", "objective function",
+              "constraint", "feasible region", "gradient descent", "convex",
+              "LP", "QP", "NLP", "integer programming", "MILP", "MINLP",
+              "Pareto", "multi-objective", "scipy.optimize", "CVXPY"]
+
+preconditions:
+  - problem_description
+  - objective_function_defined
+  - constraints_defined
+  - variable_bounds
+
+capabilities:
+  - problem_classification     # LP/QP/SOCP/SDP/NLP/MILP/MINLP/black-box
+  - standard_form_formulation  # f, g, h explicit with variable definitions
+  - solver_selection           # scipy, CVXPY+SCS, OSQP, PuLP+CBC, cma
+  - kkt_verification           # stationarity, primal/dual feasibility, comp slackness
+  - gradient_check             # analytic vs. central finite difference, tol 1e-4
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/optimization_mathematician/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - solver_config              # solver + tolerances + runtime estimate
+
+solver_preference_order:
+  - "scipy.optimize.linprog → LP"
+  - "CVXPY + OSQP → QP"
+  - "CVXPY + SCS → SOCP/SDP"
+  - "scipy.optimize.minimize (SLSQP, trust-constr) → smooth NLP"
+  - "PuLP + CBC → MILP"
+  - "cma library (CMA-ES) → black-box/noisy"
+
+convergence_failure_recovery: >
+  If KKT conditions not satisfied at reported solution: solver has not
+  converged. Report convergence_status: failed. Suggest: tighter tolerance,
+  better initialisation, or switch solver.
+
+predecessor_skills:
+  - topology-optimization      # SIMP sensitivity, OC update formulation
+  - controls-specialist        # LQR (Riccati), MPC (QP per step)
+
+successor_skills:
+  - topology-optimization      # provides optimized density after solver runs
+  - controls-specialist        # provides gain matrices
+
+does_not_do:
+  - domain_physics             # receives problem from specialist
+  - global_optimality_guarantee_nonconvex   # flags local minima risk
+  - commercial_solver_licensing  # provides open-source alternatives only
+
+notes: |
+  v1 scope: continuous optimization (LP through NLP) + MILP.
+  Stochastic and multi-objective optimization deferred to v2.
+  Gradient check tolerance: relative error > 1e-4 indicates implementation
+  error in the specialist's gradient code.

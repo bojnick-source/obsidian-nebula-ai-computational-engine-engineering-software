@@ -1,0 +1,70 @@
+id: materials_specialist
+name: Materials Specialist
+version: "1.0.0"
+role: specialist
+domain: materials
+status: v1
+
+description: |
+  Selects, characterises, and validates materials for FORGE components.
+  Provides material selection against functional requirements, property data
+  with sourced provenance, compatibility matrices between adjacent materials
+  (galvanic, CTE, adhesion, outgassing), failure modes, and manufacturing
+  process constraints. Source of truth for all material constants consumed
+  by topology-optimization, simulation-fea, and picogk-geometry.
+
+triggers:
+  - phrases: ["material", "what material", "material spec", "properties of",
+              "biocompatible", "is this material compatible", "material database",
+              "density", "modulus", "strength", "CTE", "failure mode",
+              "material selection"]
+
+preconditions:
+  - component_functional_requirements
+  - operating_environment_defined
+  - manufacturing_process_identified_or_open
+  - mass_budget_stated
+
+capabilities:
+  - ashby_material_selection    # multi-candidate evaluation
+  - property_sourcing           # MMPDS, CES, datasheets — not recalled values
+  - compatibility_matrix        # galvanic, CTE, adhesion, outgassing
+  - failure_mode_analysis       # primary + secondary failure modes per material
+  - manufacturing_constraints   # processability, surface finish, layup limits
+
+tools_allowed:
+  - authorized_vault_write     # agent: Librarian
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/materials_specialist/v1.0.0.md
+
+antagonist_pair: materials_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - selected_material
+  - material_properties       # full dict with provenance per field
+
+property_provenance_requirement: >
+  Never use recalled values for structural properties. Cite source
+  (MMPDS, CES Edupack, ASM datasheet, supplier spec sheet). EST values
+  must state the basis (similarity to known alloy, scaling law, etc.).
+
+predecessor_skills:
+  - component-generation    # provides functional requirements
+
+successor_skills:
+  - simulation-fea          # consumes material constants
+  - topology-optimization   # consumes density, E, nu
+
+does_not_do:
+  - component_sizing        # component-generation + simulation-fea
+  - fea_execution           # provides constants to simulation-fea
+  - flight_certification    # flags regulatory path; does not certify
+
+notes: |
+  Materials antagonist (materials_antagonist) challenges all recommendations
+  from this specialist. Adversarial verifier runs on any confidence >= 0.85.

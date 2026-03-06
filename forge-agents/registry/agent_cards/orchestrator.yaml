@@ -1,0 +1,68 @@
+id: orchestrator
+name: Orchestrator
+version: "1.0.0"
+role: orchestrator
+domain: pipeline_coordination
+status: planned
+
+description: |
+  Routes tasks between agents, manages the FORGE pipeline phases, reads and
+  writes the project blackboard, aggregates handoff signals, and escalates
+  blockages to the user. Does not perform domain analysis — coordinates
+  all other agents.
+
+triggers:
+  - session_start
+  - every_multi_agent_task
+  - handoff_signal_received
+  - blocked_signal_received
+
+capabilities:
+  - phase_routing              # decomposition → component → geometry → FEA → assembly
+  - blackboard_read_write
+  - agent_dispatch
+  - parallel_dispatch          # independent specialists dispatched concurrently
+  - escalation                 # user escalation for unresolvable blocks
+  - verification_gate_routing  # all outputs routed through structural_verifier
+
+tools_allowed:
+  - blackboard                 # read/write project state
+  - agent_dispatch             # invoke other agents
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/orchestrator/v1.0.0.md
+
+routing_table:
+  project_start: system_decomposition
+  component_design: component_generation
+  mass_critical_component: topology_optimization
+  geometry_needed: picogk_geometry
+  structural_check: simulation_fea
+  build_wave_complete: assembly_specialist
+  specialist_review_structural: me_specialist
+  specialist_review_materials: materials_specialist
+  specialist_review_electrical: ee_specialist
+  specialist_review_plasma: plasma_specialist
+  specialist_review_magnetics: magnetics_specialist
+  specialist_review_controls: controls_specialist
+  specialist_review_thermal: thermal_fluids_specialist
+  specialist_review_acoustics: acoustics_specialist
+  specialist_review_safety: safety_se_specialist
+  before_vault_write: structural_verifier
+  high_stakes_decision: adversarial_verifier
+
+escalation_triggers:
+  - blocked_signal_unresolvable
+  - verification_gate_failure_after_2_cycles
+  - mass_budget_overrun
+  - safety_critical_finding
+  - ambiguous_routing
+
+does_not_do:
+  - domain_analysis            # routed to specialist
+  - prompt_modification        # prompt_engineer
+  - vault_write                # librarian (after verification)
+
+notes: |
+  Planned in v1. Until Orchestrator is implemented, routing is performed
+  manually by the user or by the top-level system prompt.

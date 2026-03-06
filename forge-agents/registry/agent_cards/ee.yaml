@@ -1,0 +1,63 @@
+id: ee_specialist
+name: Electrical Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: electrical_engineering
+status: v1
+
+description: |
+  Provides electrical engineering analysis and design guidance. Covers power
+  architecture, power budget, motor drive and ESC selection, signal integrity,
+  EMC/EMI assessment, connector and harness specification, and avionics
+  integration. Source of truth for electrical loads consumed by
+  thermal-fluids-specialist.
+
+triggers:
+  - phrases: ["electrical", "circuit", "power", "voltage", "current", "PCB",
+              "wiring", "signal", "EMC", "motor controller", "battery",
+              "power budget", "connector", "harness", "avionics", "embedded",
+              "firmware interface", "ESC", "bus"]
+
+preconditions:
+  - system_power_requirements
+  - component_list_with_loads
+  - battery_chemistry_defined_or_open
+  - operating_voltage_rails
+
+capabilities:
+  - power_budget              # load table, avg/peak/duty per subsystem
+  - power_architecture        # bus voltage, regulators, protection
+  - motor_drive_sizing        # ESC current, derating, thermal
+  - signal_integrity          # interface spec, wire length, shielding
+  - emc_assessment            # switching frequencies, separation, ferrite
+  - harness_specification     # connector, AWG, routing, strain relief
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/ee_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - power_budget               # full table with units
+  - electrical_risks           # each risk + mitigation
+
+predecessor_skills:
+  - system-decomposition       # provides power requirements
+
+successor_skills:
+  - thermal-fluids-specialist  # consumes power dissipation per component
+  - controls-specialist        # consumes sensor interface specs
+
+does_not_do:
+  - pcb_layout                 # schematic-level only
+  - firmware_verification      # electrical interface only
+  - power_electronics_thermal  # routes to thermal-fluids-specialist
+
+notes: |
+  v1 scope: power budget through harness specification.
+  PCB layout and firmware interface deferred to domain tools.

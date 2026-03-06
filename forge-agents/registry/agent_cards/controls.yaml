@@ -1,0 +1,72 @@
+id: controls_specialist
+name: Controls Specialist
+version: "1.0.0"
+role: specialist
+domain: controls
+status: v1
+
+description: |
+  Provides control systems design and analysis. Covers plant linearisation,
+  PID/LQR/H-infinity controller design, stability analysis (gain/phase
+  margin, Bode/Nyquist), sensor fusion (Kalman/EKF), GNC architecture,
+  and failsafe logic. Consumes inertia tensor from simulation-fea or
+  assembly-specialist.
+
+triggers:
+  - phrases: ["control", "GNC", "guidance", "navigation", "stabilisation",
+              "autopilot", "PID", "controller", "attitude", "loop gain",
+              "bandwidth", "stability margin", "Bode", "state space",
+              "Kalman", "EKF", "trajectory", "waypoint", "flight mode",
+              "failsafe"]
+
+preconditions:
+  - vehicle_mass_and_inertia
+  - actuator_characteristics
+  - sensor_suite_defined
+  - operating_envelope
+  - performance_requirements
+
+capabilities:
+  - plant_modelling            # linearised state-space at operating point
+  - pid_lqr_design             # gain design, bandwidth, OL transfer function
+  - stability_analysis         # gain/phase margin, sensitivity peak, delay margin
+  - sensor_fusion              # complementary filter, Kalman, EKF/UKF
+  - guidance_trajectory        # trajectory planning, waypoint following
+  - failsafe_logic             # failure modes, detection, response actions
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/controls_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - stability_margins          # gain margin (≥ 6 dB) + phase margin (≥ 30°)
+
+stability_requirements:
+  gain_margin_min_dB: 6
+  phase_margin_min_deg: 30
+  sensitivity_peak_max: 2.0
+  delay_margin_min_ms: 10
+
+predecessor_skills:
+  - simulation-fea             # inertia tensor
+  - assembly-specialist        # CoM, inertia
+  - ee-specialist              # sensor interface, actuator specs
+
+successor_skills:
+  - simulation-fea             # flexible body interaction flag
+
+does_not_do:
+  - firmware_implementation    # provides control law specification
+  - flexible_body_dynamics     # routes to simulation-fea
+  - sensor_hardware_design     # routes to ee-specialist
+
+notes: |
+  v1 scope: rigid-body linearised control only. Nonlinear and adaptive
+  control deferred to v2. MPC deferred to v2 (optimization_mathematician
+  integration required).

@@ -1,0 +1,69 @@
+id: acoustics_specialist
+name: Acoustics Specialist
+version: "1.0.0"
+role: specialist
+domain: acoustics
+status: v1
+
+description: |
+  Provides acoustic and vibro-acoustic analysis. Covers propeller/rotor
+  noise prediction, structural vibration and resonance, vibration isolation
+  mount design, sound pressure level propagation, octave-band noise budget,
+  and regulatory compliance identification. Flags when BEM/FEM acoustics
+  are needed.
+
+triggers:
+  - phrases: ["acoustics", "noise", "sound", "vibration", "dB", "decibel",
+              "SPL", "acoustic signature", "propeller noise", "motor noise",
+              "rotor noise", "NVH", "damping", "isolation", "muffler",
+              "acoustic enclosure", "resonance", "modal analysis",
+              "frequency response", "blade pass"]
+
+preconditions:
+  - noise_source_identification
+  - operating_conditions_rpm_load
+  - receiver_distance_and_geometry
+  - noise_limit_or_target
+  - structural_geometry
+
+capabilities:
+  - source_characterisation    # BPF, tip speed, empirical SPL (Hubbard)
+  - spl_propagation            # spherical spreading, ground reflection, atm absorption
+  - structural_resonance       # natural frequency, coincidence, CLD damping
+  - vibration_isolation        # transmissibility, mount natural frequency
+  - noise_budget               # octave-band table with sources and margins
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/acoustics_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - noise_budget               # octave-band table
+
+bem_fea_flag_trigger: >
+  Flag [ACOUSTICS BEM/FEM REQUIRED] when: complex geometry, near-field
+  prediction, panel radiation with strong structural coupling, or
+  noise specification < ±3 dB accuracy required.
+
+predecessor_skills:
+  - system-decomposition       # noise limits from requirements
+  - picogk-geometry            # structural geometry for panel analysis
+
+successor_skills:
+  - me-specialist              # structural modification for damping treatment
+
+does_not_do:
+  - bem_fem_acoustics          # flags when needed
+  - combustion_noise           # outside scope
+  - faa_part36_certification   # preliminary sizing only
+
+notes: |
+  v1 scope: empirical source models + analytical propagation + vibration
+  isolation sizing. BEM/FEM deferred to v2.
+  Propeller noise model accuracy: ±5 dB typical (Hubbard 1952).

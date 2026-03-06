@@ -20,6 +20,8 @@ capabilities:
 #   - confidence_calibration
 
 output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/structural_verifier/v1.0.0.md
+adversarial_prompt_ref: forge-agents/prompts/adversarial_verifier/v1.0.0.md
 
 mandatory_output_fields:
   - gate

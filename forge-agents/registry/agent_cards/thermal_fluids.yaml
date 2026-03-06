@@ -1,0 +1,71 @@
+id: thermal_fluids_specialist
+name: Thermal-Fluids Specialist
+version: "1.0.0"
+role: specialist
+domain: thermal_fluids
+status: v1
+
+description: |
+  Provides thermal and fluid mechanics analysis. Covers lumped thermal
+  resistance networks, convection correlations, heat exchanger sizing (NTU),
+  cold plate and liquid cooling channel design, pressure drop calculation,
+  spacecraft thermal control (radiator, MLI), and electronics junction-to-
+  ambient analysis. Consumes heat loads from ee-specialist.
+
+triggers:
+  - phrases: ["thermal", "heat", "cooling", "temperature", "CFD", "fluid",
+              "flow", "pressure drop", "heat exchanger", "radiator", "TIM",
+              "thermal interface", "conduction", "convection", "radiation",
+              "ΔT", "cold plate", "heat pipe", "two-phase", "pump", "fan",
+              "channel", "manifold", "junction temperature"]
+
+preconditions:
+  - heat_loads_per_component_W
+  - operating_environment_temperature
+  - temperature_limits_per_component
+  - cooling_medium
+  - geometry_or_envelope
+
+capabilities:
+  - thermal_resistance_network  # conduction, convection, radiation nodes
+  - convection_coefficient      # Nusselt correlations, Re/Pr
+  - pressure_drop               # Darcy-Weisbach, pump head
+  - heat_exchanger_ntu          # NTU-effectiveness method
+  - spacecraft_thermal          # radiator sizing, MLI, eclipse transient
+  - thermal_margin_check        # T_max ≤ T_limit - margin (10°C elec, 25°C struct)
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/thermal_fluids_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - thermal_summary            # T_max, margin, cooling method, Q_total
+
+thermal_overrun_signal: "[THERMAL OVERRUN]"
+
+cfd_flag_trigger: >
+  Flag [CFD REQUIRED] when: complex 3D geometry, flow separation expected,
+  heat flux > 10 W/cm², or turbulent regime (Re > 10000) in complex ducts.
+
+predecessor_skills:
+  - ee-specialist              # power dissipation per component
+  - picogk-geometry            # geometry for surface area calculation
+  - magnetics-specialist       # core loss heat input
+
+successor_skills:
+  - simulation-fea             # thermal-mechanical stress (if ΔT-driven)
+
+does_not_do:
+  - complex_3d_cfd             # flags [CFD REQUIRED]
+  - power_electronics_design   # routes to ee-specialist
+  - thermal_structural_fea     # routes to me-specialist/simulation-fea
+
+notes: |
+  v1 scope: lumped network + standard correlations. Full 3D CFD (OpenFOAM)
+  integration deferred to v2.

@@ -1,0 +1,79 @@
+id: safety_se_specialist
+name: Safety & Systems Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: safety_se
+status: v1
+
+description: |
+  Provides system safety analysis and systems engineering discipline. Covers
+  hazard identification (HIRA), FMEA/FMECA, fault tree analysis (FTA with
+  MCS computation), redundancy architecture, safety case development (GSN),
+  requirements traceability (R-XXX → design → V&V), and certification pathway
+  identification. Escalates any Catastrophic hazard with a single-point
+  minimal cut set.
+
+triggers:
+  - phrases: ["safety", "FMEA", "FTA", "fault tree", "hazard", "risk",
+              "HAZOP", "failure mode", "criticality", "redundancy",
+              "safe mode", "systems engineering", "requirements traceability",
+              "V&V", "verification", "validation", "MBSE", "safety case",
+              "DAL", "SIL", "DO-178", "ARP4761"]
+
+preconditions:
+  - system_description_and_mission
+  - failure_consequences_defined
+  - requirements_tree
+  - component_list_with_criticality
+
+blocked_if:
+  - safety_critical_functions_undefined
+  - block_signal: "[SAFETY BLOCKED: CRITICAL FUNCTIONS UNDEFINED]"
+
+capabilities:
+  - hazard_identification      # HIRA table, MIL-STD-882E severity
+  - fmea_fmeca                 # per-component failure mode + effect + criticality
+  - fault_tree_analysis        # Boolean logic, MCS, probability targets
+  - redundancy_architecture    # active-active, voted TMR, common-cause
+  - requirements_traceability  # SR-XXX → design → V&V status
+  - safety_case_gsn            # Goal Structuring Notation argument structure
+  - certification_pathway      # FAA, EASA, MIL-STD-882, DO-178C/254, ARP4761
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/safety_se_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - open_requirements          # SR-XXX with status OPEN
+  - safety_critical_flags      # components requiring extra verification
+
+catastrophic_halt_signal: "[SAFETY CRITICAL — HALT DESIGN]"
+
+probability_targets:
+  catastrophic: 1.0e-9        # per flight hour
+  critical: 1.0e-7
+  marginal: 1.0e-5
+  negligible: 1.0e-3
+
+predecessor_skills:
+  - system-decomposition       # mission profile, requirements
+
+successor_skills:
+  - structural_verifier        # safety-critical outputs through adversarial verifier
+  - adversarial_verifier       # always run on safety_critical=true outputs
+
+does_not_do:
+  - design_certification       # flags pathway; does not certify
+  - quantitative_reliability_without_data  # requires sourced failure rate data
+  - do178_software_assurance   # identifies need; does not conduct
+
+notes: |
+  Any Catastrophic hazard with a single-point MCS and no documented mitigation
+  triggers [SAFETY CRITICAL — HALT DESIGN] and Orchestrator escalation to user.
+  Adversarial verifier always runs on this agent's outputs.

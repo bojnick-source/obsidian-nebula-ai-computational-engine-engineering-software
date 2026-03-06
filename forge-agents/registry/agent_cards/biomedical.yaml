@@ -1,0 +1,74 @@
+id: biomedical_specialist
+name: Biomedical Specialist
+version: "1.0.0"
+role: specialist
+domain: biomedical
+status: rd
+
+description: |
+  R&D ONLY — outputs require qualified biomedical engineer review before
+  clinical or regulatory use. Provides biomedical engineering analysis for
+  human-interface devices: biocompatibility assessment (ISO 10993), material
+  selection for implants and wearables, mechanical performance in physiological
+  environments, regulatory pathway identification (FDA, CE MDR), and
+  sterilisation method selection.
+
+triggers:
+  - phrases: ["biomedical", "implant", "wearable", "biocompatibility",
+              "ISO 10993", "FDA", "CE mark", "cytotoxicity", "sterilisation",
+              "body-worn", "prosthetic", "drug delivery", "biosensor",
+              "tissue engineering", "scaffold", "biomaterial"]
+
+preconditions:
+  - device_classification      # implant / wearable / diagnostic / therapeutic
+  - contact_type               # no contact / surface / externally communicating / implanted
+  - contact_duration           # <24h / 24h–30d / >30d
+  - target_anatomy
+  - sterilisation_requirement
+
+capabilities:
+  - iso_10993_evaluation_plan  # biological evaluation matrix per contact type + duration
+  - material_biocompatibility  # cytotoxicity, corrosion, leachables, sterilisation
+  - mechanical_physiological   # fatigue, fretting, stress shielding, fracture toughness
+  - regulatory_pathway         # FDA 510(k)/PMA, CE MDR Class IIb/III
+  - sterilisation_selection    # EtO, autoclave, gamma, e-beam compatibility
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/biomedical_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - safety_critical_flags      # always present; all outputs safety_critical=true
+  - regulatory_pathway
+
+status_note: |
+  All vault writes carry status: rd_review_required. This field is non-
+  negotiable — the biomedical specialist may not set status: validated.
+  Validated status requires sign-off by a named qualified biomedical engineer
+  outside the FORGE system.
+
+predecessor_skills:
+  - component-generation       # device spec
+  - materials-specialist       # base material properties
+
+successor_skills:
+  - simulation-fea             # mechanical performance in physiological environment
+  - adversarial_verifier       # always run on biomedical outputs
+
+does_not_do:
+  - biological_testing         # identifies required tests; does not conduct them
+  - regulatory_legal_advice    # identifies pathway only
+  - class_iii_final_approval   # requires qualified person sign-off
+  - pharmacokinetics           # out of scope
+
+notes: |
+  R&D status reflects absence of production validation data for this domain.
+  Any output flagged safety_critical=true (all biomedical outputs) is
+  automatically routed through adversarial_verifier and escalated to user
+  for confirmation before vault persistence.
