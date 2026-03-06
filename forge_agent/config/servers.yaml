@@ -1,0 +1,42 @@
+servers:
+  filesystem:
+    command: "npx"
+    args: ["-y", "@modelcontextprotocol/server-filesystem", "${FORGE_VAULT_PATH}"]
+    timeout_ms: 5000
+    health_check_interval_s: 30
+
+  obsidian:
+    command: "npx"
+    args: ["@mauricio.wolff/mcp-obsidian@latest", "${FORGE_VAULT_PATH}"]
+    timeout_ms: 5000
+    # Note: filesystem MCP preferred for production (no Obsidian app dependency)
+
+  picogk:
+    command: "python"
+    args: ["-m", "forge_agent.mcp_wrappers.picogk_server"]
+    timeout_ms: 30000
+    health_check_interval_s: 60
+
+  gmsh:
+    command: "python"
+    args: ["-m", "forge_agent.mcp_wrappers.gmsh_server"]
+    timeout_ms: 60000
+    health_check_interval_s: 120
+
+  fenics:
+    command: "python"
+    args: ["-m", "forge_agent.mcp_wrappers.fenics_server"]
+    timeout_ms: 120000
+    health_check_interval_s: 120
+
+  calculix:
+    command: "python"
+    args: ["-m", "forge_agent.mcp_wrappers.calculix_server"]
+    timeout_ms: 300000
+    health_check_interval_s: 120
+
+  export:
+    command: "python"
+    args: ["-m", "forge_agent.mcp_wrappers.freecad_server"]
+    timeout_ms: 60000
+    health_check_interval_s: 60

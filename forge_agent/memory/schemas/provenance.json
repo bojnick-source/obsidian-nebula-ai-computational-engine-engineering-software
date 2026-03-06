@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "forge:provenance",
+  "title": "FORGE Provenance Record",
+  "description": "Tracks the origin of each claim, equation, or data point to prevent hallucination.",
+  "type": "object",
+  "required": ["claim_id", "claim_text", "agent", "source_type"],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "description": "UUID for this provenance record."
+    },
+    "problem_id": {
+      "type": "string",
+      "description": "Associated problem run ID."
+    },
+    "claim_text": {
+      "type": "string",
+      "description": "The specific claim, value, or equation being tracked."
+    },
+    "agent": {
+      "type": "string",
+      "description": "Agent role that produced this claim."
+    },
+    "model": {
+      "type": "string",
+      "description": "Model ID used (e.g. claude-opus-4-6)."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["first_principles", "standard", "reference", "simulation", "vault_note", "calculation", "assumption"],
+      "description": "How the claim was generated."
+    },
+    "source_details": {
+      "type": "object",
+      "description": "Type-specific source detail.",
+      "properties": {
+        "standard": {"type": "string", "description": "e.g. ASME BPVC VIII-2:2023 §5.3.2"},
+        "reference": {"type": "string", "description": "Citation string"},
+        "vault_note_title": {"type": "string"},
+        "tool_name": {"type": "string"},
+        "tool_args": {"type": "object"}
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Agent self-reported confidence (0–1)."
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "True if verifier has approved this claim."
+    },
+    "verification_notes": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

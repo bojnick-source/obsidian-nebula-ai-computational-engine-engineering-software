@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "forge-agent"
+version = "0.1.0"
+description = "FORGE Unified Engineering Agent System — Reid Industries / Quantanium"
+requires-python = ">=3.11"
+
+dependencies = [
+    "anthropic>=0.40",
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "asyncio-throttle>=1.0",
+    "python-frontmatter>=1.1",
+    "watchdog>=4.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.50"]
+mcp = ["fastmcp>=0.4"]
+all = [
+    "forge-agent[openai,mcp]",
+]
+dev = [
+    "pytest>=7.4",
+    "pytest-asyncio>=0.23",
+    "forge-agent[all]",
+]
+
+[project.scripts]
+forge = "forge_agent.core.unified_agent:cli_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["forge_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["forge_agent/tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

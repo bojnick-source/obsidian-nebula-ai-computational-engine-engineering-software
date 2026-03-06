@@ -1,0 +1,10 @@
+skill_to_servers:
+  picogk-geometry:       [filesystem, picogk]
+  topology-optimization: [filesystem, picogk, fenics]
+  simulation-fea:        [filesystem, fenics, calculix]
+  cypher-stress-testing: [filesystem, fenics, picogk]
+  knowledge-synthesis:   [filesystem, obsidian]
+  cad-export:            [filesystem, export]
+  system-decomposition:  [filesystem, obsidian]
+  component-generation:  [filesystem, picogk, obsidian]
+  assembly:              [filesystem, picogk, export]

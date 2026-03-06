@@ -1,0 +1,49 @@
+# FORGE Master Configuration
+# Copy to forge.yaml and set env vars or fill values directly.
+
+vault_path: "${FORGE_VAULT_PATH:/path/to/obsidian/vault}"
+base_prompt: >
+  You are FORGE, a production engineering AI for Reid Industries / Quantanium.
+  Always output equations, units, and sanity checks.
+  Every claim must be falsifiable. Every number must have units.
+  Mathematical derivations must show every step.
+active_project: "aladdin-3b"
+
+providers:
+  anthropic:
+    api_key: "${ANTHROPIC_API_KEY}"
+    models:
+      primary: "claude-opus-4-6"
+      secondary: "claude-sonnet-4-6"
+      routing: "claude-haiku-4-5-20251001"
+
+  openai:
+    api_key: "${OPENAI_API_KEY}"
+    models:
+      primary: "o3"
+      secondary: "gpt-4o"
+      routing: "gpt-4o-mini"
+
+  local:
+    base_url: "http://localhost:11434"
+    models:
+      routing: "deepseek-r1:32b"
+      secondary: "llama3.3:70b"
+
+agent:
+  max_iterations: 25
+  max_tool_retries: 3
+  divergence_threshold: 3          # same tool + same args N times → escalate
+  token_budget: 180000             # total context budget per session
+  max_vault_tokens: 4000           # Obsidian injection ceiling
+  vault_top_k: 5                   # notes retrieved per search
+  committee_max_revisions: 3       # Verifier rejection/revision cycles
+
+mcp:
+  health_check_interval_s: 30
+  default_timeout_ms: 30000
+
+log:
+  level: "INFO"
+  output: "jsonl"                  # "jsonl" | "console" | "both"
+  jsonl_path: "forge-runs.jsonl"

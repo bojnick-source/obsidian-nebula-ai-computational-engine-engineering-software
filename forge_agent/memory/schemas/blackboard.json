@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "forge:blackboard",
+  "title": "FORGE Blackboard",
+  "description": "Shared state passed between all agents during a multi-agent committee run.",
+  "type": "object",
+  "required": ["problem_id", "problem_statement", "assumptions", "governing_equations"],
+  "properties": {
+    "problem_id": {
+      "type": "string",
+      "description": "Unique identifier for this engineering problem run."
+    },
+    "problem_statement": {
+      "type": "string",
+      "description": "Full natural-language problem statement."
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Explicit engineering assumptions (each agent may append)."
+    },
+    "governing_equations": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "LaTeX governing equations identified by any agent."
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Variables to be solved for."
+    },
+    "constraints": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Design constraints (e.g. safety factor ≥ 2.0, mass ≤ 5 kg)."
+    },
+    "derivation_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["agent", "step", "detail"],
+        "properties": {
+          "agent": {"type": "string"},
+          "step": {"type": "string"},
+          "detail": {"type": "string"},
+          "equation": {"type": "string"}
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "description": "Sanity check results keyed by check type.",
+      "properties": {
+        "limiting_case": {"type": ["string", "null"]},
+        "conservation": {"type": ["string", "null"]},
+        "dimensional": {"type": ["string", "null"]},
+        "numerical_verification": {"type": ["string", "null"]}
+      }
+    },
+    "numerical_examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "inputs", "output"],
+        "properties": {
+          "description": {"type": "string"},
+          "inputs": {"type": "object"},
+          "output": {"type": "string"},
+          "unit": {"type": "string"}
+        }
+      }
+    },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["agent", "claim", "basis"],
+        "properties": {
+          "agent": {"type": "string"},
+          "claim": {"type": "string"},
+          "basis": {"type": "string"}
+        }
+      },
+      "description": "Contested claims between agents; verifier must resolve."
+    },
+    "verification_stamp": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["validated", "disputed", "pending"]},
+        "verifier_notes": {"type": "string"},
+        "timestamp": {"type": "string", "format": "date-time"}
+      }
+    },
+    "final_answer": {
+      "type": "string",
+      "description": "Verifier-approved final answer."
+    }
+  },
+  "additionalProperties": true
+}

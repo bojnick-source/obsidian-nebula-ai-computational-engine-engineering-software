@@ -1,0 +1,45 @@
+# Role → preferred provider → model tier mapping.
+# Fallback chain: primary → secondary → routing (never fail silently).
+
+roles:
+  router:
+    preferred_provider: null          # Any — cheapest wins
+    model_tier: routing
+    temperature: 0.0
+    max_tokens: 512
+    fallback_tier: routing
+
+  orchestrator:
+    preferred_provider: anthropic     # Claude for decomposition reasoning
+    model_tier: primary
+    temperature: 0.2
+    max_tokens: 8192
+    fallback_tier: secondary
+
+  verifier:
+    preferred_provider: anthropic     # Consistent rejection behavior
+    model_tier: primary
+    temperature: 0.0                  # Zero — no creative verdicts
+    max_tokens: 2048
+    fallback_tier: secondary
+
+  librarian:
+    preferred_provider: null
+    model_tier: routing
+    temperature: 0.1
+    max_tokens: 2048
+    fallback_tier: routing
+
+  specialist_engineer:
+    preferred_provider: null          # Best available math model
+    model_tier: primary
+    temperature: 0.2
+    max_tokens: 8192
+    fallback_tier: secondary
+
+  mathematician:
+    preferred_provider: null
+    model_tier: primary
+    temperature: 0.1
+    max_tokens: 8192
+    fallback_tier: secondary
