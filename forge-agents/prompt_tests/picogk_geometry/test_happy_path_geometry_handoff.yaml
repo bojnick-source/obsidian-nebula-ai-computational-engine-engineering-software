@@ -1,0 +1,218 @@
+# Prompt test: picogk_geometry — happy path end-to-end
+#
+# Verifies that with valid params and a clean PicoGK run the agent:
+#   1. Loads params successfully with no None values
+#   2. Selects the correct voxel size per the resolution guide
+#   3. Writes a composable, non-hardcoded PicoGK script
+#   4. All 4 validation checks pass
+#   5. Writes three vault paths (_geometry.md, .vdb, .stl)
+#   6. Produces a complete geometry_handoff block
+#
+# Run:  forge prompt-test run picogk_geometry test_happy_path_geometry_handoff
+
+id: test_happy_path_geometry_handoff
+agent: picogk_geometry
+version: "1.0.0"
+description: >
+  Full happy-path run for the Aladdin-3B fuselage shell (C-001).
+  Valid params, 0.3 mm voxel size, all 4 checks pass, VDB + STL written,
+  geometry_handoff produced with ready_for_fea=true.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-001
+  project_name: Aladdin-3B
+  params_vault_path: "projects/Aladdin-3B/components/C-001_params.py"
+  voxel_size_mm: null   # let agent select from resolution guide
+  noyron_required: false
+  output_dir: "projects/Aladdin-3B/geometry"
+
+  simulated_params_content: |
+    class FuselageShellParams:
+        # Envelope — from decomposition R001, R003
+        length_m: float = 0.85              # fits within 0.56 m envelope (folded config)
+        max_diameter_m: float = 0.12        # R003 width constraint 0.35 m >> 0.12 m ✅
+
+        # Structural wall — 2-ply CFRP (approved by user after mass escalation)
+        wall_thickness_m: float = 0.0025    # 2-ply at 0.125 mm/ply × 2 + resin = ~2.5 mm
+        n_plies: int = 2                    # [0/90] layup, user-approved
+        density_kg_m3: float = 1600.0       # Toray T300/3501-6
+
+        # Interfaces — IF-001 (motor mount), IF-002 (wing spar)
+        wing_root_spar_cutout_diameter_m: float = 0.025  # IF-002: 25 mm ± 0.1 mm
+        motor_mount_bolt_pattern_m: float = 0.035        # IF-001: 35 mm bolt circle
+        n_motor_mounts: int = 4
+
+        # Payload bay
+        payload_bay_length_m: float = 0.22
+        payload_bay_width_m: float = 0.10
+        payload_bay_door_hinge_offset_m: float = 0.015   # EST: standard hinge clearance
+
+        # Budget
+        mass_budget_kg: float = 0.45
+
+        @property
+        def inner_diameter_m(self) -> float:
+            return self.max_diameter_m - 2 * self.wall_thickness_m
+
+        @property
+        def cross_section_area_m2(self) -> float:
+            import math
+            return math.pi * (self.max_diameter_m**2 - self.inner_diameter_m**2) / 4
+
+  # Simulated PicoGK execution results
+  simulated_validation_results:
+    length_within_envelope:
+      passed: true
+      got: "850.0 mm"
+      expected: "850.0 ± 2.0 mm"
+    diameter_within_envelope:
+      passed: true
+      got: "120.0 mm"
+      expected: "120.0 ± 2.0 mm"
+    mass_within_budget:
+      passed: true
+      got: "0.4312 kg"           # 2-ply shell is lighter than 4-ply; within 0.45 kg
+      expected: "≤ 0.4500 kg"
+    no_isolated_voxels:
+      passed: true
+      got: "connected"
+      expected: "all voxels form single connected body"
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Voxel size selection
+  - type: field_value
+    field: voxel_size_mm
+    expected: "0.3"
+    description: >
+      Fuselage shell: length 850 mm, wall thickness 2.5 mm → medium part
+      50–200 mm range doesn't quite apply (850 mm > 200 mm), but wall
+      thickness 2.5 mm is in the 1.5–3 mm band → 0.3 mm is correct.
+      0.5 mm would be too coarse (1/5 of 2.5 mm = 0.5 mm — exactly at limit;
+      0.3 mm is safer and still chosen per the guide).
+
+  # Params loaded without error
+  - type: output_present
+    field: params_loaded
+    description: Params load step must be confirmed successful.
+
+  # All 4 validation checks present in output
+  - type: field_count_gte
+    field: validation_results
+    min: 4
+    description: All 4 standard checks must appear in the output.
+
+  - type: all_validation_checks_passed
+    description: >
+      Every check in validation_results must have passed=true before
+      vault write or handoff. A single failing check must block progression.
+
+  # PicoGK script has no hardcoded dimensions
+  - type: output_absent_pattern
+    target: picogk_script
+    pattern: "= (0\\.85|850|0\\.12|120|0\\.025|25|0\\.035|35)[^0-9]"
+    description: >
+      No geometry dimension may appear as a bare literal in the PicoGK script.
+      All values must be read from params (e.g., params.length_m * 1000).
+      Hardcoded literals break the parametric invariant — a params change
+      doesn't propagate to the geometry.
+
+  # All three vault paths written
+  - type: field_contains_all
+    field: vault_paths_written
+    values:
+      - "projects/Aladdin-3B/components/C-001_geometry.md"
+      - "projects/Aladdin-3B/geometry/C-001.vdb"
+      - "projects/Aladdin-3B/geometry/C-001.stl"
+    description: >
+      All three output files must be written — geometry.md (human-readable
+      summary), .vdb (FEA input), .stl (manufacturing input).
+
+  # Geometry summary frontmatter
+  - type: field_value
+    field: vault_frontmatter.status
+    expected: "validated"
+    description: >
+      status must be "validated" only when all 4 checks passed. Any other
+      outcome must result in status: "failed" or "partial".
+
+  - type: field_value_lte
+    field: vault_frontmatter.estimated_mass_kg
+    max: 0.45
+    description: Frontmatter must record the computed mass, which must be ≤ budget.
+
+  # geometry_handoff block complete
+  - type: output_present
+    field: geometry_handoff
+    description: geometry_handoff XML block must be produced.
+
+  - type: field_value
+    field: geometry_handoff.component_id
+    expected: "C-001"
+    description: component_id must match input.
+
+  - type: field_value
+    field: geometry_handoff.vdb_path
+    expected: "projects/Aladdin-3B/geometry/C-001.vdb"
+    description: vdb_path must match the written vault path.
+
+  - type: field_value
+    field: geometry_handoff.stl_path
+    expected: "projects/Aladdin-3B/geometry/C-001.stl"
+    description: stl_path must match the written vault path.
+
+  - type: field_value
+    field: geometry_handoff.voxel_size_mm
+    expected: "0.3"
+    description: voxel_size_mm must match what was used.
+
+  - type: field_value
+    field: geometry_handoff.validation_passed
+    expected: "true"
+    description: validation_passed must be true — matches all-checks-passed above.
+
+  - type: field_value
+    field: geometry_handoff.ready_for_fea
+    expected: "true"
+    description: >
+      ready_for_fea must be true — geometry is validated, VDB is written.
+      simulation-fea can now mesh and run.
+
+  - type: field_value
+    field: geometry_handoff.ready_for_assembly
+    expected: "true"
+    description: >
+      ready_for_assembly must be true — STL is written with correct interface
+      geometry (spar cutouts, motor mount pattern).
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent runs all 5 steps for C-001 fuselage shell:
+    Step 1: Loads FuselageShellParams — all fields populated, no None, no
+            implausible values. Prints parameter values.
+    Step 2: Selects 0.3 mm voxel size (2.5 mm wall / 5 = 0.5 mm limit;
+            0.3 mm is more conservative and within the medium-part guide).
+            Writes PicoGK script: outer cylinder − inner hollow − 2× spar
+            cutouts − payload bay opening. All dimensions from params.
+    Step 3: Runs script. 4 validation checks pass.
+            Length 850.0 mm ✅  Diameter 120.0 mm ✅
+            Mass 0.431 kg ≤ 0.45 kg ✅  Connected ✅
+    Step 4: Noyron not required — skipped.
+    Step 5: Writes C-001_geometry.md (frontmatter: status=validated,
+            estimated_mass_kg=0.431, voxel_size_mm=0.3), C-001.vdb, C-001.stl.
+    Handoff: ready_for_fea=true, ready_for_assembly=true.
+
+failure_mode_tested: >
+  If vault_frontmatter.status is set to "validated" even though one
+  validation check failed (e.g., is_connected returned False for a shell
+  with a disconnected weld tab), simulation-fea meshes the VDB and runs
+  analysis. The FEA solver may treat the disconnected region as a separate
+  load-bearing body, compute a spurious stress field, and return a passing
+  result. The structural verifier stamps confidence 0.9. The disconnected
+  fragment goes to manufacturing and is discovered during tap-test inspection
+  — at which point the failure is attributed to manufacturing defect, not
+  to the geometry step where it originated.

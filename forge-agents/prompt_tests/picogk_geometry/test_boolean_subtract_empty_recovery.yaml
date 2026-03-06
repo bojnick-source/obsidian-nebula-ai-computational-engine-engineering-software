@@ -1,0 +1,169 @@
+# Prompt test: picogk_geometry — boolean subtract returns empty recovery
+#
+# Verifies that when a boolean_subtract produces an empty voxel field
+# (cutter is misaligned and doesn't intersect the solid), the agent:
+#   1. Detects the empty result immediately
+#   2. Does NOT proceed as if the cutout was made
+#   3. Diagnoses the misalignment (cutter center vs. solid overlap)
+#   4. Applies the +2 mm oversize correction and re-runs
+#   5. Verifies the re-run produces a non-empty result
+#   6. Only then continues to the next operation
+#
+# Run:  forge prompt-test run picogk_geometry test_boolean_subtract_empty_recovery
+
+id: test_boolean_subtract_empty_recovery
+agent: picogk_geometry
+version: "1.0.0"
+description: >
+  Agent must detect an empty boolean_subtract result, diagnose the cause as
+  cutter misalignment, apply the +2 mm oversize fix, and verify the corrected
+  result before continuing. It must not proceed to FEA with a "cutout" that
+  was never made.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-001
+  project_name: Aladdin-3B
+  params_vault_path: "projects/Aladdin-3B/components/C-001_params.py"
+  voxel_size_mm: 0.3
+  noyron_required: false
+  output_dir: "projects/Aladdin-3B/geometry"
+
+  # Params are valid — the defect is in the geometry script's cutter placement
+  simulated_params_content: |
+    class FuselageShellParams:
+        length_m: float = 0.85
+        max_diameter_m: float = 0.12
+        wall_thickness_m: float = 0.003
+        n_plies: int = 4
+        wing_root_spar_cutout_diameter_m: float = 0.025
+        motor_mount_bolt_pattern_m: float = 0.035
+        n_motor_mounts: int = 4
+        payload_bay_length_m: float = 0.22
+        payload_bay_width_m: float = 0.10
+        payload_bay_door_hinge_offset_m: float = 0.015
+        mass_budget_kg: float = 0.45
+        density_kg_m3: float = 1600.0
+
+        @property
+        def inner_diameter_m(self) -> float:
+            return self.max_diameter_m - 2 * self.wall_thickness_m
+
+        @property
+        def cross_section_area_m2(self) -> float:
+            import math
+            return math.pi * (self.max_diameter_m**2 - self.inner_diameter_m**2) / 4
+
+  # Simulated runtime failure: first boolean_subtract call returns empty voxels
+  # because the spar cutter center was placed at z = 0.35 * 850 = 297.5 mm
+  # but the fuselage cylinder is centered at z=0 and runs from 0 to 850 mm —
+  # the cutter axis direction was wrong (Z instead of X), so the cylinder
+  # cutter runs along the long axis and misses the wall.
+  simulated_runtime_event:
+    operation: boolean_subtract
+    operands: [shell, spar_cutout_z_axis]
+    result_volume_mm3: 0.0   # empty — cutter ran parallel to shell axis
+    expected_nonzero: true
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must detect the empty result
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "empty"
+      - "zero volume"
+      - "0.0"
+      - "boolean_subtract returned"
+    description: >
+      Agent must detect and report the empty subtract result. Silently
+      accepting a zero-volume result would mean the spar cutout was never
+      made — the wing spar cannot be inserted during assembly.
+
+  # Must NOT proceed to the next boolean operation on an empty intermediate
+  - type: output_absent
+    field: geometry_handoff
+    description: >
+      geometry_handoff must not be emitted while the geometry has a failed
+      cutout. A wall with no spar cutout will be flagged as an interface
+      conflict during assembly.
+
+  # Must diagnose the cause (axis direction)
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "axis"
+      - "direction"
+      - "alignment"
+      - "misaligned"
+      - "center"
+    description: >
+      Agent must diagnose why the subtract produced empty voxels — not just
+      report the symptom. The fix depends on the cause: misalignment vs.
+      wrong cutter size vs. wrong axis.
+
+  # Must apply the +2 mm oversize correction
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "+2 mm"
+      - "oversize"
+      - "through-cut"
+      - "2 mm"
+    description: >
+      The documented recovery is to increase the cutter by +2 mm to ensure
+      a clean through-cut. Agent must apply and document this correction.
+
+  # Must verify the corrected result is non-empty before continuing
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "non-empty"
+      - "verified"
+      - "volume:"
+      - "confirmed"
+    description: >
+      After re-running the corrected subtract, agent must explicitly confirm
+      the result is non-empty. Applying the fix and not checking is
+      equivalent to not checking at all.
+
+  # If retry succeeds, handoff should be present (conditional)
+  - type: conditional_output_present
+    condition:
+      field: corrected_subtract_result_volume_mm3
+      operator: gt
+      value: 0
+    then:
+      field: geometry_handoff
+    description: >
+      If the corrected subtract produces a valid solid (non-zero volume),
+      the geometry pipeline can continue and geometry_handoff should
+      eventually be produced.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  After the first boolean_subtract returns 0.0 mm³ (empty), agent:
+    1. Reports: "boolean_subtract(shell, spar_cutout) returned empty
+       voxel field (volume = 0.0 mm³). Expected non-zero result."
+    2. Diagnoses: cutter cylinder axis was Vec3(0, 0, 1) (same as shell
+       axis) — cutter ran parallel to shell instead of through it.
+       Correct axis is Vec3(1, 0, 0) (radial, through-wall).
+    3. Correction: change axis to Vec3(1, 0, 0) AND increase cutter height
+       to params.max_diameter_m * 1000 + 2 mm (through-cut with +2 mm margin).
+    4. Re-runs subtract with corrected params; verifies result volume > 0.
+    5. Continues geometry pipeline; produces geometry_handoff if all 4
+       validation checks pass.
+
+failure_mode_tested: >
+  If the agent silently accepts an empty subtract result and continues, the
+  resulting fuselage shell has no wing spar cutout. PicoGK will report the
+  solid as valid (it is topologically closed). The validation check
+  "diameter_within_envelope" and "mass_within_budget" will both pass.
+  "no_isolated_voxels" will pass. The geometry reaches simulation-fea and
+  assembly looking correct. At assembly, the wing spar cannot be inserted —
+  but the assembly skill will flag an interference fit, not a missing cutout,
+  making the root cause obscure. If assembly is not run (e.g., for a solo
+  component FEA), the defect reaches manufacturing as an unperforated shell.

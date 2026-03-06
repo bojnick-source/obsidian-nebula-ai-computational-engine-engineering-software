@@ -1,0 +1,100 @@
+id: picogk_geometry
+name: PicoGK Geometry
+version: "1.0.0"
+role: workflow
+domain: geometry_execution
+status: v1
+
+description: |
+  Executes PicoGK Python scripts to produce volumetric solid models from
+  parametric component definitions. Output is a voxel field (VDB) and
+  optionally a mesh (STL/OBJ) ready for FEA or manufacturing export.
+  Consumes component_handoff with ready_for_picogk=true. Required before
+  simulation-fea can run on any novel geometry.
+
+triggers:
+  - component_handoff_ready_for_picogk_true
+  - phrases: ["generate the geometry", "create the solid model", "PicoGK",
+              "run Noyron", "make the lattice", "build the mesh",
+              "run the geometry"]
+
+preconditions:
+  - params_file_in_vault       # projects/{name}/components/{id}_params.py
+  - picogk_installed           # python -c "import picogk"
+  - noyron_installed           # only if biomorphic structures requested
+  - output_directory           # exists or can be created
+  - voxel_size_mm              # determined from resolution guide if not overridden
+
+resolution_guide:
+  large_shell_gt_200mm_walls_gt_3mm: 0.5
+  medium_part_50_200mm_walls_1_5_to_3mm: 0.3
+  fine_feature_lt_50mm_or_walls_lt_1_5mm: 0.15
+  lattice_biomorphic_infill: 0.2
+  final_export_manufacturing: 0.1
+  rule: never_coarser_than_one_fifth_minimum_wall_thickness
+  default_when_uncertain: 0.3
+
+capabilities:
+  - params_loading_and_validation   # importlib load + field checks
+  - picogk_script_generation        # composable boolean voxel operations
+  - geometry_validation             # 4 checks: length, diameter, mass, connectivity
+  - noyron_lattice_infill           # gyroid/biomorphic (only when topo-opt prescribes)
+  - vault_write                     # _geometry.md, .vdb, .stl
+  - handoff_block_production        # geometry_handoff XML
+
+tools_allowed:
+  - authorized_vault_write   # agent: Librarian
+  - bash                     # execute PicoGK Python scripts, pip install
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/picogk_geometry/v1.0.0.md
+
+mandatory_output_fields:
+  - component_id
+  - voxel_size_mm
+  - validation_results        # all 4 checks with pass/fail + got/expected values
+  - estimated_mass_kg
+  - vault_paths_written       # _geometry.md + .vdb + .stl
+  - geometry_handoff          # XML block
+
+validation_checks:
+  - length_within_envelope    # bbox.z vs params.length_m × 1000, ±2 mm
+  - diameter_within_envelope  # bbox.x vs params.max_diameter_m × 1000, ±2 mm
+  - mass_within_budget        # volume × density ≤ params.mass_budget_kg
+  - no_isolated_voxels        # voxels.is_connected()
+
+predecessor_skills:
+  - component-generation    # provides params file + component_handoff
+
+successor_skills:
+  - simulation-fea          # consumes geometry_handoff.ready_for_fea
+  - assembly                # consumes geometry_handoff.ready_for_assembly
+  - cad-export              # consumes .stl for B-rep conversion
+
+does_not_do:
+  - define_parameters         # component-generation
+  - run_structural_analysis   # simulation-fea
+  - optimize_topology         # topology-optimization (must run first, prescribes lattice)
+  - produce_parametric_cad    # cad-export (exact bores/threads require B-rep)
+  - validate_requirements     # simulation-fea (geometry validates vs params, not requirements)
+
+noyron_policy: >
+  Only call Noyron if topology-optimization has explicitly recommended lattice
+  infill in its handoff block. Do not add lattice structures speculatively.
+
+error_recovery:
+  picogk_import_failure: pip_install_picogk_break_system_packages
+  boolean_subtract_empty: increase_cutter_by_2mm_rerun
+  disconnected_voxels: separate_components_investigate_before_fixing
+  mass_over_budget_after_geometry: flag_to_user_with_options_no_silent_thinning
+  validation_failure: fix_params_never_proceed_to_fea
+  vdb_over_500mb: coarsen_for_fea_fine_only_for_export
+  noyron_unavailable: use_solid_geometry_note_in_vault
+
+notes: |
+  v1.0 scope: all standard PicoGK boolean operations + 4-check validation.
+  Noyron conditional on topology-optimization output. VDB is the primary
+  output format; STL is derived for FEA meshing and manufacturing.
+  Vault status set to "validated" only if ALL 4 checks pass — partial
+  pass is not acceptable because a disconnected geometry will cause FEA
+  to produce silently wrong results on isolated fragments.

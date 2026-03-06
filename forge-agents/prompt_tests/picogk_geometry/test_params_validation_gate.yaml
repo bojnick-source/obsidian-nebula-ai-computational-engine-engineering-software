@@ -1,0 +1,128 @@
+# Prompt test: picogk_geometry — params validation gate
+#
+# Verifies that the agent detects and refuses to proceed when the params
+# file contains a None dimension or a zero-thickness wall, rather than
+# passing that value to PicoGK and getting a nonsensical solid model.
+#
+# Run:  forge prompt-test run picogk_geometry test_params_validation_gate
+
+id: test_params_validation_gate
+agent: picogk_geometry
+version: "1.0.0"
+description: >
+  Agent must reject params with None-valued geometry fields or physically
+  implausible values (zero wall thickness) before writing any PicoGK script.
+  It must fix the params file or halt — it must not work around the gap in
+  the geometry script.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-002
+  project_name: Aladdin-3B
+  params_vault_path: "projects/Aladdin-3B/components/C-002_params.py"
+  voxel_size_mm: 0.3
+  noyron_required: false
+  output_dir: "projects/Aladdin-3B/geometry"
+
+  # Simulated params class contents — two deliberate defects:
+  #   1. wall_thickness_m is None (component-generation left it unresolved)
+  #   2. n_plies is 0 (valid Python, invalid geometry — zero ply count)
+  simulated_params_content: |
+    class MainWingParams:
+        span_m: float = 0.60
+        chord_m: float = 0.14
+        max_thickness_m: float = 0.018
+        wall_thickness_m: float | None = None    # DEFECT: unresolved
+        n_plies: int = 0                          # DEFECT: zero plies
+        spar_diameter_m: float = 0.012
+        mass_budget_kg: float = 0.55
+        density_kg_m3: float = 1600.0
+
+        @property
+        def inner_thickness_m(self) -> float:
+            return self.max_thickness_m - 2 * self.wall_thickness_m  # will raise TypeError
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must NOT generate any PicoGK script
+  - type: output_absent
+    field: picogk_script
+    description: >
+      No PicoGK script should be written when params contain None values.
+      Passing None to pgk.cylinder(radius=None) would cause a silent type
+      error or produce a degenerate solid.
+
+  # Must NOT write any vault paths
+  - type: output_absent
+    field: vault_paths_written
+    description: >
+      No geometry.md, .vdb, or .stl should be written to vault with
+      unvalidated params.
+
+  # Must NOT produce a geometry_handoff
+  - type: output_absent
+    field: geometry_handoff
+    description: >
+      geometry_handoff must not be emitted — simulation-fea and assembly
+      must not be triggered from a failed geometry run.
+
+  # Must identify the None field specifically
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "wall_thickness_m"
+      - "None"
+      - "null"
+    description: >
+      Agent must name the offending field. A generic "params validation
+      failed" message is not actionable — the user needs to know which
+      field to fix in component-generation.
+
+  # Must identify the zero-ply defect
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "n_plies"
+      - "zero"
+      - "0 ply"
+      - "implausible"
+    description: >
+      Zero ply count is physically implausible — agent must flag it as a
+      separate error from the None field.
+
+  # Must instruct to fix params file (not work around in geometry script)
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "fix the params"
+      - "component-generation"
+      - "params file"
+      - "update the spec"
+    description: >
+      The fix must be directed at the params file. The geometry script
+      must not add conditional logic to handle None — that would silently
+      accept an incomplete spec.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent loads C-002_params.py, instantiates MainWingParams, iterates all
+  fields, and finds:
+    - wall_thickness_m is None → geometry-driving field; unacceptable
+    - n_plies is 0 → physically implausible (zero-ply laminate has no structure)
+  Agent reports both defects with field names, explains the downstream
+  consequence of each, directs the user to update component-generation's
+  spec for C-002, and halts without writing any output.
+  It does NOT add `if wall_thickness_m is None: wall_thickness_m = 0.003`
+  to the geometry script — that would silently accept a guess.
+
+failure_mode_tested: >
+  If the agent works around a None param with a hardcoded default, PicoGK
+  produces a solid model that passes all 4 validation checks because it was
+  built from an assumed dimension, not the intended design. simulation-fea
+  then runs against wrong geometry. The structural verifier may flag a stress
+  anomaly but cannot trace it back to the substituted dimension because the
+  vault shows params.wall_thickness_m = 0.003 (the agent's guess), not None.
+  The substitution is permanently hidden in the geometry script.
