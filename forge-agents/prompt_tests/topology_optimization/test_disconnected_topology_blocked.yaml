@@ -1,0 +1,188 @@
+# Prompt test: topology_optimization — disconnected topology blocks picogk handoff
+#
+# Verifies that when the density field's solid region (density >= 0.5) contains
+# more than one connected component, the agent:
+#   1. Detects the disconnection via scipy.ndimage.label
+#   2. Does NOT set ready_for_picogk=true
+#   3. Diagnoses the likely cause (volume_fraction too low, BC error, design
+#      space excludes load path)
+#   4. Proposes specific corrective actions before re-running
+#   5. Does NOT write a topology_handoff that could trigger picogk-geometry
+#
+# Run:  forge prompt-test run topology_optimization test_disconnected_topology_blocked
+
+id: test_disconnected_topology_blocked
+agent: topology_optimization
+version: "1.0.0"
+description: >
+  Agent must detect a disconnected solid region in the optimized density field,
+  set load_path_connected=false, block ready_for_picogk, and diagnose the cause
+  before proposing corrective actions. Disconnected topology must never reach
+  picogk-geometry.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-001
+  project_name: Aladdin-3B
+  spec_vault_path: "projects/Aladdin-3B/components/C-001_spec.md"
+  volume_fraction_target: 0.15   # Deliberately too low — will produce disconnected result
+  mesh_resolution_mm: 2.0
+
+  load_cases:
+    - id: LC-001
+      description: "Wing root bending — 9g pull-up"
+      magnitude_N: 1250.0
+      direction: [0, 1, 0]        # Y-axis bending
+      application_node: "wing_spar_interface_left"
+    - id: LC-002
+      description: "Wing root bending — 9g pull-up"
+      magnitude_N: 1250.0
+      direction: [0, 1, 0]
+      application_node: "wing_spar_interface_right"
+    - id: LC-003
+      description: "Motor thrust axial"
+      magnitude_N: 480.0
+      direction: [1, 0, 0]        # axial
+      application_node: "motor_mount_center"
+
+  boundary_conditions:
+    - node_group: "fuselage_frame_attachment"
+      constrained_dofs: [1, 2, 3, 4, 5, 6]   # all DOFs — fully clamped
+
+  non_design_solid: ["motor_mount_bolt_bosses", "wing_spar_tube_interfaces"]
+  non_design_void:  ["payload_bay", "fuel_line_routing_channel"]
+
+  # Simulated optimization result: converged but disconnected
+  simulated_optimization_result:
+    iterations: 178
+    converged: true
+    volume_fraction_achieved: 0.151
+    compliance_final: 0.0423
+    density_field_stats:
+      mean: 0.151
+      n_solid_elements: 2840     # density >= 0.5
+      n_lattice_elements: 1120   # density 0.2–0.5
+      n_void_elements: 14890
+    # Critical: ndimage.label finds 3 disconnected solid islands
+    connectivity_check:
+      n_components: 3
+      component_sizes: [2210, 510, 120]   # main body + two isolated islands
+      load_path_connected: false
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must detect disconnection
+  - type: field_value
+    field: load_path_connected
+    expected: "false"
+    description: >
+      load_path_connected must be reported as false. This is the critical
+      safety flag — everything downstream depends on it.
+
+  # Must NOT set ready_for_picogk
+  - type: field_value
+    field: topology_handoff.ready_for_picogk
+    expected: "false"
+    description: >
+      ready_for_picogk must be false when load_path_connected is false.
+      A disconnected topology would cause picogk-geometry to build a solid
+      model with isolated floating islands that pass all 4 picogk validation
+      checks (the islands are non-zero volume, connected within themselves,
+      and may even reduce total mass toward budget).
+
+  # Must report number of disconnected components
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "3 component"
+      - "3 disconnected"
+      - "n_components = 3"
+      - "three"
+      - "isolated"
+    description: >
+      Agent must report the specific number of disconnected components, not
+      just "disconnected". Knowing there are 3 components (not 2) helps
+      diagnose whether it's a single island (BC error) or systemic fracture
+      (volume_fraction too low).
+
+  # Must diagnose volume_fraction as likely cause
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "volume fraction"
+      - "0.15"
+      - "too low"
+      - "increase"
+    description: >
+      Volume fraction of 0.15 is below the 0.20–0.40 aerospace typical range
+      stated in the prompt. Agent must identify this as the primary candidate
+      cause before blaming BCs or design space.
+
+  # Must propose specific corrective actions
+  - type: output_contains_all
+    target: response_text
+    values:
+      - one_of: ["increase", "raise", "higher"]
+      - one_of: ["volume fraction", "volfrac", "0.2", "0.25", "0.30"]
+    description: >
+      Agent must propose increasing volume_fraction with a specific target
+      value. "Try increasing volume fraction" without a number leaves the
+      user with no actionable step — they might increase by 0.01 (still
+      disconnected) or by 0.30 (solid block, defeats the purpose).
+
+  # Must NOT write vault if disconnected
+  - type: field_value
+    field: vault_frontmatter.status
+    expected: "failed"
+    description: >
+      If topology_md is written at all (to preserve the audit trail),
+      status must be "failed", not "validated". A "validated" status on a
+      disconnected topology would be indistinguishable from a passing result
+      in downstream vault queries.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent runs scipy.ndimage.label on density >= 0.5 and finds n_components=3
+  (sizes: 2210, 510, 120 elements). Reports:
+    "load_path_connected: FALSE — 3 disconnected solid regions detected.
+    Sizes: [2210, 510, 120] elements."
+
+  Diagnoses:
+    PRIMARY: volume_fraction_target=0.15 is below the 0.20–0.40 aerospace
+    recommended range. At this volume fraction, 85% of material is removed —
+    insufficient to maintain a connected load path between the wing spar
+    interfaces and the motor mount attachment.
+    SECONDARY: Verify boundary conditions are correctly applied at the
+    clamped frame attachment. A BC error can cause the optimizer to find
+    a local minimum that appears to satisfy the volumetric constraint but
+    has no physical load path.
+
+  Proposes:
+    1. Increase volume_fraction_target to 0.25 or 0.30 (saves 70–75%
+       mass rather than 85%, but produces a connected, manufacturable
+       topology).
+    2. If 0.15 is a hard constraint (mass budget), revisit non-design
+       regions — the payload bay or routing channel exclusions may be
+       cutting through the natural load path.
+
+  Sets ready_for_picogk=false. Writes _topology.md with status=failed.
+  Does not emit topology_handoff (or emits with ready_for_picogk=false).
+
+failure_mode_tested: >
+  If ready_for_picogk=true despite n_components=3, picogk-geometry receives
+  a density field prescribing 3 isolated solid regions. build_solid_from_density()
+  produces 3 separate bodies. PicoGK's boolean_union joins them into one mesh
+  object, but they are not connected — the resulting STL is 3 separate shells.
+
+  picogk validation check "no_isolated_voxels" (voxels.is_connected()) catches
+  this... unless the three shells happen to share a voxel face at the 0.3 mm
+  voxel size. If they share a voxel face, is_connected() returns true.
+  simulation-fea meshes the "single body" and runs. The disconnected islands
+  (510 and 120 elements) behave as floating masses in the FE model — they
+  contribute to mass but not stiffness. FEA returns artificially low stress
+  (the disconnected mass is inertial, not structural), confidence is 0.92,
+  and the component proceeds to manufacturing. At proof load test the
+  isolated islands detach from the main body.

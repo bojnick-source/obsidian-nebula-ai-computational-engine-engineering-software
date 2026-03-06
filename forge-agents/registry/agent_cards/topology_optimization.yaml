@@ -1,0 +1,134 @@
+id: topology_optimization
+name: Topology Optimization
+version: "1.0.0"
+role: workflow
+domain: structural_analysis
+status: v1
+
+description: |
+  Computes the optimal material distribution for a component given boundary
+  conditions, load cases, and a volume fraction target. Output is a density
+  field (numpy array) prescribing where material is structurally necessary.
+  This is the structural prescription for picogk-geometry to follow — it
+  determines which regions should be solid, which should use lattice infill,
+  and which should be void.
+
+triggers:
+  - phrases: ["topology optimization", "TO", "minimum mass geometry",
+              "optimize the structure", "find the optimal shape", "SIMP",
+              "remove material where it's not needed",
+              "find the structurally efficient shape", "Swan"]
+
+preconditions:
+  - component_spec_in_vault        # from component-generation
+  - load_cases_defined             # magnitude, direction, application point
+  - boundary_conditions_defined    # fixed DOFs
+  - volume_fraction_target         # 0.20–0.40 for aerospace typical
+  - mesh_resolution_defined        # consistent with component size
+
+blocked_if:
+  - loads_qualitative_only         # "under stress" is not a load case
+  - block_signal: "[TO BLOCKED: LOADS REQUIRED]"
+  - block_action: return_to_component_generation
+
+solvers:
+  preferred: swan               # FEniCS-based, density + level-set, 3D
+  fallback_1: topy              # 2D and simple 3D
+  fallback_2: openmdao          # gradient-based, constrained multi-load-case
+  fallback_3: scipy_simp        # Sigmund (2001) reference implementation
+  selection_logic: |
+    Check availability in order: swan → topy → openmdao → scipy_simp.
+    Flag chosen solver in vault frontmatter.
+    scipy_simp is acceptable for 2D; for 3D > 10k elements use Swan/ToPy.
+
+capabilities:
+  - design_space_definition          # non-design solid/void from IF-XXX records
+  - solver_selection                 # 4-tier with availability check
+  - simp_implementation              # complete Sigmund (2001) scipy fallback
+  - swan_integration                 # FEniCS mesh + density/level-set method
+  - density_field_interpretation     # solid/lattice/void classification
+  - load_path_connectivity_check     # scipy.ndimage.label on solid region
+  - vault_write                      # _topology.md + _density.npy
+  - handoff_block_production         # topology_handoff XML
+
+tools_allowed:
+  - authorized_vault_write   # agent: Librarian
+  - bash                     # run Swan/ToPy/OpenMDAO, pip install, numpy I/O
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/topology_optimization/v1.0.0.md
+
+mandatory_output_fields:
+  - component_id
+  - solver_used
+  - volume_fraction_target
+  - volume_fraction_achieved
+  - iterations
+  - converged
+  - load_path_connected          # MUST be true before ready_for_picogk=true
+  - mass_reduction_pct
+  - vault_paths_written          # _topology.md + _density.npy
+  - topology_handoff             # XML block
+
+density_interpretation_thresholds:
+  solid: 0.5                     # density >= 0.5 → solid region
+  lattice: 0.2                   # density 0.2–0.5 → lattice infill candidate
+  void: 0.0                      # density < 0.2 → remove material
+
+volume_fraction_guide:
+  aerospace_typical: [0.20, 0.40]
+  note: "60–80% material removal is normal for optimized aerospace structures"
+  oC_tolerance: 0.02             # ±2% from target is acceptable; note in vault
+
+load_path_connectivity_policy: >
+  If scipy.ndimage.label(density >= 0.5) returns n_components > 1, the
+  result is physically invalid — the structure cannot transmit load.
+  Set ready_for_picogk=false. Diagnose cause (volume_fraction too low,
+  BC error, design space excludes load path). Do not pass disconnected
+  topology to picogk-geometry under any circumstances.
+
+swan_policy: >
+  Swan is the preferred solver. Always check for Swan before ToPy or
+  OpenMDAO. If Swan is available, use it for all 3D problems. Record
+  Swan version in vault frontmatter.
+
+predecessor_skills:
+  - component-generation    # provides component spec + load cases (IF-XXX)
+
+successor_skills:
+  - picogk-geometry         # consumes topology_handoff.ready_for_picogk=true
+                            # picogk uses density field to place solid vs. lattice
+
+does_not_do:
+  - generate_final_geometry       # picogk-geometry (consumes density prescription)
+  - validate_geometry_structurally # simulation-fea (runs on final PicoGK solid)
+  - multi_objective_optimization   # flag [MULTI-OBJECTIVE: define priority weighting]
+  - manufacturing_constraint_opt   # unless sensitivity filter explicitly applied
+  - replace_design_space_judgment  # GIGO: bad design space → bad topology
+
+checkerboard_prevention: >
+  Filter radius (rmin) must be ≥ 2× voxel size. If checkerboard appears
+  in result, increase rmin to ≥ 3× voxel size and re-run. Never accept
+  a checkerboard result — it indicates filter is too coarse relative to
+  mesh and the density field is numerically unstable.
+
+error_recovery:
+  swan_topy_openmdao_unavailable: use_scipy_simp_flag_solver_in_vault
+  checkerboard_pattern: increase_rmin_to_3x_voxel_size
+  load_path_disconnected: increase_volfrac_or_check_bcs_or_revise_design_space
+  no_convergence: check_rigid_body_motion_bc_error_then_increase_filter_radius
+  scipy_simp_too_slow_3d: reduce_mesh_for_first_pass_use_swan_for_production
+  volume_fraction_off_by_2pct: accept_and_note_in_vault
+  qualitative_loads: flag_TO_BLOCKED_return_to_component_generation
+
+notes: |
+  v1.0 scope: SIMP density-based method via Swan (preferred), ToPy, OpenMDAO,
+  or scipy fallback. Swan is the Leap71/FEniCS-based framework — same origin
+  as Noyron for PicoGK lattice generation, ensuring consistent density-to-
+  geometry translation.
+
+  The topology_handoff.picogk_instruction field is the critical handoff
+  artifact — it tells picogk-geometry exactly which density thresholds map
+  to which geometry operations (solid boolean, Noyron gyroid, void subtract).
+  picogk-geometry must not proceed with Noyron unless topology_handoff
+  explicitly recommends use_lattice_infill.

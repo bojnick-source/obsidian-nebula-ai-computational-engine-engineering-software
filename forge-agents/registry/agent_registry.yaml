@@ -15,7 +15,14 @@ agents:
     card: agent_cards/component_generation.yaml
     status: v1
 
-  # Workflow (geometry execution, runs after component-generation)
+  # Workflow (structural topology, runs after component-generation, before picogk-geometry)
+  - id: topology_optimization
+    role: workflow
+    domain: structural_analysis
+    card: agent_cards/topology_optimization.yaml
+    status: v1
+
+  # Workflow (geometry execution, runs after component-generation / topology-optimization)
   - id: picogk_geometry
     role: workflow
     domain: geometry_execution

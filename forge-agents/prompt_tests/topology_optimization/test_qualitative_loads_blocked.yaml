@@ -1,0 +1,132 @@
+# Prompt test: topology_optimization — qualitative loads gate
+#
+# Verifies that the agent refuses to run topology optimization when load cases
+# are described only qualitatively ("under stress", "high load") rather than
+# as quantified force vectors. Running SIMP with invented loads would produce
+# a plausible-looking density field that optimizes for the wrong load case —
+# the resulting topology could be critically weak in the actual loading direction.
+#
+# Run:  forge prompt-test run topology_optimization test_qualitative_loads_blocked
+
+id: test_qualitative_loads_blocked
+agent: topology_optimization
+version: "1.0.0"
+description: >
+  Agent must detect qualitative-only load descriptions, emit the canonical
+  [TO BLOCKED: LOADS REQUIRED] signal, and return to component-generation
+  without running any optimization or writing any vault output.
+
+# ── Input ─────────────────────────────────────────────────────────────────────
+
+input:
+  component_id: C-003
+  project_name: Aladdin-3B
+  spec_vault_path: "projects/Aladdin-3B/components/C-003_spec.md"
+  volume_fraction_target: 0.30
+  mesh_resolution_mm: 3.0
+
+  # Load cases are qualitative — no magnitudes, no directions
+  load_cases:
+    - description: "High bending loads during maneuver"
+    - description: "Under significant stress at wing root attachment"
+    - description: "Vibration loads from motor"
+    # None have: magnitude (N), direction (unit vector), application node/point
+
+  boundary_conditions:
+    - description: "Fixed at fuselage attachment points"
+    # No DOF numbers, no node IDs, no spatial coordinates
+
+# ── Assertions ────────────────────────────────────────────────────────────────
+
+assertions:
+  # Must emit the canonical block signal
+  - type: output_contains
+    target: response_text
+    value: "[TO BLOCKED: LOADS REQUIRED]"
+    description: >
+      The exact canonical block signal must appear. This is how Orchestrator
+      knows to route back to component-generation for load quantification.
+      A paraphrase like "loads are insufficient" is not machine-readable.
+
+  # Must NOT start optimization
+  - type: output_absent
+    field: density_array
+    description: >
+      No density field must be computed. Running SIMP with assumed loads
+      would produce a density field optimized for invented boundary
+      conditions. The field would look valid (converged, connected, correct
+      volume fraction) but would be structurally wrong for the actual loads.
+
+  # Must NOT write vault paths
+  - type: output_absent
+    field: vault_paths_written
+    description: >
+      No _topology.md or _density.npy must be written to vault. Writing them
+      would make the blocked state look like a successful run to downstream
+      agents (picogk-geometry would see a density file and proceed).
+
+  # Must NOT produce a topology_handoff
+  - type: output_absent
+    field: topology_handoff
+    description: >
+      topology_handoff must not be emitted. picogk-geometry and Noyron
+      must not be triggered from a blocked topology run.
+
+  # Must name which load cases are missing quantification
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "magnitude"
+      - "Newton"
+      - "force vector"
+      - "direction"
+      - "load case"
+    description: >
+      Agent must name what is missing from each load case — not just say
+      "loads are qualitative". The user needs to know what to provide:
+      magnitude (N), direction (unit vector), and application point (node /
+      coordinates).
+
+  # Must redirect to component-generation
+  - type: output_contains
+    target: response_text
+    one_of:
+      - "component-generation"
+      - "return to"
+      - "quantify"
+      - "provide load magnitudes"
+    description: >
+      Agent must tell the user where the fix belongs (component-generation,
+      which has access to the requirements and interface records) rather than
+      asking the user to provide loads directly to the topology skill.
+
+# ── Expected behavior summary ─────────────────────────────────────────────────
+
+expected_behavior: |
+  Agent inspects load_cases for C-003 and finds:
+    - "High bending loads during maneuver" → no magnitude (N·m?), no direction,
+      no application point
+    - "Under significant stress at wing root attachment" → adjective, no number
+    - "Vibration loads from motor" → no frequency, no amplitude, no direction
+  Agent also inspects boundary_conditions and finds no DOF numbers or node IDs.
+  Agent emits [TO BLOCKED: LOADS REQUIRED], lists the specific deficiencies
+  per load case, and directs back to component-generation to quantify from
+  flight envelope requirements (R-XXX records).
+  No optimization runs. No vault writes. No handoff.
+
+failure_mode_tested: >
+  If the agent invents loads (e.g., assumes F=100 N in the Z-direction based
+  on "bending"), SIMP converges after ~150 iterations to a density field that
+  looks entirely plausible. The field passes all checks: volume fraction ≈ 0.30,
+  load path connected, converged. topology_handoff.ready_for_picogk=true.
+  picogk-geometry builds a solid model from the prescription. simulation-fea
+  runs on the solid.
+
+  The FEA analysis uses the actual load cases (which ARE quantified in
+  simulation-fea's input, sourced from system-decomposition requirements).
+  The simulated component fails at 60% of limit load. The verifier flags it.
+  The root cause is traced back to the topology step — but by then, picogk
+  has committed geometry to vault, and the engineer has reviewed a plausible-
+  looking topology result. The audit trail shows "converged: true" and
+  "load_path_connected: true" for C-003's topology run, which looks like a
+  successful optimization, not a fabrication.
