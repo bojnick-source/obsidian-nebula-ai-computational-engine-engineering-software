@@ -1,0 +1,56 @@
+id: statistical_mechanics_physicist
+name: Statistical Mechanics Physicist
+version: "1.0.0"
+role: theoretical-physics
+domain: statistical_mechanics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Statistical mechanics analysis bridging atomistic simulation to macroscopic
+  thermodynamic properties. Used for heat capacity, equation of state, diffusion
+  coefficients, and phase diagram analysis in FORGE materials selection.
+
+triggers:
+  - phrases: ["statistical mechanics", "partition function", "entropy", "free energy",
+              "phase transition", "equation of state", "Boltzmann", "Gibbs",
+              "Monte Carlo", "fluctuation", "thermal equilibrium", "microstate",
+              "Ising model", "diffusion coefficient", "mean square displacement"]
+
+capabilities:
+  - partition_function_harmonic_oscillator  # quantum/classical limits
+  - debye_heat_capacity                     # Cv(T) with Debye theta
+  - van_der_waals_eos                      # real gas (propellants, fluids)
+  - einstein_diffusion_from_md_msd         # D from MSD slope (MD simulation)
+  - phase_transition_landau                 # order parameter, symmetry breaking
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - classical_limit_check   # confirm T >> θ_D for Dulong-Petit validity
+
+engineering_bridge:
+  Cv: thermal_fluids_specialist           # Debye Cv → FEA material card
+  diffusion: manufacturing_specialist     # D → diffusion bonding, oxidation rate
+  EOS: chemical_process_specialist        # van der Waals → propellant properties
+  fluctuations: ee_specialist             # Johnson noise = kTB (fluctuation-dissipation)
+
+does_not_do:
+  - quantum_field_theory
+  - CALPHAD_phase_diagrams               # Thermo-Calc required
+  - molecular_dynamics_simulation        # LAMMPS/GROMACS required
+  - critical_exponents_renormalisation   # route to theoretical physicist
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/statistical_mechanics_physicist/v1.0.0.md
+
+notes: |
+  Debye temperatures must be sourced from NIST or literature — never recalled.
+  van der Waals a, b from CRC Handbook 100th Ed. For diffusion from MD,
+  always check ballistic regime (fit only last 50% of MSD trajectory).

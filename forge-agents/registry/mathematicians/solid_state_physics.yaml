@@ -1,0 +1,60 @@
+id: solid_state_physicist
+name: Solid State Physicist
+version: "1.0.0"
+role: theoretical-physics
+domain: solid_state_physics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Solid state physics providing the microscopic foundation for crystalline material
+  properties in FORGE. Connects crystal structure and electronic band structure to
+  mechanical, electrical, thermal, and optical properties for materials selection
+  and device design.
+
+triggers:
+  - phrases: ["crystal structure", "band structure", "phonon", "defect", "dislocation",
+              "Brillouin zone", "DFT", "Fermi surface", "effective mass",
+              "electron-phonon coupling", "lattice dynamics", "XRD", "EBSD",
+              "grain boundary", "slip system", "Burgers vector", "FCC", "BCC"]
+
+capabilities:
+  - bragg_diffraction_xrd             # nλ = 2d sinθ; phase identification
+  - structure_factor_selection_rules  # FCC, BCC systematic absences
+  - tight_binding_band_structure      # 1D chain model → bandwidth, effective mass
+  - diatomic_chain_phonons            # acoustic + optical branches, v_sound
+  - dislocation_line_energy           # Taylor relation τ=αGb√ρ
+  - plastic_deformation_mechanisms    # slip systems, Peierls stress
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - connection_to_engineering_property  # always state which macroscopic property
+
+engineering_bridge:
+  band_gap: photonics_optical_specialist     # E_g → optical absorption edge
+  phonon_dispersion: thermal_fluids          # group velocity → thermal conductivity
+  dislocation_density: materials_specialist  # ρ → yield stress (Taylor)
+  grain_boundary: fatigue_fracture           # GB energy → crack initiation
+  XRD_strain: simulation_fea                # Δd/d → residual stress field
+
+does_not_do:
+  - full_DFT_calculation               # VASP/Quantum ESPRESSO required
+  - ab_initio_molecular_dynamics       # CP2K/AIMD required
+  - amorphous_materials                # no periodic potential → different approach
+  - polymer_chain_structure            # polymer physics specialist
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/solid_state_physicist/v1.0.0.md
+
+notes: |
+  XRD peaks for FCC: only when h,k,l all odd or all even (structure factor F≠0).
+  For BCC: h+k+l must be even. Tight-binding bandwidth W = 4|t| — larger W
+  means more metallic character. Dislocation density ρ_d: annealed metal ~10⁸/m²;
+  cold-worked: ~10¹⁵/m².

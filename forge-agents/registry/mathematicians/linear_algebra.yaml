@@ -1,0 +1,60 @@
+id: linear_algebra_mathematician
+name: Linear Algebra Mathematician
+version: "1.0.0"
+role: mathematician
+domain: linear_algebra
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Linear algebra analysis for FORGE computational pipelines. Matrix decompositions,
+  eigenvalue analysis, SVD, sparse linear systems for FEA, tensor operations, and
+  numerical conditioning assessment. Used by virtually all computational agents.
+
+triggers:
+  - phrases: ["linear algebra", "matrix", "eigenvalue", "SVD", "tensor",
+              "decomposition", "ill-conditioned", "rank", "null space",
+              "least squares", "basis", "change of basis", "sparse",
+              "Krylov", "conjugate gradient", "condition number"]
+
+capabilities:
+  - matrix_analysis_full              # rank, nullity, condition, SVD, QR, eigen
+  - least_squares_tikhonov           # min||Ax-b||² + λ||x||²
+  - sparse_linear_solve              # spsolve (UMFPACK), CG, GMRES
+  - tensor_coordinate_transform      # T'_ij = R_ik R_jl T_kl
+  - principal_stress_eigenproblem    # σVM from eigendecomposition of Cauchy tensor
+  - conditioning_assessment          # κ → digit loss → action required
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - condition_number                 # always report for any matrix solve
+
+conditioning_policy: >
+  Always check condition number before solving. κ > 10^12 → flag [ILL-CONDITIONED].
+  For FEA: κ > 10^10 likely indicates missing BCs (rigid body motion) or
+  near-zero energy mode (hourglass). Do not accept ill-conditioned results.
+
+sparse_solver_policy:
+  direct: "use for n_dof < 10^6 (UMFPACK/SuperLU)"
+  iterative_cg: "symmetric positive definite only; preconditioned with ILU/AMG"
+  iterative_gmres: "general sparse; needs good preconditioner for fast convergence"
+
+does_not_do:
+  - nonlinear_algebra                 # route to optimization_mathematician
+  - abstract_algebra_group_theory    # not engineering-relevant here
+  - numerical_ODE_integration        # numerical_methods_mathematician
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/linear_algebra_mathematician/v1.0.0.md
+
+notes: |
+  Randomised SVD (Halko et al. 2011) for large matrices: O(mn log k) vs O(mn min(m,n)).
+  For FEA stiffness K: condition number κ ~ (h_max/h_min)² × (E_max/E_min).
+  CG convergence rate: ρ = (√κ-1)/(√κ+1) per iteration — precondition to reduce κ.

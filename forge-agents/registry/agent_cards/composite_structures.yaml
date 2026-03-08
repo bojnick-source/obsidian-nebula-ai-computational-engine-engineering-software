@@ -1,0 +1,77 @@
+id: composite_structures_specialist
+name: Composite Structures Specialist
+version: "1.0.0"
+role: specialist
+domain: composite_structures
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides composite laminate analysis from constituent fibre/matrix
+  properties through to laminate-level strength assessment. Covers
+  Halpin-Tsai micromechanics, Classical Laminate Theory (ABD matrix),
+  Tsai-Wu first-ply failure, ILSS interlaminar shear check, and
+  manufacturability constraint enforcement. All ply angles are rounded
+  to {0, ±45, 90} deg for standard manufacturing compatibility.
+
+triggers:
+  - phrases: ["composite", "laminate", "CFRP", "GFRP", "fibre", "fiber",
+              "ply", "layup", "ABD matrix", "CLT", "classical laminate",
+              "Tsai-Wu", "Tsai-Hill", "ILSS", "interlaminar", "micromechanics",
+              "Halpin-Tsai", "winding", "prepreg", "autoclave", "resin",
+              "fibre volume fraction", "Vf", "stacking sequence"]
+
+preconditions:
+  - fibre_and_matrix_constituent_properties
+  - fibre_volume_fraction_Vf
+  - stacking_sequence_or_design_freedom
+  - in_plane_loads_Nx_Ny_Nxy_and_moments_Mx_My_Mxy
+  - manufacturing_process_identified
+
+capabilities:
+  - halpin_tsai_micromechanics   # E1, E2, G12, nu12 from Vf and constituent props
+  - clt_abd_matrix               # A, B, D matrices; mid-plane strains and curvatures
+  - tsai_wu_failure              # first-ply failure index; strength ratio per ply
+  - ilss_check                   # interlaminar shear stress vs allowable; short beam shear
+  - manufacturing_constraints    # ply-angle rounding to {0, ±45, 90}; balance/symmetry check
+  - hygrothermal_correction      # moisture and temperature knockdown factors (Ftu, E)
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/composite_structures_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - laminate_summary            # stacking sequence, ABD diagonal, min Tsai-Wu SR, ILSS margin
+
+ply_angle_constraint: >
+  All ply angles MUST be rounded to the nearest value in {0, ±45, 90} deg
+  for standard automated tape laying and hand layup manufacturability.
+  Non-standard angles (e.g. ±30, ±60) require explicit manufacturing process
+  approval; flag [NON-STANDARD PLY ANGLE: MFGR APPROVAL REQUIRED].
+
+predecessor_skills:
+  - materials-specialist        # fibre and matrix constituent properties with provenance
+  - system-decomposition        # structural load cases and mass targets
+
+successor_skills:
+  - simulation-fea              # laminate A/B/D constants for shell FEA
+  - manufacturing-specialist    # layup process, tooling, cure cycle
+
+does_not_do:
+  - 3d_interlaminar_normal_stress  # requires 3D shell/solid FEA; flags [SHELL FEA REQUIRED]
+  - bonded_joint_design            # adhesive joint analysis not in scope
+  - certification_compliance       # FAA/EASA composite certification not in scope
+  - woven_fabric_crimp_models      # plain/twill fabric property correction not in scope
+  - progressive_damage_modelling   # post-first-ply failure not in scope
+
+notes: |
+  v1 scope: Halpin-Tsai micromechanics + CLT ABD + Tsai-Wu FPF + ILSS.
+  Ply angles rounded to {0, ±45, 90} is a hard manufacturability constraint.
+  Hygrothermal knockdowns applied when environment conditions provided.
+  3D interlaminar normal stress and progressive damage deferred to v2.

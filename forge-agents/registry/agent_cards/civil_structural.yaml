@@ -1,0 +1,82 @@
+id: civil_structural_specialist
+name: Civil Structural Specialist
+version: "1.0.0"
+role: specialist
+domain: civil_structural
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides civil and structural engineering analysis per US building codes
+  including ASCE 7-22 load combinations, AISC 360-22 steel member design,
+  ACI 318-19 reinforced concrete beam and column design, and seismic base
+  shear via the Equivalent Lateral Force procedure. Scope is superstructure
+  analysis only; geotechnical and foundation design are excluded.
+
+triggers:
+  - phrases: ["civil", "structural", "beam", "column", "slab", "frame", "truss",
+              "load combination", "ASCE", "AISC", "ACI", "dead load", "live load",
+              "wind load", "seismic", "earthquake", "base shear", "drift", "story",
+              "reinforced concrete", "rebar", "steel section", "W-section", "HSS",
+              "moment frame", "braced frame", "shear wall", "bearing wall",
+              "IBC", "R-value", "occupancy category", "risk category", "Cs",
+              "effective length", "slenderness", "Mn", "Vu", "Pu", "phi factor",
+              "phi Mn", "phi Pn", "capacity reduction", "LRFD", "ASD"]
+
+preconditions:
+  - structural_system_type_and_geometry
+  - occupancy_category_or_risk_category
+  - site_location_or_design_spectral_accelerations
+  - gravity_loads_dead_and_live
+  - lateral_load_source_wind_or_seismic
+
+capabilities:
+  - asce7_load_combinations       # LRFD and ASD load combos; D, L, W, E, S, Lr per ASCE 7-22
+  - aisc360_column_design         # flexural buckling, torsional buckling; phi·Pn per AISC 360-22
+  - aisc360_beam_design           # compact/non-compact sections; phi·Mn, LTB, shear phi·Vn
+  - aci318_rc_beam                # flexural design, min/max rho, phi·Mn; shear stirrup spacing
+  - aci318_rc_column              # tied column phi·Pn-Mn interaction diagram; min eccentricity
+  - seismic_base_shear_elf        # ELF procedure: Cs, V, vertical distribution Fx per ASCE 7-22
+  - drift_check                   # story drift ratio vs ASCE 7 Table 12.12-1 limits
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/civil_structural_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - structural_summary            # governing load combo, controlling member, DCR, drift ratio
+
+design_codes:
+  gravity_loads: ASCE 7-22
+  steel_design: AISC 360-22
+  concrete_design: ACI 318-19
+  seismic: ASCE 7-22 Chapter 12 ELF
+
+predecessor_skills:
+  - system-decomposition          # structural system definition, floor plan, occupancy
+  - materials-specialist          # steel grade Fy/Fu, concrete f'c with provenance
+
+successor_skills:
+  - simulation-fea                # refined FEA for complex connections or irregular geometries
+  - safety-se-specialist          # structural reliability and code-compliance documentation
+
+does_not_do:
+  - geotechnical_analysis         # soil bearing capacity, settlement, slope stability not in scope
+  - foundation_design             # pile, mat, spread footing design not in scope
+  - post_tensioned_concrete       # PT/PT slab design not in scope
+  - construction_sequencing       # erection sequence and shoring not in scope
+  - connection_design             # bolted/welded connection design requires separate specialist
+  - dynamic_time_history_analysis  # response-spectrum or time-history analysis not in scope
+
+notes: |
+  v1 scope: ASCE 7-22 load combos + AISC 360-22 steel + ACI 318-19 RC +
+  ELF seismic base shear. All capacity checks use LRFD phi factors.
+  Seismic ELF valid for regular structures with T <= 3.5 Ts; irregular or
+  tall structures flag [MODAL ANALYSIS REQUIRED]. Post-tensioned concrete,
+  dynamic analysis, and connection design deferred to v2.

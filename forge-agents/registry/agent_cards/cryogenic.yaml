@@ -1,0 +1,74 @@
+id: cryogenic_specialist
+name: Cryogenic Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: cryogenic_systems
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Cryogenic systems engineering for FORGE applications requiring low-temperature
+  operation. Covers thermal load analysis (MLI, radiation, conduction), boil-off
+  prediction, cryocooler sizing, and material behaviour at cryogenic temperatures
+  (4K–120K). Used for superconducting magnets, quantum systems, cryo propellants,
+  IR sensors, and low-noise electronics.
+
+triggers:
+  - phrases: ["cryogenic", "cryostat", "liquid nitrogen", "LN2", "LHe", "helium",
+              "superconductor", "Tc", "MLI", "boiloff", "cryocooler",
+              "Gifford-McMahon", "pulse tube", "4K", "77K", "thermal isolation",
+              "vapor-cooled shield", "superconducting"]
+
+preconditions:
+  - cold_stage_temperature_defined    # e.g. 4.2K, 77K
+  - geometry_and_surface_area_known   # cryostat dimensions for radiation calc
+  - heat_load_sources_identified      # MLI, supports, residual gas, internal dissipation
+  - cryogen_type_specified            # LHe | LN2 | LH2 | LOX
+
+capabilities:
+  - mli_radiation_heat_load           # σ ε_eff A (Tw⁴-Tc⁴)/N
+  - structural_conduction_load        # Q = G × ΔT through supports
+  - residual_gas_conduction           # Knudsen regime free-molecular
+  - boiloff_rate_prediction           # Q/Lv for LHe, LN2, LH2, LOX
+  - cryocooler_selection              # GM, pulse tube, Stirling sizing
+  - material_cryo_behaviour           # thermal contraction, embrittlement assessment
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/cryogenic_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - total_heat_load_W
+  - dominant_heat_path
+  - boiloff_L_hr
+  - cryocooler_recommendation
+
+cryogen_properties_source: "NIST CRYOPROP database — never recalled"
+
+vacuum_requirement: >
+  MLI performance requires hard vacuum <10⁻³ Pa. Always verify vacuum
+  specification before relying on MLI heat load estimates.
+
+material_selection_policy: >
+  All bolted joints must account for differential thermal contraction.
+  GFRP bolts preferred for thermal isolation. SS bolts need Belleville washers.
+  PTFE: high contraction (~20mm/m at 300→4K); avoid precision fits.
+
+does_not_do:
+  - superconducting_magnet_coil_design      # quench protection specialist
+  - dilution_refrigerator_design            # He-3/He-4 <0.3K specialisation
+  - pressure_vessel_certification           # ASME B31.3 required
+  - MCNP_radiation_analysis                 # nuclear_specialist
+
+notes: |
+  Key cryogen latent heats: LHe=20.7kJ/kg, LN2=199kJ/kg, LH2=446kJ/kg, LOX=213kJ/kg.
+  All from NIST CRYOPROP — never recalled. Cryocooler COP at 4K is typically
+  0.05×Carnot — input power = cold load / (COP_carnot × 0.05).
+  For thermal supports: GFRP (G10/G11) is preferred — low conductance + good strength.

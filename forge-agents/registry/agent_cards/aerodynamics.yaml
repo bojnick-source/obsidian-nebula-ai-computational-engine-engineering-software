@@ -1,0 +1,76 @@
+id: aerodynamics_specialist
+name: Aerodynamics Specialist
+version: "1.0.0"
+role: specialist
+domain: aerodynamics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides aerodynamic analysis for fixed-wing, rotary-wing, and propeller
+  systems. Uses ISA atmosphere modelling, XFOIL wrapper for 2D aerofoil
+  analysis, Prandtl Lifting-Line Theory for finite wings, and Blade Element
+  Momentum theory for propellers. Flags cases requiring full 3D CFD when
+  flow physics exceed analytical model validity.
+
+triggers:
+  - phrases: ["aerodynamics", "lift", "drag", "airfoil", "aerofoil", "CL", "CD",
+              "L/D", "wing", "propeller", "blade", "BEM", "Mach", "Reynolds",
+              "atmosphere", "ISA", "stall", "induced drag", "thrust", "efficiency",
+              "pitch angle", "AoA", "angle of attack", "Prandtl", "XFOIL",
+              "lifting line", "aerodynamic performance"]
+
+preconditions:
+  - geometry_aerofoil_or_wing_planform
+  - flight_condition_velocity_altitude
+  - operating_reynolds_number
+  - required_lift_or_thrust
+
+capabilities:
+  - isa_atmosphere              # ISA standard atmosphere 0–86 km, rho/P/T/mu
+  - xfoil_wrapper               # 2D aerofoil Cl/Cd/Cm vs AoA; polar generation
+  - prandtl_llt                 # finite wing: induced drag, span efficiency, CLmax
+  - bem_propeller               # thrust, torque, efficiency vs J; blade element integration
+  - drag_buildup                # zero-lift parasite drag components; interference factors
+  - performance_envelope        # V-n diagram boundaries; stall speed; ceiling estimate
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - aero_summary                # CL, CD, L/D or thrust/torque, efficiency at design point
+
+cfd_flag_trigger: >
+  Flag [CFD REQUIRED] when: flow separation expected beyond thin-aerofoil
+  limits, Mach > 0.5 (compressibility / transonic shock), Re < 1×10⁴
+  (laminar separation bubble dominant), or 3D complex topology (blended
+  wing body, nacelle-wing junction, contra-rotating props).
+
+predecessor_skills:
+  - system-decomposition        # flight envelope, mass budget, mission profile
+  - materials-specialist        # structural constraints on wing/blade geometry
+
+successor_skills:
+  - simulation-fea              # aerodynamic loads → structural solve
+  - acoustics-specialist        # propeller BPF and tip-speed noise inputs
+
+does_not_do:
+  - full_3d_cfd                 # flags [CFD REQUIRED]; not executed here
+  - aeroelastic_flutter         # flags [AEROELASTIC ANALYSIS REQUIRED]
+  - hypersonic_aerodynamics     # Mach > 5 not in scope
+  - helicopter_rotor_wake       # free-vortex wake modelling not in scope
+  - multibody_interference_cfd  # complex store separation not in scope
+
+notes: |
+  v1 scope: ISA atmosphere + XFOIL 2D + Prandtl LLT + BEM propeller.
+  XFOIL valid for Re > 1×10⁴ and attached-flow regime. LLT valid for
+  moderate sweep (< 35°) and moderate AR. BEM accuracy degrades near
+  stall; flag when advance ratio J < 0.2. Full CFD (OpenFOAM) deferred to v2.

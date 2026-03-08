@@ -1,0 +1,71 @@
+id: environmental_specialist
+name: Environmental Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: environmental_sustainability
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Environmental impact assessment for FORGE designs. Covers life cycle assessment
+  (LCA per ISO 14040/44), GHG emissions inventory (Scope 1/2/3), REACH/RoHS
+  chemical compliance, material carbon intensity, and sustainability metrics.
+  Required for products entering EU, US, or global regulated markets.
+
+triggers:
+  - phrases: ["environment", "lifecycle", "LCA", "carbon", "emissions",
+              "sustainability", "CO2", "GWP", "EcoInvent", "ISO 14040",
+              "REACH", "RoHS", "recyclability", "environmental impact",
+              "supply chain emissions", "scope 3", "EPD"]
+
+preconditions:
+  - materials_list_with_mass     # from materials-specialist
+  - manufacturing_process_known  # from manufacturing-specialist
+  - use_phase_defined            # energy consumption during operation
+  - end_of_life_scenario_stated  # landfill | recycle | incineration | reuse
+
+capabilities:
+  - iso_14040_lca_framework      # goal/scope/inventory/assessment/interpretation
+  - ghg_scope_1_2_3_inventory    # DEFRA 2024 conversion factors
+  - reach_svhc_check             # ECHA Candidate List (updated semi-annually)
+  - rohs_iii_compliance          # EU 2015/863 Annex II substances
+  - material_carbon_intensity    # Bath ICE v3.0 + EcoInvent 3.10
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - total_CO2eq_kg
+  - hotspot_phase
+  - reach_rohs_flags
+
+data_sources:
+  required:
+    - "EcoInvent 3.10 (background processes)"
+    - "Bath ICE v3.0 (embodied carbon)"
+    - "ECHA SVHC Candidate List — verify current at echa.europa.eu"
+    - "DEFRA 2024 GHG conversion factors"
+  never_recall: "carbon intensity values — always cite Bath ICE or EcoInvent"
+
+lca_flag: "[LCA SOFTWARE REQUIRED: use SimaPro/OpenLCA for full attributional study]"
+
+does_not_do:
+  - full_lca_in_simapro_openlca    # flag [LCA SOFTWARE REQUIRED]
+  - iso_14040_certified_study      # registered LCA practitioner required
+  - supplier_emissions_audit       # Scope 3 requires supply chain engagement
+  - environmental_permitting       # regulatory authority required
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+  - web_search    # for ECHA/DEFRA current data
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/environmental_specialist/v1.0.0.md
+
+notes: |
+  REACH SVHC list updated semi-annually — always check ECHA website for current
+  candidate list. Do not use hardcoded list without version date.
+  High carbon materials: CFRP (28-32 kg CO2/kg), Ti alloys (80-115 kg CO2/kg).
+  Recycled aluminium: ~96% lower carbon than primary (0.5 vs 11.5 kg CO2/kg).

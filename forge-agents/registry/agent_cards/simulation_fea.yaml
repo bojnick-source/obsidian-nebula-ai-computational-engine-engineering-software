@@ -1,0 +1,76 @@
+id: simulation_fea
+name: Simulation FEA
+version: "1.0.0"
+role: workflow
+domain: structural_fea
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Executes finite element analysis on geometry produced by picogk-geometry.
+  Uses CalculiX as the primary solver and FEniCS as secondary, with Gmsh
+  for mesh generation. Mandates a 3-level convergence study and reports
+  safety factors against user-supplied load cases, material properties,
+  and boundary conditions.
+
+triggers:
+  - phrases: ["FEA", "finite element", "structural simulation", "stress analysis",
+              "displacement", "von Mises", "safety factor", "convergence study",
+              "mesh", "boundary condition", "load case", "static analysis",
+              "linear elastic FEA", "solve structure", "structural solve"]
+
+preconditions:
+  - geometry_from_picogk_vdb_or_stl
+  - load_cases_defined_forces_moments_pressures
+  - material_properties_E_nu_rho_Sy
+  - boundary_conditions_fixed_supports_contacts
+
+capabilities:
+  - mesh_generation               # Gmsh: tet4/tet10, hex8, surface mesh
+  - fea_solve_linear_static       # CalculiX primary; FEniCS secondary fallback
+  - convergence_study             # 3-level mesh refinement; report h-convergence
+  - safety_factor_assessment      # von Mises / yield; min SF reported per load case
+  - reaction_force_check          # global equilibrium verification
+  - displacement_output           # nodal displacements, max deflection
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/simulation_fea/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - fea_summary                  # solver, mesh stats, max stress, min SF, max disp
+
+convergence_requirement: >
+  Three mesh levels required (coarse / medium / fine). Report relative change
+  in peak von Mises stress between levels. Accept result when change < 5 %
+  between medium and fine; flag [CONVERGENCE NOT MET] otherwise.
+
+predecessor_skills:
+  - picogk-geometry              # validated VDB/STL geometry
+  - materials-specialist         # E, nu, rho, Sy with provenance
+  - component-generation         # load cases and BCs from requirements
+
+successor_skills:
+  - assembly-specialist          # assembly-level structural check
+  - fatigue-fracture-specialist  # peak stress inputs for life prediction
+
+does_not_do:
+  - fatigue_life_prediction      # routes to fatigue-fracture-specialist
+  - thermal_fea                  # routes to thermal-fluids-specialist
+  - explicit_dynamics            # crash / impact not in scope
+  - composite_ilss               # routes to composite-structures-specialist
+  - nonlinear_plasticity         # flags [NONLINEAR FEA REQUIRED]
+  - buckling_analysis            # flags [BUCKLING FEA REQUIRED]
+
+notes: |
+  v1 scope: linear static FEA with CalculiX + Gmsh. FEniCS used when
+  CalculiX solver convergence fails. Thermal-mechanical, buckling, and
+  nonlinear plasticity deferred to v2. 3-level convergence study is
+  mandatory; results without it are invalid.

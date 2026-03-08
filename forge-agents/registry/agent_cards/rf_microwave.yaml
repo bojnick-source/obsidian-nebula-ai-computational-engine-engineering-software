@@ -1,0 +1,82 @@
+id: rf_microwave_specialist
+name: RF & Microwave Specialist
+version: "1.0.0"
+role: specialist
+domain: rf_communications
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides RF and microwave analysis covering link budgets, antenna design,
+  transmission-line impedance, and EMC compliance estimation. Uses Friis
+  transmission equation for link budgets, analytical patch antenna sizing,
+  microstrip impedance models, VSWR and return loss calculation, and radiated
+  emission limit comparison against FCC Part 15 / CISPR 32. Flags cases
+  requiring full 3D electromagnetic simulation.
+
+triggers:
+  - phrases: ["RF", "radio frequency", "microwave", "antenna", "link budget",
+              "Friis", "EIRP", "gain", "dBi", "dBd", "patch antenna", "dipole",
+              "monopole", "microstrip", "stripline", "coaxial", "impedance matching",
+              "VSWR", "return loss", "S11", "S-parameter", "transmission line",
+              "wavelength", "frequency", "GHz", "MHz", "EMC", "EMI", "radiated",
+              "conducted", "FCC", "CISPR", "CE marking", "spectrum", "bandwidth",
+              "propagation", "path loss", "free space", "polarisation", "beam width",
+              "far field", "near field", "ground plane", "feed network"]
+
+preconditions:
+  - operating_frequency_or_band
+  - required_link_margin_or_data_rate
+  - antenna_type_or_aperture_constraint
+  - transmit_power_and_receiver_sensitivity
+  - substrate_properties_for_microstrip_design
+
+capabilities:
+  - link_budget_friis             # Friis equation; FSPL, Gt, Gr, Pt, SNR, link margin
+  - patch_antenna_design          # rectangular patch dimensions, resonant frequency, bandwidth estimate
+  - microstrip_impedance          # Hammerstad-Jensen closed-form Zo; effective permittivity
+  - vswr                          # VSWR and return loss from reflection coefficient Gamma
+  - emc_radiated_limits           # estimated E-field at 3/10 m vs FCC Part 15 Class A/B; CISPR 32
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/rf_microwave_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - rf_summary                    # link_margin_dB, antenna_gain_dBi, VSWR, EMC_margin_dB
+
+em_sim_signal: "[EM SIM REQUIRED]"
+
+em_simulation_trigger: >
+  Flag [EM SIM REQUIRED] when: antenna is electrically small (ka < 0.5),
+  coupling between antenna and structure is expected (nearby metal within 0.5λ),
+  phased array or beam-steering is required, or EMC compliance testing is
+  needed for regulatory submission rather than estimation.
+
+predecessor_skills:
+  - system-decomposition          # communication requirements, link geometry, data rate
+  - ee-specialist                 # transmit power, receiver sensitivity, PCB layout constraints
+
+successor_skills:
+  - safety-se-specialist          # EMC compliance plan and regulatory pathway
+  - thermal-fluids-specialist     # PA thermal management from RF power dissipation
+
+does_not_do:
+  - rf_circuit_design             # LNA, PA, mixer, filter active circuit design not in scope
+  - full_3d_em_simulation         # HFSS/CST/FEKO full-wave simulation not in scope; flags [EM SIM REQUIRED]
+  - complete_antenna_patterns      # 3D radiation pattern measurement/simulation not in scope
+  - phased_array_beamforming      # array element weighting and beam-steering not in scope
+  - channel_modelling             # multipath, fading, interference not in scope
+
+notes: |
+  v1 scope: Friis link budget + patch antenna sizing + microstrip impedance +
+  VSWR + EMC radiated limit estimation. Patch antenna model valid for rectangular
+  patch on uniform substrate; not valid for conformal or wideband designs.
+  Microstrip Hammerstad-Jensen valid for W/h from 0.1 to 10 and εr from 1 to 15.
+  Full 3D EM simulation (HFSS / CST / FEKO) deferred to v2.

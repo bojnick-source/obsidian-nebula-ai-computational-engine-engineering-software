@@ -1,0 +1,84 @@
+id: manufacturing_specialist
+name: Manufacturing Specialist
+version: "1.0.0"
+role: specialist
+domain: manufacturing_process
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides design-for-manufacture analysis, process selection, tolerance stack-up,
+  and GD&T specification for FORGE components. Evaluates process capability (Cpk),
+  performs worst-case and RSS tolerance analysis, and enforces DFM rules including
+  minimum wall thickness, draft angles, and feature accessibility. Issues warnings
+  when tolerances are unspecified or unachievable by the selected process.
+
+triggers:
+  - phrases: ["manufacturing", "DFM", "tolerance", "stack-up", "process selection",
+              "machining", "casting", "forging", "additive", "3D printing", "SLM",
+              "SLS", "DMLS", "injection moulding", "sheet metal", "GD&T",
+              "geometric dimensioning", "Cpk", "process capability", "surface finish",
+              "Ra", "draft angle", "minimum wall", "flatness", "parallelism",
+              "perpendicularity", "runout", "position tolerance", "MMC", "LMC",
+              "tolerance analysis", "worst case", "RSS", "fit", "clearance", "interference"]
+
+preconditions:
+  - component_geometry_or_drawing
+  - required_functional_dimensions_and_tolerances
+  - production_volume_estimate
+  - material_identified
+  - available_manufacturing_processes_or_open_selection
+
+capabilities:
+  - process_selection_matrix      # scored matrix: cost, volume, geometry complexity, tolerance capability
+  - tolerance_stack_worst_case_RSS  # 1D worst-case and RSS stack-up; gap/interference calculation
+  - process_capability_cpk        # Cpk from tolerance and process sigma; flag if Cpk < 1.33
+  - gdt_specification             # GD&T datum selection, feature control frames, ISO 1101 / ASME Y14.5
+  - dfm_rules                     # wall thickness, draft angle, undercut, tool access, bend radius checks
+  - surface_finish_specification  # Ra targets per process; match to tribology/fatigue requirements
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/manufacturing_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - manufacturing_summary         # selected process, critical tolerances, Cpk, DFM violations
+
+dfm_warning_signal: "[DFM WARN: UNSPECIFIED TOLERANCE]"
+
+tolerance_signals: >
+  Issue [DFM WARN: UNSPECIFIED TOLERANCE] when a functional interface dimension
+  has no tolerance specified. Issue [DFM WARN: PROCESS INCAPABLE] when the
+  required tolerance is tighter than the process 3-sigma capability (Cpk < 1.00).
+  Issue [DFM WARN: DRAFT ANGLE MISSING] for cast or moulded features without draft.
+
+predecessor_skills:
+  - component-generation          # component geometry and functional requirements
+  - materials-specialist          # material machinability, formability, surface finish limits
+  - composite-structures-specialist  # layup process constraints fed back to manufacturing
+  - tribology-specialist          # surface finish targets from Lambda ratio requirement
+
+successor_skills:
+  - fatigue-fracture-specialist   # surface finish Kf effect on fatigue allowable
+  - simulation-fea                # as-manufactured geometry and tolerance effects
+  - assembly-specialist           # interface fit and assembly sequence constraints
+
+does_not_do:
+  - cnc_gcode_generation          # CNC toolpath programming not in scope
+  - cost_estimation               # detailed cost modelling not in scope
+  - supplier_qualification        # vendor assessment and qualification not in scope
+  - process_planning_routing      # full manufacturing routing / operations planning not in scope
+  - metrology_inspection_planning # CMM programming and inspection plan not in scope
+
+notes: |
+  v1 scope: process selection matrix + tolerance stack-up (worst-case and RSS)
+  + Cpk + GD&T specification + DFM rules. Tolerance capability data sourced from
+  published process capability charts (Boothroyd & Dewhurst, Kalpakjian).
+  Cpk threshold: 1.33 for standard production; 1.67 for safety-critical features.
+  CNC G-code, cost modelling, and supplier qualification deferred to v2.

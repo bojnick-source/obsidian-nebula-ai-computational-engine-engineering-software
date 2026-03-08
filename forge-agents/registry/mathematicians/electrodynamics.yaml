@@ -1,0 +1,61 @@
+id: electrodynamics_physicist
+name: Classical Electrodynamics Physicist
+version: "1.0.0"
+role: theoretical-physics
+domain: classical_electrodynamics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Classical electrodynamics providing the theoretical foundation for FORGE systems
+  involving electromagnetic fields: magnetics, RF, power electronics switching
+  transients, EMC, and radar cross-section. Maxwell's equations in full generality.
+
+triggers:
+  - phrases: ["Maxwell equations", "electromagnetic", "radiation", "Poynting vector",
+              "wave propagation", "near field", "far field", "skin depth",
+              "eddy current", "dielectric", "permeability", "magnetic field energy",
+              "Faraday induction", "displacement current", "electromagnetic compatibility"]
+
+capabilities:
+  - em_wave_propagation_lossy_medium  # γ = jω√(με_c), α, β, skin depth
+  - skin_depth_conductors             # δ = √(2/ωμσ) — Litz wire sizing
+  - eddy_current_losses               # Steinmetz + classical lamination formula
+  - mutual_inductance_neumann         # coaxial loops, elliptic integral
+  - hertzian_dipole_radiation         # Rrad = 790(dl/λ)² Ω
+  - electromagnetic_boundary_conditions  # tangential E, normal B continuity
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - engineering_consequence          # always map physics to engineering impact
+
+engineering_bridge:
+  skin_depth: magnetics_specialist     # HF copper loss, Litz wire design
+  eddy_current: magnetics_specialist   # iron core loss, motor efficiency
+  wave_propagation: rf_microwave       # transmission line, antenna
+  near_field: ee_specialist            # PCB parasitics, shielding
+  radiation: rf_microwave              # far-field antenna pattern
+
+does_not_do:
+  - quantum_electrodynamics           # QED beyond scope
+  - magnetohydrodynamics              # plasma_specialist
+  - full_3d_em_simulation             # flag [HFSS/CST REQUIRED]
+  - spice_circuit_simulation          # ee_specialist
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/electrodynamics_physicist/v1.0.0.md
+
+notes: |
+  Skin depth in copper at 1MHz: δ = 66μm; at 10MHz: 21μm; at 100MHz: 6.6μm.
+  For wires d >> δ: use Litz wire (strands < 2δ). Eddy current loss ∝ f² B²
+  for thin laminations (d << δ); use grain-oriented silicon steel for 50Hz
+  transformers (Fe-3%Si, μr~10000, σ~2×10⁶ S/m).
+  Hertzian dipole Rrad = 790(dl/λ)² Ω — for dl/λ = 0.1: Rrad ≈ 7.9Ω (very small,
+  antenna efficiency limited by radiation resistance vs loss resistance).

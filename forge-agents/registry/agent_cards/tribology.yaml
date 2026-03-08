@@ -1,0 +1,81 @@
+id: tribology_specialist
+name: Tribology Specialist
+version: "1.0.0"
+role: specialist
+domain: tribology
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides tribological analysis covering contact mechanics, elastohydrodynamic
+  lubrication, wear life prediction, and lubrication regime identification.
+  Uses Hertz contact theory, Hamrock-Dowson EHL film thickness, Stribeck curve
+  analysis, and Archard wear law. Issues boundary-lubrication warnings when
+  film parameter Lambda falls below 1.0.
+
+triggers:
+  - phrases: ["tribology", "friction", "wear", "lubrication", "contact stress",
+              "Hertz", "EHL", "elastohydrodynamic", "Stribeck", "Archard",
+              "bearing", "surface finish", "lambda ratio", "film thickness",
+              "specific film thickness", "boundary lubrication", "mixed lubrication",
+              "hydrodynamic", "contact pressure", "sliding", "rolling", "fretting",
+              "coefficient of friction", "wear rate", "wear life", "galling"]
+
+preconditions:
+  - contact_geometry_radii_or_flat
+  - applied_normal_load
+  - material_properties_E_nu_hardness
+  - surface_roughness_Ra_or_Rq
+  - lubricant_viscosity_and_pressure_viscosity_coefficient
+  - operating_speed_and_temperature
+
+capabilities:
+  - hertz_contact               # contact half-width/radius, peak pressure, subsurface stress
+  - ehl_film_thickness_hamrock_dowson  # central and minimum film thickness; elliptical contacts
+  - stribeck_regime             # Lambda ratio; boundary/mixed/full-film regime identification
+  - archard_wear_life           # wear volume V = K·W·L/H; sliding distance to failure
+  - material_pairing            # galling risk, PV limit check, compatible material pairs
+  - surface_finish_specification  # required Ra for target Lambda at design operating point
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tribology_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - tribology_summary            # regime, Lambda, p_max, film_thickness, wear_life_cycles
+
+boundary_lubrication_signal: "[TRIBOLOGY WARN: BOUNDARY LUBRICATION]"
+
+lubrication_regime_signal: >
+  Issue [TRIBOLOGY WARN: BOUNDARY LUBRICATION] when Lambda < 1.0.
+  Issue [TRIBOLOGY WARN: MIXED LUBRICATION] when 1.0 <= Lambda < 3.0.
+  Full-film EHL confirmed when Lambda >= 3.0.
+
+predecessor_skills:
+  - materials-specialist        # E, nu, hardness, surface finish with provenance
+  - component-generation        # contact geometry, load cases, operating speeds
+  - simulation-fea              # contact forces from structural solve
+
+successor_skills:
+  - manufacturing-specialist    # surface finish targets for required Lambda
+  - fatigue-fracture-specialist # subsurface contact fatigue inputs
+
+does_not_do:
+  - bearing_geometry_design     # full bearing design (races, cage, geometry) not in scope
+  - lubricant_chemistry_specification  # oil/grease formulation selection not in scope
+  - hydrodynamic_journal_bearing_design  # Reynolds equation journal bearings not in scope
+  - fretting_fatigue_crack_propagation   # fretting crack growth needs fatigue-fracture-specialist
+  - sealing_design              # seal contact mechanics not in scope
+
+notes: |
+  v1 scope: Hertz contact + Hamrock-Dowson EHL + Stribeck regime + Archard wear.
+  Lambda ratio is the key lubrication regime indicator: Lambda = h_min / (Rq_composite).
+  Hamrock-Dowson valid for elliptical EHL contacts; not for conformal (e.g. full journal).
+  Galling risk assessment uses empirical PV limits and material pair compatibility tables.
+  Full hydrodynamic journal bearing analysis (Reynolds equation) deferred to v2.

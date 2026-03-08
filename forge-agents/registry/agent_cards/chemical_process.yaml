@@ -1,0 +1,88 @@
+id: chemical_process_specialist
+name: Chemical Process Specialist
+version: "1.0.0"
+role: specialist
+domain: chemical_process
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Provides chemical process and propulsion chemistry analysis covering reaction
+  thermodynamics, Arrhenius kinetics, bipropellant specific impulse estimation,
+  HAZOP hazard identification, and material compatibility assessment. Isp
+  calculations require CEA or STANJAN thermochemistry data as input; recalled
+  performance values are not accepted. All hazardous process nodes receive
+  HAZOP deviation analysis before any design output is issued.
+
+triggers:
+  - phrases: ["chemical", "reaction", "enthalpy", "Hess", "thermochemistry",
+              "kinetics", "Arrhenius", "activation energy", "rate constant",
+              "propellant", "bipropellant", "monopropellant", "Isp", "specific impulse",
+              "CEA", "STANJAN", "combustion", "oxidiser", "fuel", "LOX", "LH2",
+              "hydrazine", "MMH", "UDMH", "NTO", "chamber pressure", "nozzle",
+              "HAZOP", "hazard", "deviation", "what if", "material compatibility",
+              "corrosion resistance", "chemical compatibility", "SDS", "MSDS",
+              "flammability", "autoignition", "flash point", "vapour pressure",
+              "exotherm", "runaway", "relief valve", "vent", "containment"]
+
+preconditions:
+  - reactants_and_products_identified_or_propellant_pair
+  - operating_temperature_and_pressure
+  - thermochemical_data_source_cea_or_nist
+  - hazardous_inventory_quantities_for_hazop
+  - materials_in_contact_with_process_fluid
+
+capabilities:
+  - heats_of_reaction_hess        # ΔHrxn from Hess's law and standard enthalpies of formation
+  - arrhenius_kinetics            # k(T) = A·exp(-Ea/RT); half-life and conversion at temperature
+  - bipropellant_isp              # vacuum Isp from CEA/STANJAN data; not recalled values
+  - hazop_nodes                   # HAZOP guide-word deviation analysis per process node
+  - material_compatibility        # chemical compatibility matrix; corrosion allowance, swell factors
+
+tools_allowed:
+  - authorized_vault_write
+  - web_search
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/chemical_process_specialist/v1.0.0.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - chemical_summary              # ΔHrxn, Isp (if propulsion), HAZOP findings, compatibility verdict
+
+isp_data_requirement: >
+  Isp calculations MUST use CEA (Chemical Equilibrium with Applications) or
+  STANJAN thermochemistry solver output as input data. Recalled or handbook
+  Isp values are NOT accepted without citing the original CEA/STANJAN run
+  conditions (O/F ratio, Pc, nozzle expansion ratio, frozen/shifting equilibrium).
+
+hazop_requirement: >
+  All process nodes involving hazardous materials (flammable, toxic, reactive,
+  high-pressure) MUST receive a HAZOP guide-word deviation table covering:
+  No Flow, Reverse Flow, High/Low Temperature, High/Low Pressure, Contamination.
+  Flag [HAZOP INCOMPLETE] if node count exceeds analysis scope.
+
+predecessor_skills:
+  - materials-specialist          # material compatibility data with provenance
+  - system-decomposition          # propulsion requirements, thrust, burn duration
+
+successor_skills:
+  - thermal-fluids-specialist     # heat of reaction as thermal load to system
+  - safety-se-specialist          # HAZOP findings fed into safety case and fault tree
+
+does_not_do:
+  - detailed_reactor_design       # vessel sizing, internals, residence time distribution not in scope
+  - quantum_chemistry             # DFT, ab initio molecular modelling not in scope
+  - certify_propellant_procedures  # propellant handling certification not in scope; flags regulatory path
+  - distillation_column_design    # separation process design not in scope
+  - electrochemical_analysis      # battery chemistry, fuel cell reactions not in scope
+
+notes: |
+  v1 scope: Hess thermochemistry + Arrhenius kinetics + bipropellant Isp (CEA data)
+  + HAZOP node analysis + material compatibility. Isp values without CEA/STANJAN
+  source citations are flagged [ISP DATA UNVERIFIED]. HAZOP is a screening tool;
+  quantitative risk assessment (FMEA, fault tree) routes to safety-se-specialist.
+  Detailed reactor design and quantum chemistry deferred to v2.

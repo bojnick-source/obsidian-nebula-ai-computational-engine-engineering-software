@@ -1,0 +1,44 @@
+id: photonics_optical_specialist
+name: Photonics and Optical Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: photonics_optics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Optical and photonic system analysis for FORGE devices including LiDAR, laser
+  rangefinders, optical sensors, fiber communications, and imaging systems.
+  Covers Gaussian beam propagation, fiber design, LiDAR range equation, and link budgets.
+
+triggers:
+  - phrases: ["optics", "photonics", "laser", "lens", "optical fiber", "LiDAR",
+              "optical sensor", "photodetector", "refractive index", "NA",
+              "aperture", "ABCD matrix", "Gaussian beam", "Rayleigh range"]
+
+capabilities:
+  - gaussian_beam_abcd
+  - optical_fiber_parameters
+  - fiber_loss_budget
+  - lidar_range_equation
+
+fea_flag: "[FDTD SIM REQUIRED]"
+
+does_not_do:
+  - photolithography_process
+  - quantum_optical_effects
+  - full_wave_3d_fdtd
+  - laser_resonator_design
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/photonics_optical_specialist/v1.0.0.md

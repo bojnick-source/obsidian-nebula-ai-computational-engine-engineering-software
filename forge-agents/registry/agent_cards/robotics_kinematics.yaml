@@ -1,0 +1,51 @@
+id: robotics_kinematics_specialist
+name: Robotics and Kinematics Specialist
+version: "1.0.0"
+role: specialist
+domain: robotics_kinematics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Kinematic and dynamic analysis of robotic manipulators and drone platforms.
+  Provides Denavit-Hartenberg modelling, forward/inverse kinematics, Jacobian
+  computation, singularity detection, workspace analysis, and quintic polynomial
+  trajectory planning.
+
+triggers:
+  - phrases: ["robot", "kinematics", "inverse kinematics", "IK", "Jacobian",
+              "forward kinematics", "DH parameters", "manipulator", "end-effector",
+              "trajectory", "workspace", "singularity", "joint space", "SE(3)"]
+
+capabilities:
+  - dh_forward_kinematics           # T_0n via DH parameter chain
+  - geometric_jacobian              # J ∈ R^{6×n}, numerical central difference
+  - singularity_check               # manipulability w = sqrt(det(JJT))
+  - dls_inverse_kinematics          # Damped Least Squares, λ damping
+  - quintic_trajectory_planning     # position/velocity/acceleration BCs
+
+singularity_policy: >
+  Always check manipulability w before inverse kinematics. If w < 0.01,
+  configuration is near-singular. DLS damping (λ=0.05) prevents velocity
+  amplification but reduces accuracy near singularities. Flag to controls_specialist.
+
+does_not_do:
+  - collision_detection              # OMPL/MoveIt required
+  - actuator_hardware_design         # controls_specialist + ee_specialist
+  - force_control_analysis
+  - SLAM_navigation                  # dedicated mapping stack
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - manipulability
+  - singularity_warning
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/robotics_kinematics_specialist/v1.0.0.md

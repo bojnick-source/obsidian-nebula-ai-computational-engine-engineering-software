@@ -1,0 +1,52 @@
+id: semiconductor_specialist
+name: Semiconductor Physics and Device Engineering Specialist
+version: "1.0.0"
+role: specialist
+domain: semiconductor_power_electronics
+status: v1
+model: gpt-5.2-thinking
+
+description: |
+  Semiconductor device physics and power electronics for FORGE systems. Covers
+  power device selection (Si/SiC/GaN/IGBT), conduction and switching loss
+  calculation, junction temperature estimation, and thermal derating. Primary
+  use: motor drives, power conversion, and wide-bandgap device sizing.
+
+triggers:
+  - phrases: ["semiconductor", "MOSFET", "transistor", "bandgap", "doping",
+              "power electronics", "GaN", "SiC", "IGBT", "Schottky", "pn junction",
+              "threshold voltage", "breakdown voltage", "switching loss",
+              "thermal runaway", "Rdson", "Vce_sat"]
+
+capabilities:
+  - power_device_selection           # Si|SiC|GaN|IGBT based on V, I, freq
+  - conduction_switching_losses      # P_cond + P_sw
+  - junction_temperature             # Tj = Ta + P × Rth_total
+  - wbg_properties_reference        # SiC/GaN Ecrit, mobility, Tj_max table
+
+technology_selection:
+  GaN: "< 100V bus, > 200kHz switching — lowest Qg, near-zero Qrr"
+  SiC: ">= 600V bus — 3x higher Ecrit than Si, 4x lower Rdson×Area"
+  IGBT: "high current (>100A), low frequency (<20kHz) — low Vce_sat"
+  Si_MOSFET: "< 600V, moderate frequency — cost-effective"
+
+does_not_do:
+  - ic_asic_design
+  - spice_circuit_simulation         # ee_specialist
+  - device_characterisation_testing  # physical test required
+
+tools_allowed:
+  - authorized_vault_write
+  - bash
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+  - P_total_W
+  - Tj_C
+  - thermal_margin_C
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/semiconductor_specialist/v1.0.0.md
