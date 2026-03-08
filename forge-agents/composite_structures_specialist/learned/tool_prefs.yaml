@@ -1,0 +1,41 @@
+agent_id: composite_structures_specialist
+last_updated: null
+
+clt:
+  solver: abd_matrix              # "abd_matrix" — classical A, B, D stiffness matrices
+  ply_angles_deg: [0, 45, -45, 90]   # default angle set for quasi-isotropic
+  default_material: IM7_8552         # Hexcel IM7/8552 CFRP
+  moisture_condition: dry            # "dry" | "wet" — wet applies knockdown factors
+  temperature_C: 23                  # room temperature baseline
+
+failure_criteria:
+  primary: hashin                    # "max_stress" | "tsai_wu" | "hashin"
+  secondary: tsai_wu                 # cross-check with interactive criterion
+  tsai_wu_F12: -0.5                  # interaction coefficient (conservative)
+  first_ply_failure: true
+  last_ply_failure: false            # enable at Level 3+
+
+buckling:
+  method: plate_stability            # "euler_column" | "plate_stability"
+  boundary_conditions: ss_all        # "ss_all" | "clamped_all" | "mixed"
+  load_factor_safety: 1.5            # applied load factor for stability check
+
+process:
+  default_process: autoclave         # "autoclave" | "ooa_vbo" | "rtm"
+  cure_temperature_C: 180            # typical 180°C cure cycle
+  cure_pressure_bar: 7               # 7 bar autoclave pressure
+  target_void_fraction_pct: 1.0      # < 1% for aerospace grade
+
+material_database:
+  IM7_8552:
+    E1_GPa: 165
+    E2_GPa: 9.0
+    G12_GPa: 5.6
+    nu12: 0.34
+    Xt_MPa: 2724    # fibre tension strength
+    Xc_MPa: 1690    # fibre compression strength
+    Yt_MPa: 84      # matrix tension strength
+    Yc_MPa: 248     # matrix compression strength
+    S_MPa: 99       # in-plane shear strength
+    rho_kg_m3: 1570
+    Vf_nominal: 0.57

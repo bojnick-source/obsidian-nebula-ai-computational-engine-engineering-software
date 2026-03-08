@@ -1,0 +1,27 @@
+agent_id: nuclear_specialist
+last_updated: null
+
+criticality:
+  model: one_group_diffusion       # "four_factor" | "one_group_diffusion" | "multigroup"
+  cross_section_library: ENDF_B_VIII_0
+  temperature_K: 293.6             # 20°C reference
+  conservatism: upper_bound        # "best_estimate" | "upper_bound" (keff bias +Δ)
+  keff_bias_dk: 0.005              # add 0.005 ΔK/K conservatism to calculated keff
+
+shielding:
+  method: buildup_factor           # "buildup_factor" | "point_kernel"
+  buildup_data: ANSI_ANS_6_4_3
+  geometry: slab                   # default geometry "slab" | "cylinder" | "sphere"
+  dose_point_m: 1.0                # default dose evaluation distance
+
+decay_and_activation:
+  cross_section_source: ENDF_B_VIII_0
+  flux_spectrum: thermal           # "thermal" | "epithermal" | "fast"
+  bateman_solver: matrix_exponential
+  max_chains: 20                   # truncate chains beyond 20 generations
+
+kinetics:
+  model: point_kinetics
+  delayed_groups: 6                # standard 6-group delayed neutron model
+  fuel: UO2_3pct                   # default fuel composition
+  moderator: light_water

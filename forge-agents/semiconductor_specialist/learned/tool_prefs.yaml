@@ -1,0 +1,29 @@
+agent_id: semiconductor_specialist
+last_updated: null
+
+mosfet:
+  threshold_model: charge_sheet   # "charge_sheet" | "threshold_voltage_eq"
+  dibl_coefficient: auto          # auto-calculated from channel length + oxide
+  mobility_model: universal       # "constant" | "universal" (Taur-Ning)
+  channel_length_correction: true # polysilicon depletion + QM correction
+  default_vdd_V: 1.0
+
+pn_junction:
+  profile: abrupt                 # "abrupt" | "linear_graded"
+  minority_carrier_lifetime_s: 1.0e-6   # Si baseline
+  surface_recombination: false    # enable at Level 3+
+
+oxidation:
+  model: deal_grove
+  ambient: dry                    # "dry" | "wet"
+  temperature_C: 1000
+  pressure_atm: 1.0
+
+implant:
+  calculator: srim                # "srim" | "monte_carlo"
+  species: boron                  # default implant species
+  substrate: silicon
+
+power_device:
+  material: SiC                   # "Si" | "SiC" | "GaN"
+  breakdown_model: avalanche       # "avalanche" | "punchthrough"

@@ -1,0 +1,26 @@
+agent_id: plasma_specialist
+last_updated: null
+
+mhd_equilibrium:
+  solver: grad_shafranov_v1
+  flux_surfaces: 64
+  convergence_tolerance: 1.0e-8
+  pressure_profile: parabolic    # "parabolic" | "peaked" | "hollow"
+  current_profile: parabolic
+
+het_performance:
+  discharge_model: zero_d        # "zero_d" | "1d_fluid"
+  anomalous_transport: bohm      # "classical" | "bohm" | "near_wall"
+  bohm_factor: 1.0               # 1/16 default; tunable from data
+  cathode_coupling: -20          # V, typical keeper voltage
+
+plasma_processing:
+  etch_model: thornton            # "thornton" | "sigmund"
+  ion_energy_model: sheath_voltage
+  default_gas: argon
+  pressure_range_pa: [0.1, 100]
+
+debye_sheath:
+  bohm_criterion: true
+  child_langmuir: true
+  secondary_emission: false      # enable at Level 3+

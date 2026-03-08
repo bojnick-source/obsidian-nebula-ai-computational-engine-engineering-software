@@ -1,0 +1,25 @@
+agent_id: aerodynamics_specialist
+last_updated: null  # set on first run
+
+xfoil:
+  default_panels: 160       # NACA: sufficient for attached flow
+  ncrit: 9                  # free-flight default; override to 1-3 for wind tunnel
+  forced_transition: free   # "free" | "fixed" — set fixed when trip strip present
+  mach_correction: none     # "none" | "prandtl_glauert" | "karman_tsien"
+  max_iter: 200
+  convergence_rms: 1.0e-6
+
+bem_propeller:
+  radial_stations: 20       # stations from r/R=0.15 to 1.0
+  tip_loss: prandtl         # "prandtl" | "none"
+  hub_loss: prandtl         # "prandtl" | "none"
+  induction_tolerance: 0.001
+  glauert_correction_threshold: 0.4   # apply empirical correction when a > 0.4
+
+llt_lifting_line:
+  fourier_terms: 40         # number of sine series terms
+  spanwise_stations: 40     # collocation points
+
+isa_atmosphere:
+  model: ISA_1976           # ICAO standard
+  max_altitude_km: 86
