@@ -2,11 +2,14 @@ import { LeftRail } from "./LeftRail";
 import { CentralColumn } from "./CentralColumn";
 import { RightPane } from "./RightPane";
 import { PreviewOverlay } from "../viewer/PreviewOverlay";
+import { PresentationOverlay } from "../presentation/PresentationOverlay";
+import { ForgeSettingsPanel } from "../forge/ForgeSettingsPanel";
 import { useUIStore } from "../../store/useUIStore";
 
 export function Shell() {
   const { toggleRightPane } = useUIStore((s) => s.actions);
   const rightPaneVisible = useUIStore((s) => s.rightPaneVisible);
+  const settingsOpen = useUIStore((s) => s.settingsOpen);
 
   return (
     <div
@@ -49,8 +52,10 @@ export function Shell() {
         </div>
       </div>
 
-      {/* Preview overlay (portal-style, z-50) */}
+      {/* Overlays */}
       <PreviewOverlay />
+      <PresentationOverlay />
+      {settingsOpen && <ForgeSettingsPanel />}
     </div>
   );
 }

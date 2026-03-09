@@ -1,12 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useVaultStore } from "../../store/useVaultStore";
+import { useCollectionStore } from "../../store/useCollectionStore";
 import { useUIStore } from "../../store/useUIStore";
 import { MetadataPanel } from "../common/MetadataPanel";
+import { CollectionEditor } from "../collections/CollectionEditor";
 
 export function RightPane() {
   const selectedId = useVaultStore((s) => s.selectedId);
   const assets = useVaultStore((s) => s.assets);
   const rightPaneVisible = useUIStore((s) => s.rightPaneVisible);
+  const selectedCollectionId = useCollectionStore((s) => s.selectedCollectionId);
 
   const asset = selectedId ? assets[selectedId] : null;
 
@@ -24,7 +27,11 @@ export function RightPane() {
           exit={{ width: 0, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          <MetadataPanel asset={asset} />
+          {selectedCollectionId ? (
+            <CollectionEditor />
+          ) : (
+            <MetadataPanel asset={asset} />
+          )}
         </motion.div>
       )}
     </AnimatePresence>

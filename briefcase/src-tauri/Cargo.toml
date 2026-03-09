@@ -26,6 +26,8 @@ tokio = { version = "1", features = ["full"] }
 mime_guess = "2"
 thiserror = "1"
 chrono = { version = "0.4", features = ["serde"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+zeromq = "0.4"
 
 [profile.release]
 opt-level = 3

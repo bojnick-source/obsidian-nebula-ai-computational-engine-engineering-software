@@ -374,3 +374,207 @@ fn row_to_asset(row: &rusqlite::Row<'_>) -> rusqlite::Result<AssetRecord> {
         superseded_by: row.get(19)?,
     })
 }
+
+// ── Phase 2: Collections schema + CRUD ───────────────────────────────────────
+
+pub fn initialize_collections_schema(conn: &Connection) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute_batch(
+        r#"
+        CREATE TABLE IF NOT EXISTS collections (
+            id             TEXT PRIMARY KEY,
+            name           TEXT NOT NULL,
+            description    TEXT NOT NULL DEFAULT '',
+            cover_asset_id TEXT REFERENCES assets(id) ON DELETE SET NULL,
+            created_at     TEXT NOT NULL,
+            updated_at     TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS collection_items (
+            collection_id TEXT NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+            asset_id      TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+            position      INTEGER NOT NULL DEFAULT 0,
+            slide_notes   TEXT NOT NULL DEFAULT '',
+            PRIMARY KEY (collection_id, asset_id)
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_ci_collection ON collection_items(collection_id, position);
+        "#,
+    )?;
+    Ok(())
+}
+
+// ── Collection CRUD ───────────────────────────────────────────────────────────
+
+use crate::models::collection::{Collection, CollectionItem};
+
+pub fn insert_collection(conn: &Connection, c: &Collection) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute(
+        "INSERT INTO collections (id, name, description, cover_asset_id, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        params![c.id, c.name, c.description, c.cover_asset_id, c.created_at, c.updated_at],
+    )?;
+    Ok(())
+}
+
+pub fn get_collection(conn: &Connection, id: &str) -> Result<Collection, crate::error::BriefcaseError> {
+    let mut stmt = conn.prepare(
+        "SELECT c.id, c.name, c.description, c.cover_asset_id, c.created_at, c.updated_at,
+                COUNT(ci.asset_id) AS item_count
+         FROM collections c
+         LEFT JOIN collection_items ci ON ci.collection_id = c.id
+         WHERE c.id = ?1
+         GROUP BY c.id",
+    )?;
+    let result = stmt.query_row(params![id], row_to_collection).map_err(|_| {
+        crate::error::BriefcaseError::NotFound { id: id.to_string() }
+    })?;
+    Ok(result)
+}
+
+pub fn list_collections(conn: &Connection) -> Result<Vec<Collection>, crate::error::BriefcaseError> {
+    let mut stmt = conn.prepare(
+        "SELECT c.id, c.name, c.description, c.cover_asset_id, c.created_at, c.updated_at,
+                COUNT(ci.asset_id) AS item_count
+         FROM collections c
+         LEFT JOIN collection_items ci ON ci.collection_id = c.id
+         GROUP BY c.id
+         ORDER BY c.updated_at DESC",
+    )?;
+    let rows = stmt.query_map([], row_to_collection)?;
+    let mut results = Vec::new();
+    for row in rows {
+        results.push(row?);
+    }
+    Ok(results)
+}
+
+pub fn update_collection(
+    conn: &Connection,
+    id: &str,
+    name: &str,
+    description: &str,
+    cover_asset_id: Option<&str>,
+    updated_at: &str,
+) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute(
+        "UPDATE collections SET name = ?1, description = ?2, cover_asset_id = ?3, updated_at = ?4
+         WHERE id = ?5",
+        params![name, description, cover_asset_id, updated_at, id],
+    )?;
+    Ok(())
+}
+
+pub fn delete_collection(conn: &Connection, id: &str) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute("DELETE FROM collections WHERE id = ?1", params![id])?;
+    Ok(())
+}
+
+// ── Collection item operations ────────────────────────────────────────────────
+
+pub fn get_collection_items(
+    conn: &Connection,
+    collection_id: &str,
+) -> Result<Vec<CollectionItem>, crate::error::BriefcaseError> {
+    let mut stmt = conn.prepare(
+        "SELECT collection_id, asset_id, position, slide_notes
+         FROM collection_items
+         WHERE collection_id = ?1
+         ORDER BY position ASC",
+    )?;
+    let rows = stmt.query_map(params![collection_id], |row| {
+        Ok(CollectionItem {
+            collection_id: row.get(0)?,
+            asset_id: row.get(1)?,
+            position: row.get(2)?,
+            slide_notes: row.get(3)?,
+        })
+    })?;
+    let mut results = Vec::new();
+    for row in rows {
+        results.push(row?);
+    }
+    Ok(results)
+}
+
+pub fn add_to_collection(
+    conn: &Connection,
+    collection_id: &str,
+    asset_id: &str,
+    slide_notes: &str,
+) -> Result<(), crate::error::BriefcaseError> {
+    // Append at the end: max(position) + 1
+    let max_pos: i64 = conn.query_row(
+        "SELECT COALESCE(MAX(position), -1) FROM collection_items WHERE collection_id = ?1",
+        params![collection_id],
+        |row| row.get(0),
+    )?;
+    conn.execute(
+        "INSERT OR IGNORE INTO collection_items (collection_id, asset_id, position, slide_notes)
+         VALUES (?1, ?2, ?3, ?4)",
+        params![collection_id, asset_id, max_pos + 1, slide_notes],
+    )?;
+    // Touch updated_at on the parent collection
+    let now = chrono::Utc::now().to_rfc3339();
+    conn.execute(
+        "UPDATE collections SET updated_at = ?1 WHERE id = ?2",
+        params![now, collection_id],
+    )?;
+    Ok(())
+}
+
+pub fn remove_from_collection(
+    conn: &Connection,
+    collection_id: &str,
+    asset_id: &str,
+) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute(
+        "DELETE FROM collection_items WHERE collection_id = ?1 AND asset_id = ?2",
+        params![collection_id, asset_id],
+    )?;
+    Ok(())
+}
+
+pub fn reorder_collection_item(
+    conn: &Connection,
+    collection_id: &str,
+    asset_id: &str,
+    position: i64,
+) -> Result<(), crate::error::BriefcaseError> {
+    conn.execute(
+        "UPDATE collection_items SET position = ?1 WHERE collection_id = ?2 AND asset_id = ?3",
+        params![position, collection_id, asset_id],
+    )?;
+    Ok(())
+}
+
+/// Used by the FORGE listener to check for duplicates before ingesting.
+pub fn find_by_hash(
+    conn: &Connection,
+    hash: &str,
+) -> Result<Option<AssetRecord>, crate::error::BriefcaseError> {
+    let mut stmt = conn.prepare(
+        "SELECT id, content_hash, title, file_type, original_name,
+                project, subproject, source_agent, pipeline_id,
+                importance, audience, confidentiality, vetted_status,
+                tags, classification_confidence, classification_explanation,
+                created_at, ingested_at, version, superseded_by
+         FROM assets WHERE content_hash = ?1 LIMIT 1",
+    )?;
+    match stmt.query_row(params![hash], row_to_asset) {
+        Ok(record) => Ok(Some(record)),
+        Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
+        Err(e) => Err(crate::error::BriefcaseError::Database(e)),
+    }
+}
+
+fn row_to_collection(row: &rusqlite::Row<'_>) -> rusqlite::Result<Collection> {
+    Ok(Collection {
+        id: row.get(0)?,
+        name: row.get(1)?,
+        description: row.get(2)?,
+        cover_asset_id: row.get(3)?,
+        created_at: row.get(4)?,
+        updated_at: row.get(5)?,
+        item_count: row.get(6)?,
+    })
+}

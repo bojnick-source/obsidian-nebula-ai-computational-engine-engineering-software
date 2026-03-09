@@ -1,5 +1,8 @@
 import { useVaultStore } from "../../store/useVaultStore";
+import { useForgeStore } from "../../store/useForgeStore";
+import { useUIStore } from "../../store/useUIStore";
 import { importanceColor } from "../vault/ImportanceChip";
+import { CollectionSidebar } from "../collections/CollectionSidebar";
 import type { Importance } from "../../types/asset";
 
 const IMPORTANCE_ORDER: Importance[] = [
@@ -17,12 +20,14 @@ export function LeftRail() {
   const showArchived = useVaultStore((s) => s.showArchived);
   const { setGroupBy, toggleShowArchived } = useVaultStore((s) => s.actions);
 
+  const listenerRunning = useForgeStore((s) => s.listenerRunning);
+  const listenerConnected = useForgeStore((s) => s.listenerConnected);
+  const { toggleSettings } = useUIStore((s) => s.actions);
+
   const allAssets = Object.values(assets);
 
-  // Project list
   const projects = [...new Set(allAssets.map((a) => a.project).filter(Boolean))];
 
-  // Importance counts
   const importanceCounts = IMPORTANCE_ORDER.reduce<Record<string, number>>(
     (acc, imp) => {
       acc[imp] = allAssets.filter((a) => a.importance === imp).length;
@@ -127,6 +132,9 @@ export function LeftRail() {
           </section>
         )}
 
+        {/* Collections (Phase 2) */}
+        <CollectionSidebar />
+
         {/* Archive toggle */}
         <section className="mt-auto">
           <button
@@ -144,6 +152,36 @@ export function LeftRail() {
             )}
           </button>
         </section>
+      </div>
+
+      {/* FORGE status footer */}
+      <div
+        className="shrink-0 px-3 py-2"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+      >
+        <button
+          onClick={toggleSettings}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition-colors"
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full shrink-0"
+            style={{
+              background: listenerRunning
+                ? listenerConnected
+                  ? "#22c55e"
+                  : "#f59e0b"
+                : "#ffffff20",
+            }}
+          />
+          <span className="flex-1 text-left">
+            {listenerRunning
+              ? listenerConnected
+                ? "FORGE connected"
+                : "FORGE connecting…"
+              : "FORGE listener off"}
+          </span>
+          <span className="text-white/20">⚙</span>
+        </button>
       </div>
     </div>
   );

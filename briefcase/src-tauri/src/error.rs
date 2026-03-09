@@ -28,6 +28,12 @@ pub enum BriefcaseError {
 
     #[error("Object store error: {message}")]
     ObjectStore { message: String },
+
+    #[error("FORGE listener error: {message}")]
+    ForgeListener { message: String },
+
+    #[error("LLM classifier error: {message}")]
+    LlmClassifier { message: String },
 }
 
 // Required for Tauri IPC: serializes errors as JSON strings to the frontend
