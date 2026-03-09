@@ -1,0 +1,74 @@
+# Mesh-LHS Morphogenesis Engine — design space definition
+# Each parameter drives one or more morph operators applied to the base mesh.
+
+# Base mesh configuration
+base_mesh:
+  type: grid          # grid | hex | radial | custom
+  nx: 10
+  ny: 10
+  nz: 1               # 1 = planar 2.5D lattice; >1 = volumetric
+  spacing: 1.0
+  diagonals: true     # add face diagonals for shear stiffness
+
+# Structural boundary conditions
+boundary_conditions:
+  supports:
+    - type: pin        # pin | roller | fixed
+      nodes: bottom_row   # keyword resolved to node indices at runtime
+      dofs: [0, 1, 2]     # constrained global DOFs per node (0=X 1=Y 2=Z)
+  loads:
+    - type: point
+      nodes: top_center
+      force: [0.0, -1000.0, 0.0]   # Newtons, global frame
+
+# Material defaults
+material:
+  youngs_modulus: 200.0e9   # Pa (steel)
+  density: 7850.0           # kg/m³
+  yield_stress: 250.0e6     # Pa
+
+# Member cross-section (overridden per-sample by thickness param)
+section:
+  area_base: 1.0e-4         # m²  (baseline; scaled by thickness param)
+
+# Latin hypercube sampling
+sampling:
+  n_samples: 60
+  seed: 42
+  maximin_iters: 200        # restarts for maximin LHS criterion
+
+# Optimization loop
+optimization:
+  n_generations: 4
+  elite_fraction: 0.20      # keep top fraction for adaptive resampling
+  resample_fraction: 0.80   # fraction of next pop from surrogate; rest = random
+  pareto_objectives:        # metrics used for Pareto non-domination sorting
+    - compliance
+    - mass
+
+# Scoring weights for aggregate scalar (used alongside Pareto)
+scoring:
+  w_compliance: 1.0
+  w_mass: 0.5
+  w_stress_penalty: 2.0     # penalty coefficient for yield violations
+  w_mesh_penalty: 0.3
+  stress_limit_fraction: 0.8 # fraction of yield_stress before penalty kicks in
+
+# Parameter space — each entry: [name, lower, upper, transform]
+# transform: linear | log | angle
+parameters:
+  - [span_scale,        0.60, 1.80, linear]
+  - [height_scale,      0.50, 1.50, linear]
+  - [thickness,         0.01, 0.10, log]
+  - [curvature_amp,    -0.40, 0.40, linear]
+  - [twist_angle,      -25.0, 25.0, angle]
+  - [cell_skew,         0.00, 0.50, linear]
+  - [lattice_density,   2.00, 10.0, linear]
+  - [branch_bias,      -1.00, 1.00, linear]
+  - [smoothing_strength, 0.00, 1.00, linear]
+
+# Output control
+output:
+  save_top_k: 10
+  save_all_metrics: true
+  results_dir: results/
