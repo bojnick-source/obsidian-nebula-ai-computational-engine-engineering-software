@@ -1,0 +1,38 @@
+# Solid State Physicist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "solid_state_physicist"
+level: 1
+runs_completed: 0
+
+dft_preferences:
+  dft_code: "Quantum_ESPRESSO"          # open-source default; VASP requires licence flag
+  vasp_flag: true                        # set true to indicate VASP is commercial/flagged
+  functional: "PBE_GGA"                  # baseline; upgrade to HSE06 for band gaps
+  k_mesh: "8x8x8_MP"                    # Monkhorst-Pack grid
+  plane_wave_cutoff_eV: 500              # 500 eV / ~60 Ry
+  charge_density_cutoff_eV: 4000        # 4× plane-wave cutoff (norm-conserving)
+  smearing: "Methfessel-Paxton"
+  smearing_width_eV: 0.02
+  pseudopotential_library: "PSlibrary_1.0.0_ONCV"
+  scf_convergence_Ry: 1.0e-8
+  force_convergence_Ry_per_Bohr: 1.0e-3
+
+phonon_preferences:
+  phonon_method: "DFPT"                  # ph.x in Quantum ESPRESSO
+  q_mesh: "4x4x4"
+  interpolation: "Fourier"
+  finite_displacement_supercell: "2x2x2"  # fallback if DFPT unstable
+
+structure_preferences:
+  structure_database: "Materials_Project_mp_ids"
+  relaxation_method: "BFGS"
+  convergence_force_eV_per_Ang: 0.01
+
+band_gap_correction:
+  lda_gga_correction: "HSE06"           # preferred for semiconductors
+  metal_correction: "none"
+  strongly_correlated_correction: "DFT+U or DMFT"
+
+# Updated by learning loop
+last_updated: null

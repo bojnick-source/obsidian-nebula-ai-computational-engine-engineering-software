@@ -1,0 +1,19 @@
+# Fatigue & Fracture Specialist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "fatigue_fracture_specialist"
+level: 1
+runs_completed: 0
+
+fracture_toughness_database: MMPDS_12
+crack_growth_model: paris_law
+rainflow_counter: ASTM_E1049
+goodman_correction: modified_goodman
+sn_curve_basis: 50pct_survival
+
+# Populated after first successful run
+crack_growth_integrator_preferences: {}
+fad_calculator_preferences: {}
+
+# Updated by learning loop
+last_updated: null

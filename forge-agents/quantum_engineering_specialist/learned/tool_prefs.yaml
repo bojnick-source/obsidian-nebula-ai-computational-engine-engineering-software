@@ -1,0 +1,38 @@
+# Quantum Engineering Specialist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "quantum_engineering_specialist"
+level: 1
+runs_completed: 0
+
+simulator_preferences:
+  primary: "Qiskit_Aer"
+  mode: "statevector"        # statevector (noiseless) | density_matrix (noisy)
+  shots: 8192                # default shot count for sampling mode
+
+noise_model_preferences:
+  default: "depolarising"
+  depolarising_error_rate: 0.001   # 0.1% per gate (NISQ-era typical)
+  readout_error_rate: 0.01
+  error_mitigation: "zero_noise_extrapolation"
+
+qubit_platform: "superconducting_transmon"
+
+gate_set:
+  universal: ["H", "CNOT", "T", "S", "Rz"]
+  native_cx_equivalent: "CNOT"
+  decomposition_check: true   # warn when non-native gates used
+
+connectivity_assumption: "all_to_all"  # flag if sparse topology matters
+
+algorithm_defaults:
+  vqe_initialisation: "random"        # random | fixed_point
+  qaoa_layers: 1                      # p parameter
+  grover_iterations: "optimal"        # floor(pi/4 * sqrt(N/M))
+
+escalation_thresholds:
+  depth_times_error_rate: 0.1         # trigger [HARDWARE NOISE MODEL REQUIRED]
+  vqe_qubit_barren_plateau: 50        # qubit count above which barren plateau risk raised
+
+# Updated by learning loop
+last_updated: null
