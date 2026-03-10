@@ -1,0 +1,51 @@
+# Tribology Specialist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "tribology_specialist"
+level: 1
+runs_completed: 0
+
+contact_mechanics_preferences:
+  contact_model: "hertz_analytical"    # default; upgrade to GW for rough surfaces
+  geometry_default: "sphere_on_flat"
+  rough_surface_model: "Greenwood_Williamson"   # when Rq/R > 1e-4
+  gw_asperity_density_per_m2: 1.0e13  # typical engineering surface
+  elastic_modulus_GPa: 210.0          # default steel
+  poisson_ratio: 0.30
+
+lubrication_preferences:
+  lubrication_model: "reynolds_equation_1D"
+  ehl_model: "Dowson_Higginson"       # for p > 0.5 GPa contacts
+  default_lubricant: "ISO_VG_46_mineral"
+  viscosity_model: "walther_ASTM"     # ASTM D341 two-point Walther equation
+  viscosity_ref_temp_1_C: 40.0        # first reference temperature
+  viscosity_ref_temp_2_C: 100.0       # second reference temperature
+  pressure_viscosity_coeff_GPa_inv: 20.0   # α for EHL (typical mineral oil)
+  lambda_regime_thresholds:
+    boundary: 1.0                     # λ < 1.0 → boundary lubrication
+    mixed: 3.0                        # 1.0 ≤ λ < 3.0 → mixed lubrication
+    full_film: 3.0                    # λ ≥ 3.0 → full-film hydrodynamic
+
+wear_preferences:
+  wear_law: "archard"
+  archard_K_default: 1.0e-4          # mild adhesive wear (steel-on-steel, lubricated)
+  archard_K_severe: 1.0e-2           # severe adhesive wear (dry, unlubricated)
+  wear_mechanism_priority:            # check in order
+    - adhesive
+    - abrasive
+    - fatigue
+    - corrosive
+    - fretting
+
+surface_roughness_preferences:
+  surface_roughness_param: "Ra_and_Rq"   # always report both
+  additional_params: ["Rsk", "Rku"]      # skewness and kurtosis for tribology
+  measurement_standard: "ISO_4287"
+
+escalation_thresholds:
+  ehl_pressure_GPa: 1.0              # above this → [EHL SIMULATION REQUIRED]
+  md_film_thickness_nm: 10.0         # below this → [MD REQUIRED]
+  lambda_seizure_risk: 1.0           # λ < 1.0 → flag seizure risk
+
+# Updated by learning loop
+last_updated: null

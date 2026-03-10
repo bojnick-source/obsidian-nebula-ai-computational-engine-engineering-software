@@ -1,0 +1,50 @@
+# Academic Peer Reviewer — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: academic_peer_reviewer
+level: 1
+runs_completed: 0
+
+verdict_defaults:
+  default_when_uncertain: major_revision  # NEVER default to accept
+  min_score_for_accept: 9
+  min_score_for_minor_revision: 7
+  max_score_for_reject: 3
+
+provenance:
+  required_fields:
+    - tool_name
+    - tool_version
+    - input_hash_sha256
+    - random_seed          # required for any stochastic computation
+  textbook_alone_sufficient: false      # primary literature required for novel claims
+  arxiv_preprint_acceptable: true       # with note "preprint, not peer-reviewed"
+
+severity_thresholds:
+  fatal_min_conditions:
+    - conclusion_entirely_invalidated: true
+    - fundamental_methodological_error: true
+  major_min_conditions:
+    - new_analysis_required: true
+    - approximation_outside_regime: true
+  minor_conditions:
+    - cosmetic_or_citation_fix_only: true
+
+replication:
+  standard: stated_information_only     # must reproduce from paper alone
+  require_input_hash: true
+  require_method_specification: true    # algorithm must be fully stated
+
+scoring_calibration:
+  score_10_awarded: false               # never awarded by default
+  score_10_requires: "explicit written justification of zero objections"
+  score_9_requires: "zero major/fatal, ≤2 minor, full provenance, replicable"
+
+citation_standard:
+  primary_literature_preferred: true
+  textbook_sufficient_for: "established methods in well-defined regimes"
+  textbook_insufficient_for: "novel claims, non-standard approximations"
+
+# Updated by learning loop
+last_updated: null

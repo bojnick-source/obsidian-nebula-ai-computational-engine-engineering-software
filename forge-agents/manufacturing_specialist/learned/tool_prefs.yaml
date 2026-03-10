@@ -1,0 +1,60 @@
+# Manufacturing Specialist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: manufacturing_specialist
+level: 1
+runs_completed: 0
+
+tolerance:
+  default_method: RSS                 # RSS for production; worst-case only if safety-critical
+  capability_index: Cpk               # Cpk (not just Cp) — centring matters
+  min_acceptable_Cpk: 1.33            # short-term process capability target
+  min_acceptable_Cp: 1.67             # short-term potential capability
+
+surface_finish:
+  primary_parameter: Ra               # arithmetic mean height (ISO 4287)
+  Ra_to_Rz_factor: 5.0               # approximate: Rz ≈ 5 × Ra for turned surfaces
+  default_Ra_um_machined: 1.6         # typical finish-machined surface
+  default_Ra_um_ground: 0.4           # precision ground surface
+
+machining:
+  database: Sandvik_Coromant_2024
+  tool_life_model: Taylor             # v × T^n = C; apply when > 50 parts
+  default_sfm_steel_mild: 300         # surface feet/min (mild steel, HSS)
+  default_sfm_steel_mild_carbide: 700 # surface feet/min (mild steel, carbide)
+  default_feed_ipr: 0.005             # in/rev default for finish turning
+  coolant: flood                      # flood | mist | dry
+  min_wall_thickness_mm: 1.0          # below this flag thin-wall deflection
+
+casting:
+  draft_angle_min_deg: 1.5            # minimum draft for die casting
+  draft_angle_typical_deg: 3.0        # typical draft for sand/investment casting
+  min_wall_thickness_mm_diecast: 1.5
+  min_wall_thickness_mm_sand: 4.0
+  fillet_radius_min_mm: 1.0           # minimum inside corner fillet
+
+additive:
+  default_polymer_process: FDM        # FDM for thermoplastics
+  default_metal_process: LPBF         # laser powder bed fusion for metals
+  min_feature_FDM_mm: 0.5            # smallest printable feature FDM
+  min_feature_LPBF_mm: 0.2           # smallest printable feature LPBF
+  support_overhang_angle_FDM_deg: 45  # overhang threshold requiring support
+
+cost:
+  basis: feature_based_USD_2024
+  currency: USD
+  year: 2024
+  lot_size_default: 100               # default lot size for cost estimation
+
+gdt:
+  standard: ASME_Y14.5_2018
+  default_interpretation: regardless_of_feature_size  # RFS unless specified
+
+spc:
+  default_chart: Xbar_R               # for n ≤ 9; Xbar_S for n ≥ 10
+  western_electric_rules: true
+  control_limit_sigma: 3
+
+# Updated by learning loop
+last_updated: null

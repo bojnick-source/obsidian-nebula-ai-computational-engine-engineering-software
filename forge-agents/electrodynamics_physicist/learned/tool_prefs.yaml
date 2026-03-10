@@ -1,0 +1,56 @@
+# Electrodynamics Physicist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: electrodynamics_physicist
+level: 1
+runs_completed: 0
+
+solver:
+  default_regime: analytical_canonical  # always attempt before numerical escalation
+  escalation_threshold: NUMERICAL_EM_REQUIRED
+  fdtd_cells_per_wavelength: 20         # minimum spatial resolution
+  fdtd_pml_layers: 10                   # perfectly matched layer thickness
+  fdtd_courant_number: 0.99             # stability: CFL < 1 / sqrt(ndim)
+  fem_order: 2                          # second-order Nedelec elements default
+
+medium:
+  default: vacuum
+  epsilon_r_default: 1.0
+  mu_r_default: 1.0
+  sigma_default_S_per_m: 0.0
+  linear_isotropic_homogeneous: true    # assumed unless stated otherwise
+
+polarisation:
+  TE_definition: s-polarisation         # E perpendicular to plane of incidence
+  TM_definition: p-polarisation         # E in plane of incidence
+  convention: physics                   # "physics" (k,E,H right-hand) vs "engineering"
+
+boundary_conditions:
+  open_domain: PML                      # absorbing boundaries
+  periodic: Bloch                       # periodic structures
+  waveguide: PEC                        # perfect electric conductor walls
+
+skin_depth:
+  formula: delta_m                      # delta = sqrt(2 / (omega * mu * sigma))
+  warn_if_structure_thinner_than_delta: true
+
+near_far_field:
+  near_field_zone: lambda_div_2pi       # r << lambda / (2*pi)
+  far_field_zone: 2D^2_per_lambda       # Fraunhofer criterion r > 2D²/λ
+
+units:
+  electric_field: V/m
+  magnetic_field: A/m
+  power_density: W/m2
+  frequency: Hz
+  wavelength: m
+  permittivity: F/m
+  permeability: H/m
+
+numerical_stability:
+  warn_if_cells_below: 10              # cells per wavelength < 10 → accuracy risk
+  warn_if_aspect_ratio_above: 5        # cell aspect ratio > 5 → numerical dispersion
+
+# Updated by learning loop
+last_updated: null

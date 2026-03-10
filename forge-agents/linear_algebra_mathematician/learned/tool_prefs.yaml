@@ -1,0 +1,20 @@
+# Linear Algebra Mathematician — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "linear_algebra_mathematician"
+level: 1
+runs_completed: 0
+
+default_backend: numpy_scipy
+sparse_format: CSR
+least_squares_method: QR
+svd_driver: gesdd
+eigenvalue_solver: ARPACK_for_sparse
+condition_number_threshold: 1e12
+
+# Populated after first successful run
+numpy_scipy_preferences: {}
+arpack_preferences: {}
+
+# Updated by learning loop
+last_updated: null

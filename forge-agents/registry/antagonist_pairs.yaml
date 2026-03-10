@@ -20,6 +20,80 @@ pairs:
       - safety_margin_challenges
       - failure_mode_challenges
 
+  # Physics antagonist pairs
+  - specialist: electrodynamics_physicist
+    antagonist: physics_antagonist
+    debate_scope:
+      - approximation_regime_validity
+      - conservation_law_check
+      - dimensional_analysis
+      - benchmark_comparison
+    reviewer: academic_peer_reviewer
+
+  - specialist: quantum_mechanics_physicist
+    antagonist: physics_antagonist
+    debate_scope:
+      - non_relativistic_limit_check
+      - perturbation_validity
+      - wavefunction_normalisation
+      - many_body_approximation
+    reviewer: academic_peer_reviewer
+
+  - specialist: statistical_mechanics_physicist
+    antagonist: physics_antagonist
+    debate_scope:
+      - thermodynamic_limit_validity
+      - ergodicity_assumption
+      - classical_vs_quantum_statistics
+      - mean_field_dimension_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: solid_state_physicist
+    antagonist: physics_antagonist
+    debate_scope:
+      - dft_functional_appropriateness
+      - kpoint_convergence
+      - effective_mass_tensor_vs_scalar
+      - phonon_model_completeness
+    reviewer: academic_peer_reviewer
+
+  # Mathematics antagonist pairs
+  - specialist: linear_algebra_mathematician
+    antagonist: mathematics_antagonist
+    debate_scope:
+      - numerical_stability_audit
+      - solver_algorithm_correctness
+      - condition_number_impact
+      - convergence_verification
+    reviewer: academic_peer_reviewer
+
+  - specialist: statistics_probability_mathematician
+    antagonist: mathematics_antagonist
+    debate_scope:
+      - assumption_satisfaction
+      - multiple_comparisons_control
+      - causality_claim_validity
+      - power_and_effect_size
+    reviewer: academic_peer_reviewer
+
+  # Universal academic panel (multi-agent outputs)
+  - specialist: all
+    antagonist: academic_peer_reviewer
+    debate_scope:
+      - cross_agent_consistency
+      - reproducibility_assessment
+      - academic_panel_verdict
+      - pre_publication_gate
+    notes: "academic_peer_reviewer reviews any single-agent or multi-agent output"
+
 notes: |
   Antagonist debate is V1 only. At MVP, single-specialist path with no debate.
   Debate is activated by SWITCH_NO_ANTAGONIST being OFF (default in full mode).
+
+  V1 adds three new antagonist roles:
+  - physics_antagonist: attacks regime validity in all physics agent outputs
+  - mathematics_antagonist: attacks numerical stability and statistical assumptions
+  - academic_peer_reviewer: universal cross-domain reviewer with brutally high standards
+
+  academic_peer_reviewer is the final-authority critique signal and may override
+  lower-authority antagonist verdicts in a panel review context.

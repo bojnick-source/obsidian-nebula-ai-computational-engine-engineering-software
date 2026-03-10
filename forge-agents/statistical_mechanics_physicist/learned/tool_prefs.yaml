@@ -1,0 +1,39 @@
+# Statistical Mechanics Physicist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "statistical_mechanics_physicist"
+level: 1
+runs_completed: 0
+
+monte_carlo_preferences:
+  mc_algorithm: "Metropolis_Hastings"   # detailed balance enforced
+  ising_lattice_default: "2D_square_L50"
+  boundary_conditions: "periodic"
+  equilibration_sweeps: 10000
+  production_sweeps: 100000
+  measurement_interval: 10             # sweeps between measurements
+
+molecular_dynamics_preferences:
+  md_integrator: "velocity_Verlet"
+  timestep_fs: 1.0                     # default; reduce to 0.5 fs for stiff bonds
+  ensemble: "NVT_Nose_Hoover"
+  thermostat_relaxation_time_ps: 0.1
+  units: "reduced_LJ"                  # epsilon=1, sigma=1, mass=1 unless specified
+  equilibration_steps: 100000
+  production_steps: 1000000
+  trajectory_output_interval: 1000
+
+phase_transition_preferences:
+  order_parameter_binning: 50          # histogram bins for order parameter
+  finite_size_scaling: true            # perform L-scaling analysis by default
+  system_sizes: [20, 30, 50, 80, 100] # L values for FSS
+  critical_region_threshold: 0.01     # |T-Tc|/Tc < 0.01 → trigger RG escalation
+
+statistical_analysis_preferences:
+  autocorrelation_method: "integrated_autocorrelation_time"
+  jackknife_blocks: 20
+  bootstrap_samples: 1000
+  convergence_check: "R_hat"           # Gelman-Rubin for parallel chains
+
+# Updated by learning loop
+last_updated: null

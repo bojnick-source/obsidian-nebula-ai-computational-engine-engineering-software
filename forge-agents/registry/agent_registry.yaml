@@ -135,6 +135,24 @@ agents:
     card: agent_cards/materials.yaml
     status: v1
 
+  - id: physics_antagonist
+    role: antagonist
+    domain: physics_critique
+    card: agent_cards/physics_antagonist.yaml
+    status: v1
+
+  - id: mathematics_antagonist
+    role: antagonist
+    domain: mathematics_critique
+    card: agent_cards/mathematics_antagonist.yaml
+    status: v1
+
+  - id: academic_peer_reviewer
+    role: antagonist
+    domain: universal_critique
+    card: agent_cards/academic_peer_reviewer.yaml
+    status: v1
+
   # Verifiers
   - id: structural_verifier
     role: verifier
