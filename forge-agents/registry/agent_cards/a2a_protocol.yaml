@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: a2a_protocol_specialist
+name: A2A Protocol Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: a2a_protocol
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Designs agent-to-agent message schemas, delivery guarantees, and protocol versioning. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/a2a_protocol_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: a2a_protocol_antagonist
 
 mandatory_output_fields:
   - findings

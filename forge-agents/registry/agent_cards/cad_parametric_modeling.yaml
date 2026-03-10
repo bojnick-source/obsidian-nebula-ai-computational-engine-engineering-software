@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: cad_parametric_modeling_specialist
+name: CAD Parametric Modeling Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: cad_parametric_modeling
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Creates parametric CAD models with robust constraint and feature management. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/cad_parametric_modeling_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: cad_parametric_modeling_antagonist
 
 mandatory_output_fields:
   - findings

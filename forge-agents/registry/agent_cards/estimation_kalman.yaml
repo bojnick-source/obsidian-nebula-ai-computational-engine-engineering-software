@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: estimation_kalman_specialist
+name: Estimation & Kalman Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: estimation_kalman
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Implements Kalman-family filters for optimal state and parameter estimation. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/estimation_kalman_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: estimation_kalman_antagonist
 
 mandatory_output_fields:
   - findings

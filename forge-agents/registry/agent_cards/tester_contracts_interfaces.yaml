@@ -1,0 +1,23 @@
+id: tester_contracts_interfaces
+name: Tester Contracts Interfaces
+version: "1.0.0"
+role: tester
+domain: contracts_interfaces
+status: planned
+
+description: |
+  Tests interface contracts between agents for schema compliance and version compatibility. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_contracts_interfaces/v1.0.0.md
+mandatory_output_fields:
+  - test_results
+  - failures
+  - coverage_summary
+
+notes: |
+  STUB — status: planned.

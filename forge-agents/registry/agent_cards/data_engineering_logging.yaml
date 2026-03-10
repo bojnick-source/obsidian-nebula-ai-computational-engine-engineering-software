@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: data_engineering_logging_specialist
+name: Data Engineering & Logging Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: data_engineering_logging
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Designs data pipelines, schema evolution strategies, and structured logging systems. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/data_engineering_logging_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: data_engineering_logging_antagonist
 
 mandatory_output_fields:
   - findings

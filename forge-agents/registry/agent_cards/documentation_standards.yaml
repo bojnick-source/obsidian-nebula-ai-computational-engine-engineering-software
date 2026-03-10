@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: documentation_standards_specialist
+name: Documentation Standards Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: documentation_standards
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Establishes documentation standards, review discipline, and audience-appropriate content. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/documentation_standards_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: documentation_standards_antagonist
 
 mandatory_output_fields:
   - findings

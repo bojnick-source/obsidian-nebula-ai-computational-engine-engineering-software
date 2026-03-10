@@ -1,0 +1,25 @@
+id: forge_orchestrator
+name: FORGE Orchestrator
+version: "1.0.0"
+role: orchestrator
+domain: forge_command
+status: planned
+
+description: |
+  Top-level FORGE orchestrator: receives tasks, builds agent execution graphs,
+  dispatches to specialists, and assembles final outputs. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+  - agent_dispatch
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_orchestrator/v1.0.0.md
+mandatory_output_fields:
+  - task_graph
+  - dispatch_log
+  - final_output
+
+notes: |
+  STUB — status: planned. Core command agent; replaces ad-hoc orchestration.

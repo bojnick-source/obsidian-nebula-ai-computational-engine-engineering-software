@@ -1,0 +1,23 @@
+id: risk_register_monitor
+name: Risk Register Monitor
+version: "1.0.0"
+role: maintenance
+domain: risk_register_monitor
+status: planned
+
+description: |
+  Monitors the risk register for stale mitigations and unreviewed escalations. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/risk_register_monitor/v1.0.0.md
+mandatory_output_fields:
+  - audit_findings
+  - issues_flagged
+  - recommended_actions
+
+notes: |
+  STUB — status: planned.

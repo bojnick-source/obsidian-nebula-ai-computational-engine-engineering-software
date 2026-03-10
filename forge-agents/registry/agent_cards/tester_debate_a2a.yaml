@@ -1,0 +1,23 @@
+id: tester_debate_a2a
+name: Tester Debate A2a
+version: "1.0.0"
+role: tester
+domain: debate_a2a
+status: planned
+
+description: |
+  Tests agent-to-agent debate protocol, message delivery, and arbitration flow. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_debate_a2a/v1.0.0.md
+mandatory_output_fields:
+  - test_results
+  - failures
+  - coverage_summary
+
+notes: |
+  STUB — status: planned.

@@ -1,0 +1,23 @@
+id: maintenance_global_antagonist
+name: Maintenance Global Antagonist
+version: "1.0.0"
+role: maintenance
+domain: maintenance_global_antagonist
+status: planned
+
+description: |
+  Challenges the maintenance mesh's own audit coverage and escalation thresholds. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/maintenance_global_antagonist/v1.0.0.md
+mandatory_output_fields:
+  - audit_findings
+  - issues_flagged
+  - recommended_actions
+
+notes: |
+  STUB — status: planned.

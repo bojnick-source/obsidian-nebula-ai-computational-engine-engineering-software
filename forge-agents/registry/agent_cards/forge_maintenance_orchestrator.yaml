@@ -1,0 +1,24 @@
+id: forge_maintenance_orchestrator
+name: FORGE Maintenance Orchestrator
+version: "1.0.0"
+role: orchestrator
+domain: forge_command
+status: planned
+
+description: |
+  Coordinates the maintenance mesh agents, schedules audits,
+  and escalates drift or integrity issues. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_maintenance_orchestrator/v1.0.0.md
+mandatory_output_fields:
+  - audit_schedule
+  - issue_log
+  - escalations
+
+notes: |
+  STUB — status: planned.

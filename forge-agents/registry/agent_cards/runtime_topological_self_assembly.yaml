@@ -1,0 +1,28 @@
+id: runtime_topological_self_assembly_specialist
+name: Runtime Topological Self-Assembly Specialist
+version: "1.0.0"
+role: specialist
+domain: runtime_topological_self_assembly
+status: planned
+
+description: |
+  Manages dynamic agent topology assembly, graph convergence, and cycle prevention at runtime. STUB — to be fleshed out.
+
+capabilities: []
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/runtime_topological_self_assembly_specialist/v1.0.0.md
+
+antagonist_pair: runtime_topological_self_assembly_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+
+notes: |
+  STUB — status: planned. Prompt and full card to be completed before activation.

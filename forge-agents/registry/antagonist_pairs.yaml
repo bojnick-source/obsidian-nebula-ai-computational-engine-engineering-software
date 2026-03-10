@@ -20,6 +20,485 @@ pairs:
       - safety_margin_challenges
       - failure_mode_challenges
 
+  # ── EXPANDED PAIRS (68) — status: planned ──────────────────────────────────
+  - specialist: structural_mechanics_specialist
+    antagonist: structural_mechanics_antagonist
+    debate_scope:
+      - load_case_completeness_challenges
+      - factor_of_safety_challenges
+      - structural_assumption_challenges
+
+  - specialist: structural_fea_specialist
+    antagonist: structural_fea_antagonist
+    debate_scope:
+      - mesh_convergence_challenges
+      - boundary_condition_adequacy_challenges
+      - element_formulation_challenges
+
+  - specialist: fatigue_fracture_specialist
+    antagonist: fatigue_fracture_antagonist
+    debate_scope:
+      - crack_initiation_assumption_challenges
+      - sn_curve_applicability_challenges
+      - inspection_interval_challenges
+
+  - specialist: vibration_modal_specialist
+    antagonist: vibration_modal_antagonist
+    debate_scope:
+      - damping_model_challenges
+      - mode_shape_significance_challenges
+      - resonance_margin_adequacy_challenges
+
+  - specialist: dynamics_multibody_specialist
+    antagonist: dynamics_multibody_antagonist
+    debate_scope:
+      - constraint_formulation_challenges
+      - joint_model_fidelity_challenges
+      - integration_timestep_challenges
+
+  - specialist: mechanisms_kinematics_specialist
+    antagonist: mechanisms_kinematics_antagonist
+    debate_scope:
+      - kinematic_singularity_challenges
+      - tolerance_stack_challenges
+      - actuator_sizing_challenges
+
+  - specialist: fasteners_joints_specialist
+    antagonist: fasteners_joints_antagonist
+    debate_scope:
+      - preload_retention_challenges
+      - fatigue_under_vibration_challenges
+      - corrosion_compatibility_challenges
+
+  - specialist: composites_layup_specialist
+    antagonist: composites_layup_antagonist
+    debate_scope:
+      - ply_orientation_optimality_challenges
+      - interlaminar_stress_challenges
+      - manufacturing_variability_challenges
+
+  - specialist: additive_manufacturing_specialist
+    antagonist: additive_manufacturing_antagonist
+    debate_scope:
+      - support_strategy_challenges
+      - residual_stress_challenges
+      - anisotropy_treatment_challenges
+
+  - specialist: dfa_dfm_specialist
+    antagonist: dfa_dfm_antagonist
+    debate_scope:
+      - assembly_sequence_challenges
+      - tooling_access_challenges
+      - part_count_reduction_challenges
+
+  - specialist: materials_selection_specialist
+    antagonist: materials_selection_antagonist
+    debate_scope:
+      - property_data_provenance_challenges
+      - ashby_chart_interpretation_challenges
+      - cost_vs_performance_tradeoff_challenges
+
+  - specialist: corrosion_degradation_specialist
+    antagonist: corrosion_degradation_antagonist
+    debate_scope:
+      - galvanic_couple_severity_challenges
+      - coating_system_adequacy_challenges
+      - service_life_prediction_challenges
+
+  - specialist: thermal_management_specialist
+    antagonist: thermal_management_antagonist
+    debate_scope:
+      - heat_sink_sizing_challenges
+      - transient_vs_steady_state_challenges
+      - thermal_interface_resistance_challenges
+
+  - specialist: heat_transfer_specialist
+    antagonist: heat_transfer_antagonist
+    debate_scope:
+      - convection_coefficient_challenges
+      - radiation_view_factor_challenges
+      - contact_conductance_challenges
+
+  - specialist: fluids_hydraulics_specialist
+    antagonist: fluids_hydraulics_antagonist
+    debate_scope:
+      - flow_regime_assumption_challenges
+      - pressure_drop_model_challenges
+      - cavitation_risk_challenges
+
+  - specialist: cfd_specialist
+    antagonist: cfd_antagonist
+    debate_scope:
+      - turbulence_model_selection_challenges
+      - grid_independence_challenges
+      - boundary_condition_realism_challenges
+
+  - specialist: aerodynamics_specialist
+    antagonist: aerodynamics_antagonist
+    debate_scope:
+      - reynolds_number_regime_challenges
+      - separation_point_prediction_challenges
+      - induced_drag_accounting_challenges
+
+  - specialist: airfoils_wings_specialist
+    antagonist: airfoils_wings_antagonist
+    debate_scope:
+      - stall_characteristic_challenges
+      - span_efficiency_challenges
+      - aeroelastic_coupling_challenges
+
+  - specialist: propulsion_systems_specialist
+    antagonist: propulsion_systems_antagonist
+    debate_scope:
+      - specific_impulse_assumption_challenges
+      - throttle_response_challenges
+      - installation_loss_challenges
+
+  - specialist: rotor_bemt_specialist
+    antagonist: rotor_bemt_antagonist
+    debate_scope:
+      - tip_loss_correction_challenges
+      - swirl_recovery_assumption_challenges
+      - inflow_model_fidelity_challenges
+
+  - specialist: coaxial_interference_specialist
+    antagonist: coaxial_interference_antagonist
+    debate_scope:
+      - rotor_separation_ratio_challenges
+      - upwash_downwash_interaction_challenges
+      - efficiency_penalty_quantification_challenges
+
+  - specialist: motor_selection_specialist
+    antagonist: motor_selection_antagonist
+    debate_scope:
+      - kv_selection_rationale_challenges
+      - thermal_derating_challenges
+      - efficiency_map_coverage_challenges
+
+  - specialist: magnetics_em_fields_specialist
+    antagonist: magnetics_em_fields_antagonist
+    debate_scope:
+      - permeability_linearity_challenges
+      - fringing_effect_challenges
+      - saturation_margin_challenges
+
+  - specialist: electric_machines_specialist
+    antagonist: electric_machines_antagonist
+    debate_scope:
+      - torque_ripple_acceptability_challenges
+      - core_loss_model_challenges
+      - thermal_class_adequacy_challenges
+
+  - specialist: power_electronics_specialist
+    antagonist: power_electronics_antagonist
+    debate_scope:
+      - switching_loss_calculation_challenges
+      - derating_curve_challenges
+      - emi_filter_adequacy_challenges
+
+  - specialist: battery_energy_storage_specialist
+    antagonist: battery_energy_storage_antagonist
+    debate_scope:
+      - c_rate_derating_challenges
+      - soc_estimation_accuracy_challenges
+      - cycle_life_prediction_challenges
+
+  - specialist: power_distribution_specialist
+    antagonist: power_distribution_antagonist
+    debate_scope:
+      - wire_gauge_sizing_challenges
+      - fault_current_clearing_challenges
+      - voltage_drop_budget_challenges
+
+  - specialist: emi_emc_specialist
+    antagonist: emi_emc_antagonist
+    debate_scope:
+      - shielding_effectiveness_challenges
+      - common_mode_vs_differential_mode_challenges
+      - standard_applicability_challenges
+
+  - specialist: rf_comms_specialist
+    antagonist: rf_comms_antagonist
+    debate_scope:
+      - link_margin_adequacy_challenges
+      - multipath_fading_challenges
+      - frequency_coordination_challenges
+
+  - specialist: antennas_link_budget_specialist
+    antagonist: antennas_link_budget_antagonist
+    debate_scope:
+      - gain_pattern_assumption_challenges
+      - polarization_loss_challenges
+      - atmospheric_attenuation_challenges
+
+  - specialist: avionics_architecture_specialist
+    antagonist: avionics_architecture_antagonist
+    debate_scope:
+      - bus_redundancy_challenges
+      - data_latency_budget_challenges
+      - single_point_of_failure_challenges
+
+  - specialist: embedded_firmware_specialist
+    antagonist: embedded_firmware_antagonist
+    debate_scope:
+      - interrupt_latency_challenges
+      - memory_safety_challenges
+      - watchdog_coverage_challenges
+
+  - specialist: real_time_systems_specialist
+    antagonist: real_time_systems_antagonist
+    debate_scope:
+      - worst_case_execution_time_challenges
+      - scheduling_policy_adequacy_challenges
+      - priority_inversion_risk_challenges
+
+  - specialist: sensors_imu_gnss_specialist
+    antagonist: sensors_imu_gnss_antagonist
+    debate_scope:
+      - noise_density_specification_challenges
+      - bias_stability_challenges
+      - multipath_gnss_challenges
+
+  - specialist: sensor_fusion_specialist
+    antagonist: sensor_fusion_antagonist
+    debate_scope:
+      - covariance_tuning_challenges
+      - observability_completeness_challenges
+      - outlier_rejection_policy_challenges
+
+  - specialist: controls_flight_control_specialist
+    antagonist: controls_flight_control_antagonist
+    debate_scope:
+      - gain_margin_adequacy_challenges
+      - phase_margin_adequacy_challenges
+      - nonlinear_limit_cycle_challenges
+
+  - specialist: gnc_guidance_navigation_specialist
+    antagonist: gnc_guidance_navigation_antagonist
+    debate_scope:
+      - trajectory_constraint_completeness_challenges
+      - navigation_error_propagation_challenges
+      - contingency_mode_coverage_challenges
+
+  - specialist: system_identification_specialist
+    antagonist: system_identification_antagonist
+    debate_scope:
+      - excitation_signal_richness_challenges
+      - model_order_selection_challenges
+      - validation_dataset_independence_challenges
+
+  - specialist: estimation_kalman_specialist
+    antagonist: estimation_kalman_antagonist
+    debate_scope:
+      - process_noise_tuning_challenges
+      - measurement_model_linearity_challenges
+      - filter_divergence_risk_challenges
+
+  - specialist: flight_dynamics_specialist
+    antagonist: flight_dynamics_antagonist
+    debate_scope:
+      - aerodynamic_derivative_accuracy_challenges
+      - inertia_tensor_uncertainty_challenges
+      - cross_coupling_term_challenges
+
+  - specialist: mission_performance_specialist
+    antagonist: mission_performance_antagonist
+    debate_scope:
+      - range_endurance_margin_challenges
+      - payload_fraction_optimism_challenges
+      - reserve_fuel_policy_challenges
+
+  - specialist: energy_maneuverability_specialist
+    antagonist: energy_maneuverability_antagonist
+    debate_scope:
+      - excess_power_calculation_challenges
+      - drag_polar_fidelity_challenges
+      - maneuver_load_factor_challenges
+
+  - specialist: reliability_engineering_specialist
+    antagonist: reliability_engineering_antagonist
+    debate_scope:
+      - mtbf_source_data_challenges
+      - redundancy_credit_challenges
+      - common_cause_failure_challenges
+
+  - specialist: safety_hazards_fmea_specialist
+    antagonist: safety_hazards_fmea_antagonist
+    debate_scope:
+      - hazard_severity_classification_challenges
+      - detection_coverage_challenges
+      - residual_risk_acceptance_challenges
+
+  - specialist: systems_engineering_specialist
+    antagonist: systems_engineering_antagonist
+    debate_scope:
+      - interface_definition_completeness_challenges
+      - derived_requirement_traceability_challenges
+      - margin_policy_challenges
+
+  - specialist: requirements_traceability_specialist
+    antagonist: requirements_traceability_antagonist
+    debate_scope:
+      - requirement_ambiguity_challenges
+      - verification_method_adequacy_challenges
+      - requirement_completeness_challenges
+
+  - specialist: verification_validation_specialist
+    antagonist: verification_validation_antagonist
+    debate_scope:
+      - test_coverage_adequacy_challenges
+      - acceptance_criteria_rigor_challenges
+      - simulation_fidelity_challenges
+
+  - specialist: test_engineering_specialist
+    antagonist: test_engineering_antagonist
+    debate_scope:
+      - test_environment_representativeness_challenges
+      - instrumentation_uncertainty_challenges
+      - test_point_selection_challenges
+
+  - specialist: uncertainty_quantification_specialist
+    antagonist: uncertainty_quantification_antagonist
+    debate_scope:
+      - distribution_assumption_challenges
+      - sensitivity_index_interpretation_challenges
+      - epistemic_vs_aleatory_separation_challenges
+
+  - specialist: monte_carlo_doe_specialist
+    antagonist: monte_carlo_doe_antagonist
+    debate_scope:
+      - sample_size_convergence_challenges
+      - correlation_structure_challenges
+      - design_space_coverage_challenges
+
+  - specialist: optimization_bayesian_specialist
+    antagonist: optimization_bayesian_antagonist
+    debate_scope:
+      - acquisition_function_selection_challenges
+      - surrogate_model_fidelity_challenges
+      - convergence_criterion_challenges
+
+  - specialist: numerical_methods_specialist
+    antagonist: numerical_methods_antagonist
+    debate_scope:
+      - truncation_error_challenges
+      - stability_condition_challenges
+      - solver_tolerance_challenges
+
+  - specialist: pde_formulations_specialist
+    antagonist: pde_formulations_antagonist
+    debate_scope:
+      - weak_form_correctness_challenges
+      - boundary_condition_completeness_challenges
+      - discretization_order_challenges
+
+  - specialist: geometry_meshing_specialist
+    antagonist: geometry_meshing_antagonist
+    debate_scope:
+      - mesh_quality_metric_challenges
+      - boundary_layer_resolution_challenges
+      - feature_capture_fidelity_challenges
+
+  - specialist: cad_parametric_modeling_specialist
+    antagonist: cad_parametric_modeling_antagonist
+    debate_scope:
+      - parameter_constraint_robustness_challenges
+      - geometry_degeneracy_challenges
+      - downstream_fea_compatibility_challenges
+
+  - specialist: topology_optimization_specialist
+    antagonist: topology_optimization_antagonist
+    debate_scope:
+      - penalization_parameter_challenges
+      - minimum_length_scale_challenges
+      - manufacturability_filter_challenges
+
+  - specialist: runtime_topological_self_assembly_specialist
+    antagonist: runtime_topological_self_assembly_antagonist
+    debate_scope:
+      - convergence_guarantee_challenges
+      - cycle_detection_challenges
+      - assembly_order_determinism_challenges
+
+  - specialist: simulation_toolchain_integration_specialist
+    antagonist: simulation_toolchain_integration_antagonist
+    debate_scope:
+      - data_format_fidelity_challenges
+      - solver_coupling_stability_challenges
+      - version_compatibility_challenges
+
+  - specialist: mcp_tooling_specialist
+    antagonist: mcp_tooling_antagonist
+    debate_scope:
+      - tool_schema_completeness_challenges
+      - error_propagation_challenges
+      - tool_authorization_scope_challenges
+
+  - specialist: a2a_protocol_specialist
+    antagonist: a2a_protocol_antagonist
+    debate_scope:
+      - message_schema_versioning_challenges
+      - delivery_guarantee_challenges
+      - backpressure_handling_challenges
+
+  - specialist: security_secrets_vault_specialist
+    antagonist: security_secrets_vault_antagonist
+    debate_scope:
+      - secret_rotation_coverage_challenges
+      - least_privilege_enforcement_challenges
+      - audit_trail_completeness_challenges
+
+  - specialist: cryptography_integrity_specialist
+    antagonist: cryptography_integrity_antagonist
+    debate_scope:
+      - algorithm_selection_challenges
+      - key_management_lifecycle_challenges
+      - side_channel_risk_challenges
+
+  - specialist: data_engineering_logging_specialist
+    antagonist: data_engineering_logging_antagonist
+    debate_scope:
+      - schema_evolution_challenges
+      - retention_policy_adequacy_challenges
+      - pii_handling_challenges
+
+  - specialist: observability_monitoring_specialist
+    antagonist: observability_monitoring_antagonist
+    debate_scope:
+      - alert_threshold_calibration_challenges
+      - cardinality_budget_challenges
+      - trace_sampling_strategy_challenges
+
+  - specialist: cost_token_economics_specialist
+    antagonist: cost_token_economics_antagonist
+    debate_scope:
+      - token_budget_estimation_challenges
+      - provider_cost_model_challenges
+      - caching_effectiveness_challenges
+
+  - specialist: project_management_specialist
+    antagonist: project_management_antagonist
+    debate_scope:
+      - schedule_risk_challenges
+      - dependency_completeness_challenges
+      - resource_allocation_challenges
+
+  - specialist: documentation_standards_specialist
+    antagonist: documentation_standards_antagonist
+    debate_scope:
+      - documentation_coverage_challenges
+      - update_discipline_challenges
+      - audience_appropriateness_challenges
+
+  - specialist: quality_governance_specialist
+    antagonist: quality_governance_antagonist
+    debate_scope:
+      - process_compliance_challenges
+      - metrics_meaningfulness_challenges
+      - gate_criteria_rigor_challenges
+
 notes: |
   Antagonist debate is V1 only. At MVP, single-specialist path with no debate.
   Debate is activated by SWITCH_NO_ANTAGONIST being OFF (default in full mode).
+  Expanded pairs (68) are status: planned — not active until individual agent cards
+  and prompts are completed.

@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: coaxial_interference_specialist
+name: Coaxial Interference Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: coaxial_interference
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Quantifies aerodynamic interaction and efficiency penalties in coaxial rotor systems. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/coaxial_interference_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: coaxial_interference_antagonist
 
 mandatory_output_fields:
   - findings

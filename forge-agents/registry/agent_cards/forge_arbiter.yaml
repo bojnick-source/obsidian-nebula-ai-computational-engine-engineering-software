@@ -1,0 +1,24 @@
+id: forge_arbiter
+name: FORGE Arbiter
+version: "1.0.0"
+role: orchestrator
+domain: forge_command
+status: planned
+
+description: |
+  Arbitrates conflicts between specialist and antagonist outputs,
+  selects winning position, and records dissent. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_arbiter/v1.0.0.md
+mandatory_output_fields:
+  - arbitration_decision
+  - dissent_record
+  - confidence
+
+notes: |
+  STUB — status: planned.

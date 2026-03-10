@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: battery_energy_storage_specialist
+name: Battery & Energy Storage Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: battery_energy_storage
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Characterizes cells, packs, BMS design, and degradation modeling for energy storage systems. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/battery_energy_storage_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: battery_energy_storage_antagonist
 
 mandatory_output_fields:
   - findings

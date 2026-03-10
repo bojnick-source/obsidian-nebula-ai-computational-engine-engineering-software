@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: energy_maneuverability_specialist
+name: Energy Maneuverability Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: energy_maneuverability
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Analyzes specific excess power, climb performance, and maneuver envelopes. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/energy_maneuverability_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: energy_maneuverability_antagonist
 
 mandatory_output_fields:
   - findings

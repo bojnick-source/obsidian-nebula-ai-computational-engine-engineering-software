@@ -1,0 +1,28 @@
+id: simulation_toolchain_integration_specialist
+name: Simulation Toolchain Integration Specialist
+version: "1.0.0"
+role: specialist
+domain: simulation_toolchain_integration
+status: planned
+
+description: |
+  Integrates heterogeneous simulation tools, manages data exchange formats, and co-simulation. STUB — to be fleshed out.
+
+capabilities: []
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/simulation_toolchain_integration_specialist/v1.0.0.md
+
+antagonist_pair: simulation_toolchain_integration_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - gaps_identified
+
+notes: |
+  STUB — status: planned. Prompt and full card to be completed before activation.

@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: safety_hazards_fmea_specialist
+name: Safety, Hazards & FMEA Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: safety_hazards_fmea
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Conducts FMEA, hazard analysis, and safety case development. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/safety_hazards_fmea_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: safety_hazards_fmea_antagonist
 
 mandatory_output_fields:
   - findings

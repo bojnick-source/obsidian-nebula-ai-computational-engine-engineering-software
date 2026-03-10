@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: antennas_link_budget_specialist
+name: Antennas & Link Budget Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: antennas_link_budget
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Selects antenna types and computes end-to-end link budgets. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/antennas_link_budget_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: antennas_link_budget_antagonist
 
 mandatory_output_fields:
   - findings

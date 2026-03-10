@@ -1,0 +1,23 @@
+id: contradiction_verifier
+name: Contradiction Verifier
+version: "1.0.0"
+role: verifier
+domain: contradiction_verifier
+status: planned
+
+description: |
+  Detects logical contradictions and inconsistencies across agent outputs. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/contradiction_verifier/v1.0.0.md
+mandatory_output_fields:
+  - verification_result
+  - issues_found
+  - confidence
+
+notes: |
+  STUB — status: planned.

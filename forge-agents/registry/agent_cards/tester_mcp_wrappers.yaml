@@ -1,0 +1,23 @@
+id: tester_mcp_wrappers
+name: Tester Mcp Wrappers
+version: "1.0.0"
+role: tester
+domain: mcp_wrappers
+status: planned
+
+description: |
+  Tests MCP tool schema compliance, error propagation, and authorization boundaries. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_mcp_wrappers/v1.0.0.md
+mandatory_output_fields:
+  - test_results
+  - failures
+  - coverage_summary
+
+notes: |
+  STUB — status: planned.

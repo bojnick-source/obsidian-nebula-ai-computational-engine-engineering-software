@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: embedded_firmware_specialist
+name: Embedded Firmware Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: embedded_firmware
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Develops and reviews embedded C/C++ firmware for microcontrollers and FPGAs. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/embedded_firmware_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: embedded_firmware_antagonist
 
 mandatory_output_fields:
   - findings

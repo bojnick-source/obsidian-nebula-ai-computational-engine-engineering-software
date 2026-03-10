@@ -1,0 +1,24 @@
+id: forge_project_manager
+name: FORGE Project Manager
+version: "1.0.0"
+role: orchestrator
+domain: forge_command
+status: planned
+
+description: |
+  Manages project state, milestone tracking, dependency graphs,
+  and agent work-queue for multi-session FORGE projects. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_project_manager/v1.0.0.md
+mandatory_output_fields:
+  - milestone_status
+  - dependency_graph
+  - next_actions
+
+notes: |
+  STUB — status: planned.

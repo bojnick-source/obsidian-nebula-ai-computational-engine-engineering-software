@@ -1,0 +1,23 @@
+id: router_config_auditor
+name: Router Config Auditor
+version: "1.0.0"
+role: maintenance
+domain: router_config_auditor
+status: planned
+
+description: |
+  Audits model router configuration for correctness and coverage gaps. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/router_config_auditor/v1.0.0.md
+mandatory_output_fields:
+  - audit_findings
+  - issues_flagged
+  - recommended_actions
+
+notes: |
+  STUB — status: planned.

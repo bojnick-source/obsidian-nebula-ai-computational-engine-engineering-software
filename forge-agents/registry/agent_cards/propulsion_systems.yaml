@@ -1,12 +1,12 @@
-id: aerodynamics_specialist
-name: Aerodynamics Specialist
+id: propulsion_systems_specialist
+name: Propulsion Systems Specialist
 version: "1.0.0"
 role: specialist
-domain: aerodynamics
+domain: propulsion_systems
 status: planned
 
 description: |
-  Analyzes external aerodynamic performance, drag breakdown, and flow field behavior. STUB — to be fleshed out.
+  Sizes and analyzes propulsion architectures including thrust, specific impulse, and fuel systems. STUB — to be fleshed out.
 
 capabilities: []
 
@@ -14,9 +14,9 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/aerodynamics_specialist/v1.0.0.md
+prompt_ref: forge-agents/prompts/propulsion_systems_specialist/v1.0.0.md
 
-antagonist_pair: aerodynamics_antagonist
+antagonist_pair: propulsion_systems_antagonist
 
 mandatory_output_fields:
   - findings

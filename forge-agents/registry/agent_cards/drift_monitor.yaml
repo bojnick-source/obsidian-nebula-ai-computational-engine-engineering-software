@@ -1,0 +1,23 @@
+id: drift_monitor
+name: Drift Monitor
+version: "1.0.0"
+role: maintenance
+domain: drift_monitor
+status: planned
+
+description: |
+  Detects configuration and behavioral drift from baseline across FORGE subsystems. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/drift_monitor/v1.0.0.md
+mandatory_output_fields:
+  - audit_findings
+  - issues_flagged
+  - recommended_actions
+
+notes: |
+  STUB — status: planned.

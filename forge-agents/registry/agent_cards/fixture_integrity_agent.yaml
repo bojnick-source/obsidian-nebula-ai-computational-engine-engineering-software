@@ -1,0 +1,23 @@
+id: fixture_integrity_agent
+name: Fixture Integrity Agent
+version: "1.0.0"
+role: maintenance
+domain: fixture_integrity_agent
+status: planned
+
+description: |
+  Checks test fixture integrity and flags outdated or broken fixtures. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/fixture_integrity_agent/v1.0.0.md
+mandatory_output_fields:
+  - audit_findings
+  - issues_flagged
+  - recommended_actions
+
+notes: |
+  STUB — status: planned.

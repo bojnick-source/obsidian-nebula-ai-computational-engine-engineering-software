@@ -1,0 +1,23 @@
+id: tester_ops_observability
+name: Tester Ops Observability
+version: "1.0.0"
+role: tester
+domain: ops_observability
+status: planned
+
+description: |
+  Tests observability pipelines, alert thresholds, and trace completeness. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_ops_observability/v1.0.0.md
+mandatory_output_fields:
+  - test_results
+  - failures
+  - coverage_summary
+
+notes: |
+  STUB — status: planned.

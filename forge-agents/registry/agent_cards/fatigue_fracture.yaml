@@ -2,39 +2,13 @@ id: fatigue_fracture_specialist
 name: Fatigue & Fracture Specialist
 version: "1.0.0"
 role: specialist
-domain: structural_durability
-status: v1
-model: gpt-5.2-thinking
+domain: fatigue_fracture
+status: planned
 
 description: |
-  Provides structural durability analysis covering fatigue life prediction
-  and linear elastic fracture mechanics. Uses Basquin S-N curves with
-  Goodman mean-stress correction, Miner's rule for spectrum loading, and
-  Paris Law crack-growth integration to determine inspection intervals.
-  Peak stress inputs must come from simulation-fea; this agent does not
-  perform FEA.
+  Assesses fatigue life, crack growth, and fracture mechanics for cyclic loading. STUB — to be fleshed out.
 
-triggers:
-  - phrases: ["fatigue", "crack", "fracture", "S-N curve", "Wöhler", "Goodman",
-              "Miner", "cumulative damage", "stress cycle", "R-ratio", "life",
-              "cycles to failure", "Nf", "Paris law", "LEFM", "SIF", "KI",
-              "stress intensity", "crack growth", "inspection interval", "KIc",
-              "fracture toughness", "endurance limit", "durability", "da/dN"]
-
-preconditions:
-  - peak_stress_from_fea_or_hand_calc
-  - stress_spectrum_or_load_cycles_defined
-  - material_S_N_data_or_Basquin_constants
-  - initial_flaw_size_or_inspection_resolution
-  - fracture_toughness_KIc
-
-capabilities:
-  - basquin_sn_life              # Nf from sigma_a vs N; interpolate S-N curve
-  - goodman_correction           # equivalent fully-reversed stress from sigma_m, sigma_a
-  - miners_rule                  # cumulative damage D from load spectrum; D < 1.0 check
-  - paris_lefm_crack_growth      # da/dN = C(ΔK)^m integration; Nf from a0 to ac
-  - inspection_interval          # a_detectable to ac crack growth cycles / 2 safety factor
-  - stress_concentration_factor  # Kt from geometry look-up; Kf from Neuber/Peterson
+capabilities: []
 
 tools_allowed:
   - authorized_vault_write
@@ -42,37 +16,13 @@ tools_allowed:
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/fatigue_fracture_specialist/v1.0.0.md
 
+antagonist_pair: fatigue_fracture_antagonist
+
 mandatory_output_fields:
   - findings
   - assumptions
   - what_would_falsify
   - gaps_identified
-  - durability_summary          # Nf_cycles, miners_D, inspection_interval_cycles, KIc, ac
-
-key_outputs:
-  Nf_cycles: cycles to first-ply or initiation failure (Basquin + Goodman)
-  miners_D: cumulative damage ratio (< 1.0 = pass; flag if > 0.8 warning)
-  inspection_interval_cycles: half the Paris-law crack growth life from a_detect to a_c
-  KIc: fracture toughness used; source must be cited
-
-predecessor_skills:
-  - simulation-fea              # peak stress fields per load case
-  - materials-specialist        # S-N constants, KIc, Paris C and m with provenance
-
-successor_skills:
-  - safety-se-specialist        # feeds inspection interval into maintenance plan
-  - manufacturing-specialist    # surface finish effects on fatigue allowable
-
-does_not_do:
-  - xfem_crack_initiation       # 3D crack initiation simulation not in scope
-  - dynamic_fracture            # high strain-rate / Charpy energy not in scope
-  - corrosion_fatigue           # environment-assisted cracking not in scope
-  - high_cycle_thermal_fatigue  # TMF (thermomechanical fatigue) not in scope
-  - weld_fatigue_detail_class   # IIW weld class approach not in scope
 
 notes: |
-  v1 scope: Basquin S-N + Goodman + Miner + Paris LEFM. Inspection interval
-  is computed as half the Paris growth life from detectable flaw to critical
-  crack size. Material S-N and Paris constants must be sourced (MMPDS, MIL-HDBK-5,
-  published data); recalled values are not accepted. XFEM and corrosion-fatigue
-  deferred to v2.
+  STUB — status: planned. Prompt and full card to be completed before activation.

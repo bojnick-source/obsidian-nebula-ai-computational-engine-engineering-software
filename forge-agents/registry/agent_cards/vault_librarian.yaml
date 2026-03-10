@@ -1,0 +1,26 @@
+id: vault_librarian
+name: Vault Librarian
+version: "1.0.0"
+role: librarian
+domain: vault_knowledge
+status: planned
+
+description: |
+  Manages knowledge retrieval, provenance tagging, and write authorization
+  for the FORGE Obsidian vault. STUB — to be fleshed out.
+
+capabilities: []
+tools_allowed:
+  - authorized_vault_write
+  - vault_read
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/vault_librarian/v1.0.0.md
+antagonist_pair: vault_librarian_antagonist
+mandatory_output_fields:
+  - retrieved_artifacts
+  - provenance_tags
+  - write_log
+
+notes: |
+  STUB — status: planned. Antagonist challenges retrieval relevance and provenance accuracy.
