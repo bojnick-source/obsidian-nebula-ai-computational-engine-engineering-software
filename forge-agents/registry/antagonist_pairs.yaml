@@ -497,6 +497,218 @@ pairs:
       - metrics_meaningfulness_challenges
       - gate_criteria_rigor_challenges
 
+  # ── PART TWO: NON-DOMAIN PAIRS (30) ─────────────────────────────────────────
+
+  - specialist: forge_orchestrator
+    antagonist: forge_orchestrator_antagonist
+    debate_scope:
+      - task_graph_completeness_challenges
+      - agent_dispatch_correctness_challenges
+      - output_assembly_challenges
+
+  - specialist: forge_arbiter
+    antagonist: forge_arbiter_antagonist
+    debate_scope:
+      - arbitration_bias_challenges
+      - dissent_suppression_challenges
+      - confidence_calibration_challenges
+
+  - specialist: forge_project_manager
+    antagonist: forge_project_manager_antagonist
+    debate_scope:
+      - schedule_optimism_challenges
+      - dependency_gap_challenges
+      - resource_overcommit_challenges
+
+  - specialist: forge_maintenance_orchestrator
+    antagonist: forge_maintenance_orchestrator_antagonist
+    debate_scope:
+      - audit_frequency_adequacy_challenges
+      - escalation_threshold_challenges
+      - false_negative_maintenance_challenges
+
+  - specialist: prompt_engineer
+    antagonist: prompt_engineer_antagonist
+    debate_scope:
+      - prompt_specification_completeness_challenges
+      - instruction_ambiguity_challenges
+      - edge_case_coverage_challenges
+
+  - specialist: structural_verifier
+    antagonist: structural_verifier_antagonist
+    debate_scope:
+      - verification_coverage_challenges
+      - false_pass_risk_challenges
+      - threshold_adequacy_challenges
+
+  - specialist: adversarial_verifier
+    antagonist: adversarial_verifier_antagonist
+    debate_scope:
+      - red_team_coverage_challenges
+      - adversarial_scenario_completeness_challenges
+      - verification_blind_spot_challenges
+
+  - specialist: provenance_verifier
+    antagonist: provenance_verifier_antagonist
+    debate_scope:
+      - citation_chain_completeness_challenges
+      - source_reliability_challenges
+      - provenance_gap_challenges
+
+  - specialist: contradiction_verifier
+    antagonist: contradiction_verifier_antagonist
+    debate_scope:
+      - contradiction_detection_sensitivity_challenges
+      - false_positive_rate_challenges
+      - context_sensitivity_challenges
+
+  - specialist: confidence_calibrator
+    antagonist: confidence_calibrator_antagonist
+    debate_scope:
+      - calibration_dataset_representativeness_challenges
+      - overconfidence_bias_challenges
+      - calibration_drift_challenges
+
+  - specialist: tester_core_runtime
+    antagonist: tester_core_runtime_antagonist
+    debate_scope:
+      - test_coverage_completeness_challenges
+      - fixture_realism_challenges
+      - edge_case_omission_challenges
+
+  - specialist: tester_memory_system
+    antagonist: tester_memory_system_antagonist
+    debate_scope:
+      - retrieval_accuracy_test_challenges
+      - write_fidelity_challenges
+      - provenance_test_coverage_challenges
+
+  - specialist: tester_debate_a2a
+    antagonist: tester_debate_a2a_antagonist
+    debate_scope:
+      - protocol_conformance_test_challenges
+      - arbitration_edge_case_challenges
+      - latency_test_realism_challenges
+
+  - specialist: tester_mcp_wrappers
+    antagonist: tester_mcp_wrappers_antagonist
+    debate_scope:
+      - schema_coverage_test_challenges
+      - error_injection_completeness_challenges
+      - auth_boundary_test_challenges
+
+  - specialist: tester_verifier_redteam
+    antagonist: tester_verifier_redteam_antagonist
+    debate_scope:
+      - redteam_scenario_realism_challenges
+      - bypass_vector_coverage_challenges
+      - detection_gap_challenges
+
+  - specialist: tester_contracts_interfaces
+    antagonist: tester_contracts_interfaces_antagonist
+    debate_scope:
+      - contract_version_coverage_challenges
+      - schema_migration_test_challenges
+      - regression_coverage_challenges
+
+  - specialist: tester_ops_observability
+    antagonist: tester_ops_observability_antagonist
+    debate_scope:
+      - alert_coverage_test_challenges
+      - trace_fidelity_challenges
+      - cardinality_test_challenges
+
+  - specialist: tester_maintenance_mesh
+    antagonist: tester_maintenance_mesh_antagonist
+    debate_scope:
+      - audit_completeness_test_challenges
+      - escalation_path_test_challenges
+      - drift_detection_sensitivity_challenges
+
+  - specialist: catalog_librarian
+    antagonist: catalog_librarian_antagonist
+    debate_scope:
+      - catalog_staleness_challenges
+      - missing_entry_challenges
+      - inconsistency_challenges
+
+  - specialist: schema_auditor
+    antagonist: schema_auditor_antagonist
+    debate_scope:
+      - schema_drift_detection_challenges
+      - false_compliance_challenges
+      - audit_scope_challenges
+
+  - specialist: fixture_integrity_agent
+    antagonist: fixture_integrity_agent_antagonist
+    debate_scope:
+      - fixture_coverage_challenges
+      - fixture_realism_challenges
+      - stale_fixture_detection_challenges
+
+  - specialist: provider_matrix_watcher
+    antagonist: provider_matrix_watcher_antagonist
+    debate_scope:
+      - health_check_realism_challenges
+      - false_healthy_challenges
+      - latency_threshold_calibration_challenges
+
+  - specialist: router_config_auditor
+    antagonist: router_config_auditor_antagonist
+    debate_scope:
+      - routing_coverage_challenges
+      - fallback_path_challenges
+      - version_skew_challenges
+
+  - specialist: prompt_registry_auditor
+    antagonist: prompt_registry_auditor_antagonist
+    debate_scope:
+      - orphan_detection_challenges
+      - version_skew_challenges
+      - prompt_ref_integrity_challenges
+
+  - specialist: risk_register_monitor
+    antagonist: risk_register_monitor_antagonist
+    debate_scope:
+      - risk_completeness_challenges
+      - mitigation_adequacy_challenges
+      - stale_risk_challenges
+
+  - specialist: degraded_mode_monitor
+    antagonist: degraded_mode_monitor_antagonist
+    debate_scope:
+      - fallback_activation_coverage_challenges
+      - degraded_mode_realism_challenges
+      - recovery_path_challenges
+
+  - specialist: drift_monitor
+    antagonist: drift_monitor_antagonist
+    debate_scope:
+      - drift_threshold_calibration_challenges
+      - false_negative_drift_challenges
+      - scope_completeness_challenges
+
+  - specialist: ops_consistency_auditor
+    antagonist: ops_consistency_auditor_antagonist
+    debate_scope:
+      - consistency_metric_completeness_challenges
+      - audit_frequency_challenges
+      - blind_spot_challenges
+
+  - specialist: vault_librarian
+    antagonist: vault_librarian_antagonist
+    debate_scope:
+      - retrieval_relevance_challenges
+      - provenance_accuracy_challenges
+      - write_authorization_scope_challenges
+
+  - specialist: forge_redteam_global
+    antagonist: forge_redteam_global_antagonist
+    debate_scope:
+      - system_boundary_assumption_challenges
+      - defense_completeness_challenges
+      - threat_model_coverage_challenges
+
 notes: |
   Antagonist debate is V1 only. At MVP, single-specialist path with no debate.
   Debate is activated by SWITCH_NO_ANTAGONIST being OFF (default in full mode).

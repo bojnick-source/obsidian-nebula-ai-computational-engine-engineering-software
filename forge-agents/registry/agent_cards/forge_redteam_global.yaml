@@ -1,0 +1,33 @@
+id: forge_redteam_global
+name: FORGE Global Red Team
+version: "1.0.0"
+role: antagonist
+domain: global_redteam
+status: planned
+
+description: |
+  System-wide adversary that challenges the entire FORGE architecture:
+  threat model coverage, defense completeness, system boundary assumptions,
+  cross-agent trust relationships, and security posture. Operates at the
+  architectural level rather than within any single domain. STUB — to be fleshed out.
+
+capabilities: []
+
+tools_allowed:
+  - authorized_vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_redteam_global/v1.0.0.md
+
+antagonist_pair: forge_redteam_global_antagonist
+
+mandatory_output_fields:
+  - threat_findings
+  - assumptions_challenged
+  - attack_surface_gaps
+  - recommended_mitigations
+
+notes: |
+  STUB — status: planned. Global red-team agent; challenges the entire FORGE
+  system rather than any single domain. Antagonist debates the red team's own
+  threat model coverage and completeness.

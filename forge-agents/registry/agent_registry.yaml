@@ -1102,3 +1102,191 @@ agents:
     domain: maintenance
     card: agent_cards/maintenance_global_antagonist.yaml
     status: planned
+
+# ── PART TWO: NON-DOMAIN ANTAGONIST PAIRS ────────────────────────────────────
+
+  # Command / Governance antagonists
+  - id: forge_orchestrator_antagonist
+    role: antagonist
+    domain: forge_command
+    card: agent_cards/forge_orchestrator.yaml
+    status: planned
+
+  - id: forge_arbiter_antagonist
+    role: antagonist
+    domain: forge_command
+    card: agent_cards/forge_arbiter.yaml
+    status: planned
+
+  - id: forge_project_manager_antagonist
+    role: antagonist
+    domain: forge_command
+    card: agent_cards/forge_project_manager.yaml
+    status: planned
+
+  - id: forge_maintenance_orchestrator_antagonist
+    role: antagonist
+    domain: forge_command
+    card: agent_cards/forge_maintenance_orchestrator.yaml
+    status: planned
+
+  # Knowledge / Prompt antagonist
+  - id: prompt_engineer_antagonist
+    role: antagonist
+    domain: prompt_engineering
+    card: agent_cards/prompt_engineer.yaml
+    status: planned
+
+  # Verifier antagonists
+  - id: structural_verifier_antagonist
+    role: antagonist
+    domain: structural_verification
+    card: agent_cards/verifier.yaml
+    status: planned
+
+  - id: adversarial_verifier_antagonist
+    role: antagonist
+    domain: adversarial_verification
+    card: agent_cards/verifier.yaml
+    status: planned
+
+  - id: provenance_verifier_antagonist
+    role: antagonist
+    domain: provenance
+    card: agent_cards/provenance_verifier.yaml
+    status: planned
+
+  - id: contradiction_verifier_antagonist
+    role: antagonist
+    domain: contradiction
+    card: agent_cards/contradiction_verifier.yaml
+    status: planned
+
+  - id: confidence_calibrator_antagonist
+    role: antagonist
+    domain: confidence
+    card: agent_cards/confidence_calibrator.yaml
+    status: planned
+
+  # Tester antagonists
+  - id: tester_core_runtime_antagonist
+    role: antagonist
+    domain: core_runtime
+    card: agent_cards/tester_core_runtime.yaml
+    status: planned
+
+  - id: tester_memory_system_antagonist
+    role: antagonist
+    domain: memory_system
+    card: agent_cards/tester_memory_system.yaml
+    status: planned
+
+  - id: tester_debate_a2a_antagonist
+    role: antagonist
+    domain: debate_a2a
+    card: agent_cards/tester_debate_a2a.yaml
+    status: planned
+
+  - id: tester_mcp_wrappers_antagonist
+    role: antagonist
+    domain: mcp_wrappers
+    card: agent_cards/tester_mcp_wrappers.yaml
+    status: planned
+
+  - id: tester_verifier_redteam_antagonist
+    role: antagonist
+    domain: verifier_redteam
+    card: agent_cards/tester_verifier_redteam.yaml
+    status: planned
+
+  - id: tester_contracts_interfaces_antagonist
+    role: antagonist
+    domain: contracts_interfaces
+    card: agent_cards/tester_contracts_interfaces.yaml
+    status: planned
+
+  - id: tester_ops_observability_antagonist
+    role: antagonist
+    domain: ops_observability
+    card: agent_cards/tester_ops_observability.yaml
+    status: planned
+
+  - id: tester_maintenance_mesh_antagonist
+    role: antagonist
+    domain: maintenance_mesh
+    card: agent_cards/tester_maintenance_mesh.yaml
+    status: planned
+
+  # Maintenance mesh antagonists
+  - id: catalog_librarian_antagonist
+    role: antagonist
+    domain: catalog
+    card: agent_cards/catalog_librarian.yaml
+    status: planned
+
+  - id: schema_auditor_antagonist
+    role: antagonist
+    domain: schema
+    card: agent_cards/schema_auditor.yaml
+    status: planned
+
+  - id: fixture_integrity_agent_antagonist
+    role: antagonist
+    domain: fixture_integrity
+    card: agent_cards/fixture_integrity_agent.yaml
+    status: planned
+
+  - id: provider_matrix_watcher_antagonist
+    role: antagonist
+    domain: provider_matrix
+    card: agent_cards/provider_matrix_watcher.yaml
+    status: planned
+
+  - id: router_config_auditor_antagonist
+    role: antagonist
+    domain: router_config
+    card: agent_cards/router_config_auditor.yaml
+    status: planned
+
+  - id: prompt_registry_auditor_antagonist
+    role: antagonist
+    domain: prompt_registry
+    card: agent_cards/prompt_registry_auditor.yaml
+    status: planned
+
+  - id: risk_register_monitor_antagonist
+    role: antagonist
+    domain: risk_register
+    card: agent_cards/risk_register_monitor.yaml
+    status: planned
+
+  - id: degraded_mode_monitor_antagonist
+    role: antagonist
+    domain: degraded_mode
+    card: agent_cards/degraded_mode_monitor.yaml
+    status: planned
+
+  - id: drift_monitor_antagonist
+    role: antagonist
+    domain: drift
+    card: agent_cards/drift_monitor.yaml
+    status: planned
+
+  - id: ops_consistency_auditor_antagonist
+    role: antagonist
+    domain: ops_consistency
+    card: agent_cards/ops_consistency_auditor.yaml
+    status: planned
+
+  # Global Red Team pair
+  - id: forge_redteam_global
+    role: antagonist
+    domain: global_redteam
+    card: agent_cards/forge_redteam_global.yaml
+    status: planned
+
+  - id: forge_redteam_global_antagonist
+    role: antagonist
+    domain: global_redteam
+    card: agent_cards/forge_redteam_global.yaml
+    status: planned
