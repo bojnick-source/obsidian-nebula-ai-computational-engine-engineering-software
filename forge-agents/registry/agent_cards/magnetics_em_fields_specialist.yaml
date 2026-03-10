@@ -1,0 +1,23 @@
+id: magnetics_em_fields_specialist
+name: Magnetics Em Fields Specialist
+version: "1.0.0"
+role: specialist
+domain: Magnetics & EM Fields
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/magnetics_em_fields_specialist/v1.0.0.md
+skill_ref: forge-agents/magnetics_em_fields_specialist/SKILL.md
+
+antagonist_pair: magnetics_em_fields_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

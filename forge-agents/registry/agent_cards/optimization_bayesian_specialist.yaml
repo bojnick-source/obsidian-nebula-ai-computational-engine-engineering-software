@@ -1,0 +1,23 @@
+id: optimization_bayesian_specialist
+name: Optimization Bayesian Specialist
+version: "1.0.0"
+role: specialist
+domain: Bayesian Optimisation
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/optimization_bayesian_specialist/v1.0.0.md
+skill_ref: forge-agents/optimization_bayesian_specialist/SKILL.md
+
+antagonist_pair: optimization_bayesian_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

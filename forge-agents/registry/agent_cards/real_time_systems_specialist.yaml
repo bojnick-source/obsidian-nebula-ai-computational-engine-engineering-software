@@ -1,0 +1,23 @@
+id: real_time_systems_specialist
+name: Real Time Systems Specialist
+version: "1.0.0"
+role: specialist
+domain: Real-Time Systems
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/real_time_systems_specialist/v1.0.0.md
+skill_ref: forge-agents/real_time_systems_specialist/SKILL.md
+
+antagonist_pair: real_time_systems_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

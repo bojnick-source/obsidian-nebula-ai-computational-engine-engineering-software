@@ -1,0 +1,17 @@
+id: structural_verifier
+name: Structural Verifier
+version: 1.0.0
+role: verifier
+domain: structural_verification
+status: mvp
+capabilities:
+- output_schema_validation
+- mandatory_field_check
+- unit_consistency_check
+- safety_margin_verification
+tools_allowed:
+- verifier_gates
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/structural_verifier/v1.0.0.md
+notes: Validates ME and structural specialist outputs against the output contract
+  schema.

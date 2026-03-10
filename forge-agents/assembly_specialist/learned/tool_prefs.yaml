@@ -1,0 +1,17 @@
+# tool_prefs.yaml — runtime learned preferences
+# Auto-generated skeleton. Updated by the agent after each run.
+schema_version: "v1"
+agent_id: "assembly_specialist"
+
+defaults:
+  method: analytical
+  confidence_threshold_release: 0.70
+  safety_factor_design: 1.5
+  safety_factor_safety_critical: 2.0
+  max_iterations: 1000
+  convergence_tolerance: 1.0e-6
+
+tool_call_history:
+  total_runs: 0
+  successful_runs: 0
+  last_updated: null

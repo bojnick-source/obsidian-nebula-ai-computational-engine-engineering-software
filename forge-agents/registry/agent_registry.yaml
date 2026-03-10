@@ -1,59 +1,363 @@
-schema_version: "v1"
+schema_version: "v2"
+# FORGE Agent Registry — canonical source of truth for all agents
+# Updated: 2026-03-10
+# Validation: python tools/validate_registry.py
 
 agents:
-  # Knowledge synthesis (runs before or alongside system-decomposition; feeds design paths)
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # COMMAND AGENTS
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: forge_orchestrator
+    role: command
+    domain: forge_orchestration
+    card: agent_cards/forge_orchestrator.yaml
+    status: planned
+
+  - id: forge_arbiter
+    role: command
+    domain: forge_arbitration
+    card: agent_cards/forge_arbiter.yaml
+    status: planned
+
+  - id: forge_project_manager
+    role: command
+    domain: forge_project_management
+    card: agent_cards/forge_project_manager.yaml
+    status: planned
+
+  - id: forge_maintenance_orchestrator
+    role: command
+    domain: forge_maintenance
+    card: agent_cards/forge_maintenance_orchestrator.yaml
+    status: planned
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # WORKFLOW AGENTS (existing — kept as-is)
+  # ══════════════════════════════════════════════════════════════════════════
+
   - id: vision_cortex
     role: specialist
     domain: adaptive_vision_cognition
     card: agent_cards/vision_cortex.yaml
     status: v1
 
-  # Workflow (project-kickoff, runs before any specialist)
   - id: system_decomposition
     role: workflow
     domain: project_kickoff
     card: agent_cards/system_decomposition.yaml
     status: v1
 
-  # Workflow (component design, runs after system-decomposition)
   - id: component_generation
     role: workflow
     domain: component_design
     card: agent_cards/component_generation.yaml
     status: v1
 
-  # Workflow (structural topology, runs after component-generation, before picogk-geometry)
   - id: topology_optimization
     role: workflow
-    domain: structural_analysis
+    domain: structural_topology
     card: agent_cards/topology_optimization.yaml
     status: v1
 
-  # Workflow (geometry execution, runs after component-generation / topology-optimization)
   - id: picogk_geometry
     role: workflow
     domain: geometry_execution
     card: agent_cards/picogk_geometry.yaml
     status: v1
 
-  # Orchestrator
+  - id: simulation_fea
+    role: workflow
+    domain: structural_fea
+    card: agent_cards/simulation_fea.yaml
+    status: v1
+
   - id: orchestrator
     role: orchestrator
+    domain: pipeline_coordination
     card: agent_cards/orchestrator.yaml
     status: planned
 
-  # Librarian
+  # ══════════════════════════════════════════════════════════════════════════
+  # KNOWLEDGE / MEMORY AGENTS
+  # ══════════════════════════════════════════════════════════════════════════
+
   - id: librarian
     role: librarian
+    domain: knowledge_retrieval
     card: agent_cards/librarian.yaml
     status: planned
 
-  # Specialists
-  - id: assembly_specialist
-    role: specialist
-    domain: assembly_dfa
-    card: agent_cards/assembly.yaml
+  - id: vault_librarian
+    role: librarian
+    domain: vault_knowledge_retrieval
+    card: agent_cards/vault_librarian.yaml
+    status: planned
+
+  - id: vault_librarian_antagonist
+    role: antagonist
+    domain: vault_provenance_critique
+    card: agent_cards/vault_librarian_antagonist.yaml
+    status: planned
+
+  - id: prompt_engineer
+    role: prompt_engineer
+    domain: prompt_engineering
+    card: agent_cards/prompt_engineer.yaml
     status: v1
+
+  - id: prompt_engineer_antagonist
+    role: antagonist
+    domain: prompt_quality_critique
+    card: agent_cards/prompt_engineer_antagonist.yaml
+    status: planned
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # VERIFIER AGENTS
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: structural_verifier
+    role: verifier
+    domain: structural_verification
+    card: agent_cards/structural_verifier.yaml
+    status: mvp
+
+  - id: adversarial_verifier
+    role: verifier
+    domain: adversarial_verification
+    card: agent_cards/adversarial_verifier.yaml
+    status: v1
+
+  - id: provenance_verifier
+    role: verifier
+    domain: provenance_verification
+    card: agent_cards/provenance_verifier.yaml
+    status: planned
+
+  - id: contradiction_verifier
+    role: verifier
+    domain: contradiction_detection
+    card: agent_cards/contradiction_verifier.yaml
+    status: planned
+
+  - id: confidence_calibrator
+    role: verifier
+    domain: confidence_calibration
+    card: agent_cards/confidence_calibrator.yaml
+    status: planned
+
+  - id: verifier_redteam_antagonist
+    role: antagonist
+    domain: verifier_redteam
+    card: agent_cards/verifier_redteam_antagonist.yaml
+    status: planned
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # TESTER AGENTS
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: tester_core_runtime
+    role: tester
+    domain: core_runtime_testing
+    card: agent_cards/tester_core_runtime.yaml
+    status: planned
+
+  - id: tester_memory_system
+    role: tester
+    domain: memory_system_testing
+    card: agent_cards/tester_memory_system.yaml
+    status: planned
+
+  - id: tester_debate_a2a
+    role: tester
+    domain: debate_a2a_testing
+    card: agent_cards/tester_debate_a2a.yaml
+    status: planned
+
+  - id: tester_mcp_wrappers
+    role: tester
+    domain: mcp_wrapper_testing
+    card: agent_cards/tester_mcp_wrappers.yaml
+    status: planned
+
+  - id: tester_verifier_redteam
+    role: tester
+    domain: verifier_redteam_testing
+    card: agent_cards/tester_verifier_redteam.yaml
+    status: planned
+
+  - id: tester_contracts_interfaces
+    role: tester
+    domain: contracts_interface_testing
+    card: agent_cards/tester_contracts_interfaces.yaml
+    status: planned
+
+  - id: tester_ops_observability
+    role: tester
+    domain: ops_observability_testing
+    card: agent_cards/tester_ops_observability.yaml
+    status: planned
+
+  - id: tester_maintenance_mesh
+    role: tester
+    domain: maintenance_mesh_testing
+    card: agent_cards/tester_maintenance_mesh.yaml
+    status: planned
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # MAINTENANCE MESH AGENTS
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: catalog_librarian
+    role: maintenance
+    domain: agent_catalogue_maintenance
+    card: agent_cards/catalog_librarian.yaml
+    status: planned
+
+  - id: schema_auditor
+    role: maintenance
+    domain: schema_compliance
+    card: agent_cards/schema_auditor.yaml
+    status: planned
+
+  - id: fixture_integrity_agent
+    role: maintenance
+    domain: fixture_integrity
+    card: agent_cards/fixture_integrity_agent.yaml
+    status: planned
+
+  - id: provider_matrix_watcher
+    role: maintenance
+    domain: provider_matrix_monitoring
+    card: agent_cards/provider_matrix_watcher.yaml
+    status: planned
+
+  - id: router_config_auditor
+    role: maintenance
+    domain: router_config_audit
+    card: agent_cards/router_config_auditor.yaml
+    status: planned
+
+  - id: prompt_registry_auditor
+    role: maintenance
+    domain: prompt_registry_audit
+    card: agent_cards/prompt_registry_auditor.yaml
+    status: planned
+
+  - id: risk_register_monitor
+    role: maintenance
+    domain: risk_register_monitoring
+    card: agent_cards/risk_register_monitor.yaml
+    status: planned
+
+  - id: degraded_mode_monitor
+    role: maintenance
+    domain: degraded_mode_monitoring
+    card: agent_cards/degraded_mode_monitor.yaml
+    status: planned
+
+  - id: drift_monitor
+    role: maintenance
+    domain: registry_drift_detection
+    card: agent_cards/drift_monitor.yaml
+    status: planned
+
+  - id: ops_consistency_auditor
+    role: maintenance
+    domain: ops_consistency_audit
+    card: agent_cards/ops_consistency_auditor.yaml
+    status: planned
+
+  - id: maintenance_global_antagonist
+    role: antagonist
+    domain: maintenance_global_critique
+    card: agent_cards/maintenance_global_antagonist.yaml
+    status: planned
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # UNIVERSAL CRITICS
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: academic_peer_reviewer
+    role: antagonist
+    domain: universal_critique
+    card: agent_cards/academic_peer_reviewer.yaml
+    status: v1
+
+  - id: physics_antagonist
+    role: antagonist
+    domain: physics_critique
+    card: agent_cards/physics_antagonist.yaml
+    status: v1
+
+  - id: mathematics_antagonist
+    role: antagonist
+    domain: mathematics_critique
+    card: agent_cards/mathematics_antagonist.yaml
+    status: v1
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # PHYSICS & MATHEMATICS AGENTS (existing — kept as-is)
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - id: electrodynamics_physicist
+    role: specialist
+    domain: electrodynamics
+    card: agent_cards/electrodynamics_physicist.yaml
+    status: v1
+
+  - id: quantum_mechanics_physicist
+    role: specialist
+    domain: quantum_mechanics
+    card: agent_cards/quantum_mechanics_physicist.yaml
+    status: v1
+
+  - id: statistical_mechanics_physicist
+    role: specialist
+    domain: statistical_mechanics
+    card: agent_cards/statistical_mechanics_physicist.yaml
+    status: v1
+
+  - id: solid_state_physicist
+    role: specialist
+    domain: solid_state_physics
+    card: agent_cards/solid_state_physicist.yaml
+    status: v1
+
+  - id: linear_algebra_mathematician
+    role: mathematician
+    domain: linear_algebra
+    card: agent_cards/linear_algebra_mathematician.yaml
+    status: v1
+
+  - id: statistics_probability_mathematician
+    role: mathematician
+    domain: statistics_probability
+    card: agent_cards/statistics_probability_mathematician.yaml
+    status: v1
+
+  - id: numerical_methods_mathematician
+    role: mathematician
+    domain: numerical_methods_math
+    card: agent_cards/numerical_methods_mathematician.yaml
+    status: v1
+
+  - id: optimization_mathematician
+    role: mathematician
+    domain: optimization
+    card: mathematicians/optimization.yaml
+    status: v1
+
+  - id: pde_mathematician
+    role: mathematician
+    domain: pde
+    card: mathematicians/pde.yaml
+    status: v1
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # LEGACY SPECIALISTS (existing — kept as-is, not deprecated)
+  # ══════════════════════════════════════════════════════════════════════════
 
   - id: me_specialist
     role: specialist
@@ -65,6 +369,12 @@ agents:
     role: specialist
     domain: materials
     card: agent_cards/materials.yaml
+    status: v1
+
+  - id: materials_antagonist
+    role: antagonist
+    domain: materials_critique
+    card: agent_cards/materials_antagonist.yaml   # fixed: was materials.yaml
     status: v1
 
   - id: ee_specialist
@@ -109,63 +419,925 @@ agents:
     card: agent_cards/safety_se.yaml
     status: v1
 
+  - id: assembly_specialist
+    role: specialist
+    domain: assembly_dfa
+    card: agent_cards/assembly.yaml
+    status: v1
+
+  - id: aerodynamics_specialist
+    role: specialist
+    domain: aerodynamics
+    card: agent_cards/aerodynamics.yaml
+    status: v1
+
+  - id: fatigue_fracture_specialist
+    role: specialist
+    domain: fatigue_fracture
+    card: agent_cards/fatigue_fracture.yaml
+    status: v1
+
+  - id: composite_structures_specialist
+    role: specialist
+    domain: composite_structures
+    card: agent_cards/composite_structures.yaml
+    status: v1
+
+  - id: environmental_specialist
+    role: specialist
+    domain: environmental
+    card: agent_cards/environmental.yaml
+    status: v1
+
+  - id: nuclear_specialist
+    role: specialist
+    domain: nuclear
+    card: agent_cards/nuclear.yaml
+    status: v1
+
+  - id: photonics_optical_specialist
+    role: specialist
+    domain: photonics_optical
+    card: agent_cards/photonics_optical.yaml
+    status: v1
+
+  - id: semiconductor_specialist
+    role: specialist
+    domain: semiconductor
+    card: agent_cards/semiconductor.yaml
+    status: v1
+
+  - id: rf_microwave_specialist
+    role: specialist
+    domain: rf_microwave
+    card: agent_cards/rf_microwave.yaml
+    status: v1
+
+  - id: tribology_specialist
+    role: specialist
+    domain: tribology
+    card: agent_cards/tribology.yaml
+    status: v1
+
+  - id: chemical_process_specialist
+    role: specialist
+    domain: chemical_process
+    card: agent_cards/chemical_process.yaml
+    status: v1
+
+  - id: civil_structural_specialist
+    role: specialist
+    domain: civil_structural
+    card: agent_cards/civil_structural.yaml
+    status: v1
+
+  - id: manufacturing_specialist
+    role: specialist
+    domain: manufacturing
+    card: agent_cards/manufacturing.yaml
+    status: v1
+
+  - id: cryogenic_specialist
+    role: specialist
+    domain: cryogenic
+    card: agent_cards/cryogenic.yaml
+    status: v1
+
+  - id: quantum_engineering_specialist
+    role: specialist
+    domain: quantum_engineering
+    card: agent_cards/quantum_engineering.yaml
+    status: v1
+
   - id: biomedical_specialist
     role: specialist
     domain: biomedical
     card: agent_cards/biomedical.yaml
     status: rd
 
-  # Mathematicians
-  - id: optimization_mathematician
-    role: mathematician
-    domain: optimization
-    card: mathematicians/optimization.yaml
+  - id: robotics_kinematics_specialist
+    role: specialist
+    domain: robotics_kinematics
+    card: agent_cards/robotics_kinematics.yaml
     status: v1
 
-  - id: pde_mathematician
-    role: mathematician
-    domain: pde
-    card: mathematicians/pde.yaml
-    status: v1
+  # ══════════════════════════════════════════════════════════════════════════
+  # 68 CANONICAL SPECIALIST↔ANTAGONIST PAIRS
+  # ══════════════════════════════════════════════════════════════════════════
 
-  # Antagonists (V1)
-  - id: materials_antagonist
+  # ── Group 1: Structural / Mechanical ──────────────────────────────────────
+  - id: structural_mechanics_specialist
+    role: specialist
+    domain: structural_mechanics
+    card: agent_cards/structural_mechanics_specialist.yaml
+    status: planned
+
+  - id: structural_mechanics_antagonist
     role: antagonist
-    domain: materials
-    card: agent_cards/materials.yaml
-    status: v1
+    domain: structural_mechanics_critique
+    card: agent_cards/structural_mechanics_antagonist.yaml
+    status: planned
 
-  - id: physics_antagonist
+  - id: structural_fea_specialist
+    role: specialist
+    domain: structural_fea
+    card: agent_cards/structural_fea_specialist.yaml
+    status: planned
+
+  - id: structural_fea_antagonist
     role: antagonist
-    domain: physics_critique
-    card: agent_cards/physics_antagonist.yaml
-    status: v1
+    domain: structural_fea_critique
+    card: agent_cards/structural_fea_antagonist.yaml
+    status: planned
 
-  - id: mathematics_antagonist
+  - id: fatigue_fracture_antagonist
     role: antagonist
-    domain: mathematics_critique
-    card: agent_cards/mathematics_antagonist.yaml
-    status: v1
+    domain: fatigue_fracture_critique
+    card: agent_cards/fatigue_fracture_antagonist.yaml
+    status: planned
 
-  - id: academic_peer_reviewer
+  - id: vibration_modal_specialist
+    role: specialist
+    domain: vibration_modal
+    card: agent_cards/vibration_modal_specialist.yaml
+    status: planned
+
+  - id: vibration_modal_antagonist
     role: antagonist
-    domain: universal_critique
-    card: agent_cards/academic_peer_reviewer.yaml
-    status: v1
+    domain: vibration_modal_critique
+    card: agent_cards/vibration_modal_antagonist.yaml
+    status: planned
 
-  # Verifiers
-  - id: structural_verifier
-    role: verifier
-    card: agent_cards/verifier.yaml
-    status: mvp
+  - id: dynamics_multibody_specialist
+    role: specialist
+    domain: dynamics_multibody
+    card: agent_cards/dynamics_multibody_specialist.yaml
+    status: planned
 
-  - id: adversarial_verifier
-    role: verifier
-    card: agent_cards/verifier.yaml
-    status: v1
+  - id: dynamics_multibody_antagonist
+    role: antagonist
+    domain: dynamics_multibody_critique
+    card: agent_cards/dynamics_multibody_antagonist.yaml
+    status: planned
 
-  # Prompt Engineer (meta)
-  - id: prompt_engineer
-    role: prompt_engineer
-    card: agent_cards/prompt_engineer.yaml
-    status: v1
+  - id: mechanisms_kinematics_specialist
+    role: specialist
+    domain: mechanisms_kinematics
+    card: agent_cards/mechanisms_kinematics_specialist.yaml
+    status: planned
+
+  - id: mechanisms_kinematics_antagonist
+    role: antagonist
+    domain: mechanisms_kinematics_critique
+    card: agent_cards/mechanisms_kinematics_antagonist.yaml
+    status: planned
+
+  - id: fasteners_joints_specialist
+    role: specialist
+    domain: fasteners_joints
+    card: agent_cards/fasteners_joints_specialist.yaml
+    status: planned
+
+  - id: fasteners_joints_antagonist
+    role: antagonist
+    domain: fasteners_joints_critique
+    card: agent_cards/fasteners_joints_antagonist.yaml
+    status: planned
+
+  - id: composites_layup_specialist
+    role: specialist
+    domain: composites_layup
+    card: agent_cards/composites_layup_specialist.yaml
+    status: planned
+
+  - id: composites_layup_antagonist
+    role: antagonist
+    domain: composites_layup_critique
+    card: agent_cards/composites_layup_antagonist.yaml
+    status: planned
+
+  - id: additive_manufacturing_specialist
+    role: specialist
+    domain: additive_manufacturing
+    card: agent_cards/additive_manufacturing_specialist.yaml
+    status: planned
+
+  - id: additive_manufacturing_antagonist
+    role: antagonist
+    domain: additive_manufacturing_critique
+    card: agent_cards/additive_manufacturing_antagonist.yaml
+    status: planned
+
+  - id: dfa_dfm_specialist
+    role: specialist
+    domain: dfa_dfm
+    card: agent_cards/dfa_dfm_specialist.yaml
+    status: planned
+
+  - id: dfa_dfm_antagonist
+    role: antagonist
+    domain: dfa_dfm_critique
+    card: agent_cards/dfa_dfm_antagonist.yaml
+    status: planned
+
+  # ── Group 2: Materials ─────────────────────────────────────────────────────
+  - id: materials_selection_specialist
+    role: specialist
+    domain: materials_selection
+    card: agent_cards/materials_selection_specialist.yaml
+    status: planned
+
+  - id: materials_selection_antagonist
+    role: antagonist
+    domain: materials_selection_critique
+    card: agent_cards/materials_selection_antagonist.yaml
+    status: planned
+
+  - id: corrosion_degradation_specialist
+    role: specialist
+    domain: corrosion_degradation
+    card: agent_cards/corrosion_degradation_specialist.yaml
+    status: planned
+
+  - id: corrosion_degradation_antagonist
+    role: antagonist
+    domain: corrosion_degradation_critique
+    card: agent_cards/corrosion_degradation_antagonist.yaml
+    status: planned
+
+  - id: thermal_management_specialist
+    role: specialist
+    domain: thermal_management
+    card: agent_cards/thermal_management_specialist.yaml
+    status: planned
+
+  - id: thermal_management_antagonist
+    role: antagonist
+    domain: thermal_management_critique
+    card: agent_cards/thermal_management_antagonist.yaml
+    status: planned
+
+  # ── Group 3: Thermal / Fluids ──────────────────────────────────────────────
+  - id: heat_transfer_specialist
+    role: specialist
+    domain: heat_transfer
+    card: agent_cards/heat_transfer_specialist.yaml
+    status: planned
+
+  - id: heat_transfer_antagonist
+    role: antagonist
+    domain: heat_transfer_critique
+    card: agent_cards/heat_transfer_antagonist.yaml
+    status: planned
+
+  - id: fluids_hydraulics_specialist
+    role: specialist
+    domain: fluids_hydraulics
+    card: agent_cards/fluids_hydraulics_specialist.yaml
+    status: planned
+
+  - id: fluids_hydraulics_antagonist
+    role: antagonist
+    domain: fluids_hydraulics_critique
+    card: agent_cards/fluids_hydraulics_antagonist.yaml
+    status: planned
+
+  - id: cfd_specialist
+    role: specialist
+    domain: cfd
+    card: agent_cards/cfd_specialist.yaml
+    status: planned
+
+  - id: cfd_antagonist
+    role: antagonist
+    domain: cfd_critique
+    card: agent_cards/cfd_antagonist.yaml
+    status: planned
+
+  - id: aerodynamics_antagonist
+    role: antagonist
+    domain: aerodynamics_critique
+    card: agent_cards/aerodynamics_antagonist.yaml
+    status: planned
+
+  # ── Group 4: Aerodynamics specializations ─────────────────────────────────
+  - id: airfoils_wings_specialist
+    role: specialist
+    domain: airfoils_wings
+    card: agent_cards/airfoils_wings_specialist.yaml
+    status: planned
+
+  - id: airfoils_wings_antagonist
+    role: antagonist
+    domain: airfoils_wings_critique
+    card: agent_cards/airfoils_wings_antagonist.yaml
+    status: planned
+
+  - id: propulsion_systems_specialist
+    role: specialist
+    domain: propulsion_systems
+    card: agent_cards/propulsion_systems_specialist.yaml
+    status: planned
+
+  - id: propulsion_systems_antagonist
+    role: antagonist
+    domain: propulsion_systems_critique
+    card: agent_cards/propulsion_systems_antagonist.yaml
+    status: planned
+
+  - id: rotor_bemt_specialist
+    role: specialist
+    domain: rotor_bemt
+    card: agent_cards/rotor_bemt_specialist.yaml
+    status: planned
+
+  - id: rotor_bemt_antagonist
+    role: antagonist
+    domain: rotor_bemt_critique
+    card: agent_cards/rotor_bemt_antagonist.yaml
+    status: planned
+
+  - id: coaxial_interference_specialist
+    role: specialist
+    domain: coaxial_interference
+    card: agent_cards/coaxial_interference_specialist.yaml
+    status: planned
+
+  - id: coaxial_interference_antagonist
+    role: antagonist
+    domain: coaxial_interference_critique
+    card: agent_cards/coaxial_interference_antagonist.yaml
+    status: planned
+
+  - id: motor_selection_specialist
+    role: specialist
+    domain: motor_selection
+    card: agent_cards/motor_selection_specialist.yaml
+    status: planned
+
+  - id: motor_selection_antagonist
+    role: antagonist
+    domain: motor_selection_critique
+    card: agent_cards/motor_selection_antagonist.yaml
+    status: planned
+
+  # ── Group 5: Electrical / Power ────────────────────────────────────────────
+  - id: magnetics_em_fields_specialist
+    role: specialist
+    domain: magnetics_em_fields
+    card: agent_cards/magnetics_em_fields_specialist.yaml
+    status: planned
+
+  - id: magnetics_em_fields_antagonist
+    role: antagonist
+    domain: magnetics_em_fields_critique
+    card: agent_cards/magnetics_em_fields_antagonist.yaml
+    status: planned
+
+  - id: electric_machines_specialist
+    role: specialist
+    domain: electric_machines
+    card: agent_cards/electric_machines_specialist.yaml
+    status: planned
+
+  - id: electric_machines_antagonist
+    role: antagonist
+    domain: electric_machines_critique
+    card: agent_cards/electric_machines_antagonist.yaml
+    status: planned
+
+  - id: power_electronics_specialist
+    role: specialist
+    domain: power_electronics
+    card: agent_cards/power_electronics_specialist.yaml
+    status: planned
+
+  - id: power_electronics_antagonist
+    role: antagonist
+    domain: power_electronics_critique
+    card: agent_cards/power_electronics_antagonist.yaml
+    status: planned
+
+  - id: battery_energy_storage_specialist
+    role: specialist
+    domain: battery_energy_storage
+    card: agent_cards/battery_energy_storage_specialist.yaml
+    status: planned
+
+  - id: battery_energy_storage_antagonist
+    role: antagonist
+    domain: battery_energy_storage_critique
+    card: agent_cards/battery_energy_storage_antagonist.yaml
+    status: planned
+
+  - id: power_distribution_specialist
+    role: specialist
+    domain: power_distribution
+    card: agent_cards/power_distribution_specialist.yaml
+    status: planned
+
+  - id: power_distribution_antagonist
+    role: antagonist
+    domain: power_distribution_critique
+    card: agent_cards/power_distribution_antagonist.yaml
+    status: planned
+
+  - id: emi_emc_specialist
+    role: specialist
+    domain: emi_emc
+    card: agent_cards/emi_emc_specialist.yaml
+    status: planned
+
+  - id: emi_emc_antagonist
+    role: antagonist
+    domain: emi_emc_critique
+    card: agent_cards/emi_emc_antagonist.yaml
+    status: planned
+
+  # ── Group 6: RF / Comms ─────────────────────────────────────────────────────
+  - id: rf_comms_specialist
+    role: specialist
+    domain: rf_comms
+    card: agent_cards/rf_comms_specialist.yaml
+    status: planned
+
+  - id: rf_comms_antagonist
+    role: antagonist
+    domain: rf_comms_critique
+    card: agent_cards/rf_comms_antagonist.yaml
+    status: planned
+
+  - id: antennas_link_budget_specialist
+    role: specialist
+    domain: antennas_link_budget
+    card: agent_cards/antennas_link_budget_specialist.yaml
+    status: planned
+
+  - id: antennas_link_budget_antagonist
+    role: antagonist
+    domain: antennas_link_budget_critique
+    card: agent_cards/antennas_link_budget_antagonist.yaml
+    status: planned
+
+  - id: avionics_architecture_specialist
+    role: specialist
+    domain: avionics_architecture
+    card: agent_cards/avionics_architecture_specialist.yaml
+    status: planned
+
+  - id: avionics_architecture_antagonist
+    role: antagonist
+    domain: avionics_architecture_critique
+    card: agent_cards/avionics_architecture_antagonist.yaml
+    status: planned
+
+  # ── Group 7: Embedded / Software ──────────────────────────────────────────
+  - id: embedded_firmware_specialist
+    role: specialist
+    domain: embedded_firmware
+    card: agent_cards/embedded_firmware_specialist.yaml
+    status: planned
+
+  - id: embedded_firmware_antagonist
+    role: antagonist
+    domain: embedded_firmware_critique
+    card: agent_cards/embedded_firmware_antagonist.yaml
+    status: planned
+
+  - id: real_time_systems_specialist
+    role: specialist
+    domain: real_time_systems
+    card: agent_cards/real_time_systems_specialist.yaml
+    status: planned
+
+  - id: real_time_systems_antagonist
+    role: antagonist
+    domain: real_time_systems_critique
+    card: agent_cards/real_time_systems_antagonist.yaml
+    status: planned
+
+  - id: sensors_imu_gnss_specialist
+    role: specialist
+    domain: sensors_imu_gnss
+    card: agent_cards/sensors_imu_gnss_specialist.yaml
+    status: planned
+
+  - id: sensors_imu_gnss_antagonist
+    role: antagonist
+    domain: sensors_imu_gnss_critique
+    card: agent_cards/sensors_imu_gnss_antagonist.yaml
+    status: planned
+
+  # ── Group 8: Controls / GNC ────────────────────────────────────────────────
+  - id: sensor_fusion_specialist
+    role: specialist
+    domain: sensor_fusion
+    card: agent_cards/sensor_fusion_specialist.yaml
+    status: planned
+
+  - id: sensor_fusion_antagonist
+    role: antagonist
+    domain: sensor_fusion_critique
+    card: agent_cards/sensor_fusion_antagonist.yaml
+    status: planned
+
+  - id: controls_flight_control_specialist
+    role: specialist
+    domain: controls_flight_control
+    card: agent_cards/controls_flight_control_specialist.yaml
+    status: planned
+
+  - id: controls_flight_control_antagonist
+    role: antagonist
+    domain: controls_flight_control_critique
+    card: agent_cards/controls_flight_control_antagonist.yaml
+    status: planned
+
+  - id: gnc_guidance_navigation_specialist
+    role: specialist
+    domain: gnc_guidance_navigation
+    card: agent_cards/gnc_guidance_navigation_specialist.yaml
+    status: planned
+
+  - id: gnc_guidance_navigation_antagonist
+    role: antagonist
+    domain: gnc_guidance_navigation_critique
+    card: agent_cards/gnc_guidance_navigation_antagonist.yaml
+    status: planned
+
+  - id: system_identification_specialist
+    role: specialist
+    domain: system_identification
+    card: agent_cards/system_identification_specialist.yaml
+    status: planned
+
+  - id: system_identification_antagonist
+    role: antagonist
+    domain: system_identification_critique
+    card: agent_cards/system_identification_antagonist.yaml
+    status: planned
+
+  - id: estimation_kalman_specialist
+    role: specialist
+    domain: estimation_kalman
+    card: agent_cards/estimation_kalman_specialist.yaml
+    status: planned
+
+  - id: estimation_kalman_antagonist
+    role: antagonist
+    domain: estimation_kalman_critique
+    card: agent_cards/estimation_kalman_antagonist.yaml
+    status: planned
+
+  - id: flight_dynamics_specialist
+    role: specialist
+    domain: flight_dynamics
+    card: agent_cards/flight_dynamics_specialist.yaml
+    status: planned
+
+  - id: flight_dynamics_antagonist
+    role: antagonist
+    domain: flight_dynamics_critique
+    card: agent_cards/flight_dynamics_antagonist.yaml
+    status: planned
+
+  # ── Group 9: Mission / Systems ─────────────────────────────────────────────
+  - id: mission_performance_specialist
+    role: specialist
+    domain: mission_performance
+    card: agent_cards/mission_performance_specialist.yaml
+    status: planned
+
+  - id: mission_performance_antagonist
+    role: antagonist
+    domain: mission_performance_critique
+    card: agent_cards/mission_performance_antagonist.yaml
+    status: planned
+
+  - id: energy_maneuverability_specialist
+    role: specialist
+    domain: energy_maneuverability
+    card: agent_cards/energy_maneuverability_specialist.yaml
+    status: planned
+
+  - id: energy_maneuverability_antagonist
+    role: antagonist
+    domain: energy_maneuverability_critique
+    card: agent_cards/energy_maneuverability_antagonist.yaml
+    status: planned
+
+  - id: reliability_engineering_specialist
+    role: specialist
+    domain: reliability_engineering
+    card: agent_cards/reliability_engineering_specialist.yaml
+    status: planned
+
+  - id: reliability_engineering_antagonist
+    role: antagonist
+    domain: reliability_engineering_critique
+    card: agent_cards/reliability_engineering_antagonist.yaml
+    status: planned
+
+  - id: safety_hazards_fmea_specialist
+    role: specialist
+    domain: safety_hazards_fmea
+    card: agent_cards/safety_hazards_fmea_specialist.yaml
+    status: planned
+
+  - id: safety_hazards_fmea_antagonist
+    role: antagonist
+    domain: safety_hazards_fmea_critique
+    card: agent_cards/safety_hazards_fmea_antagonist.yaml
+    status: planned
+
+  - id: systems_engineering_specialist
+    role: specialist
+    domain: systems_engineering
+    card: agent_cards/systems_engineering_specialist.yaml
+    status: planned
+
+  - id: systems_engineering_antagonist
+    role: antagonist
+    domain: systems_engineering_critique
+    card: agent_cards/systems_engineering_antagonist.yaml
+    status: planned
+
+  - id: requirements_traceability_specialist
+    role: specialist
+    domain: requirements_traceability
+    card: agent_cards/requirements_traceability_specialist.yaml
+    status: planned
+
+  - id: requirements_traceability_antagonist
+    role: antagonist
+    domain: requirements_traceability_critique
+    card: agent_cards/requirements_traceability_antagonist.yaml
+    status: planned
+
+  # ── Group 10: SE & Testing ─────────────────────────────────────────────────
+  - id: verification_validation_specialist
+    role: specialist
+    domain: verification_validation
+    card: agent_cards/verification_validation_specialist.yaml
+    status: planned
+
+  - id: verification_validation_antagonist
+    role: antagonist
+    domain: verification_validation_critique
+    card: agent_cards/verification_validation_antagonist.yaml
+    status: planned
+
+  - id: test_engineering_specialist
+    role: specialist
+    domain: test_engineering
+    card: agent_cards/test_engineering_specialist.yaml
+    status: planned
+
+  - id: test_engineering_antagonist
+    role: antagonist
+    domain: test_engineering_critique
+    card: agent_cards/test_engineering_antagonist.yaml
+    status: planned
+
+  # ── Group 11: Math / Optimisation ──────────────────────────────────────────
+  - id: uncertainty_quantification_specialist
+    role: specialist
+    domain: uncertainty_quantification
+    card: agent_cards/uncertainty_quantification_specialist.yaml
+    status: planned
+
+  - id: uncertainty_quantification_antagonist
+    role: antagonist
+    domain: uncertainty_quantification_critique
+    card: agent_cards/uncertainty_quantification_antagonist.yaml
+    status: planned
+
+  - id: monte_carlo_doe_specialist
+    role: specialist
+    domain: monte_carlo_doe
+    card: agent_cards/monte_carlo_doe_specialist.yaml
+    status: planned
+
+  - id: monte_carlo_doe_antagonist
+    role: antagonist
+    domain: monte_carlo_doe_critique
+    card: agent_cards/monte_carlo_doe_antagonist.yaml
+    status: planned
+
+  - id: optimization_bayesian_specialist
+    role: specialist
+    domain: optimization_bayesian
+    card: agent_cards/optimization_bayesian_specialist.yaml
+    status: planned
+
+  - id: optimization_bayesian_antagonist
+    role: antagonist
+    domain: optimization_bayesian_critique
+    card: agent_cards/optimization_bayesian_antagonist.yaml
+    status: planned
+
+  - id: numerical_methods_specialist
+    role: specialist
+    domain: numerical_methods
+    card: agent_cards/numerical_methods_specialist.yaml
+    status: planned
+
+  - id: numerical_methods_antagonist
+    role: antagonist
+    domain: numerical_methods_critique
+    card: agent_cards/numerical_methods_antagonist.yaml
+    status: planned
+
+  - id: pde_formulations_specialist
+    role: specialist
+    domain: pde_formulations
+    card: agent_cards/pde_formulations_specialist.yaml
+    status: planned
+
+  - id: pde_formulations_antagonist
+    role: antagonist
+    domain: pde_formulations_critique
+    card: agent_cards/pde_formulations_antagonist.yaml
+    status: planned
+
+  - id: geometry_meshing_specialist
+    role: specialist
+    domain: geometry_meshing
+    card: agent_cards/geometry_meshing_specialist.yaml
+    status: planned
+
+  - id: geometry_meshing_antagonist
+    role: antagonist
+    domain: geometry_meshing_critique
+    card: agent_cards/geometry_meshing_antagonist.yaml
+    status: planned
+
+  # ── Group 12: CAD / Simulation ─────────────────────────────────────────────
+  - id: cad_parametric_modeling_specialist
+    role: specialist
+    domain: cad_parametric_modeling
+    card: agent_cards/cad_parametric_modeling_specialist.yaml
+    status: planned
+
+  - id: cad_parametric_modeling_antagonist
+    role: antagonist
+    domain: cad_parametric_modeling_critique
+    card: agent_cards/cad_parametric_modeling_antagonist.yaml
+    status: planned
+
+  - id: topology_optimization_specialist
+    role: specialist
+    domain: topology_optimization_new
+    card: agent_cards/topology_optimization_specialist.yaml
+    status: planned
+
+  - id: topology_optimization_antagonist
+    role: antagonist
+    domain: topology_optimization_critique
+    card: agent_cards/topology_optimization_antagonist.yaml
+    status: planned
+
+  - id: runtime_topological_self_assembly_specialist
+    role: specialist
+    domain: runtime_topological_self_assembly
+    card: agent_cards/runtime_topological_self_assembly_specialist.yaml
+    status: planned
+
+  - id: runtime_topological_self_assembly_antagonist
+    role: antagonist
+    domain: runtime_topological_self_assembly_critique
+    card: agent_cards/runtime_topological_self_assembly_antagonist.yaml
+    status: planned
+
+  - id: simulation_toolchain_integration_specialist
+    role: specialist
+    domain: simulation_toolchain_integration
+    card: agent_cards/simulation_toolchain_integration_specialist.yaml
+    status: planned
+
+  - id: simulation_toolchain_integration_antagonist
+    role: antagonist
+    domain: simulation_toolchain_integration_critique
+    card: agent_cards/simulation_toolchain_integration_antagonist.yaml
+    status: planned
+
+  # ── Group 13: Infrastructure / MLOps ──────────────────────────────────────
+  - id: mcp_tooling_specialist
+    role: specialist
+    domain: mcp_tooling
+    card: agent_cards/mcp_tooling_specialist.yaml
+    status: planned
+
+  - id: mcp_tooling_antagonist
+    role: antagonist
+    domain: mcp_tooling_critique
+    card: agent_cards/mcp_tooling_antagonist.yaml
+    status: planned
+
+  - id: a2a_protocol_specialist
+    role: specialist
+    domain: a2a_protocol
+    card: agent_cards/a2a_protocol_specialist.yaml
+    status: planned
+
+  - id: a2a_protocol_antagonist
+    role: antagonist
+    domain: a2a_protocol_critique
+    card: agent_cards/a2a_protocol_antagonist.yaml
+    status: planned
+
+  - id: security_secrets_vault_specialist
+    role: specialist
+    domain: security_secrets_vault
+    card: agent_cards/security_secrets_vault_specialist.yaml
+    status: planned
+
+  - id: security_secrets_vault_antagonist
+    role: antagonist
+    domain: security_secrets_vault_critique
+    card: agent_cards/security_secrets_vault_antagonist.yaml
+    status: planned
+
+  - id: cryptography_integrity_specialist
+    role: specialist
+    domain: cryptography_integrity
+    card: agent_cards/cryptography_integrity_specialist.yaml
+    status: planned
+
+  - id: cryptography_integrity_antagonist
+    role: antagonist
+    domain: cryptography_integrity_critique
+    card: agent_cards/cryptography_integrity_antagonist.yaml
+    status: planned
+
+  - id: data_engineering_logging_specialist
+    role: specialist
+    domain: data_engineering_logging
+    card: agent_cards/data_engineering_logging_specialist.yaml
+    status: planned
+
+  - id: data_engineering_logging_antagonist
+    role: antagonist
+    domain: data_engineering_logging_critique
+    card: agent_cards/data_engineering_logging_antagonist.yaml
+    status: planned
+
+  - id: observability_monitoring_specialist
+    role: specialist
+    domain: observability_monitoring
+    card: agent_cards/observability_monitoring_specialist.yaml
+    status: planned
+
+  - id: observability_monitoring_antagonist
+    role: antagonist
+    domain: observability_monitoring_critique
+    card: agent_cards/observability_monitoring_antagonist.yaml
+    status: planned
+
+  - id: cost_token_economics_specialist
+    role: specialist
+    domain: cost_token_economics
+    card: agent_cards/cost_token_economics_specialist.yaml
+    status: planned
+
+  - id: cost_token_economics_antagonist
+    role: antagonist
+    domain: cost_token_economics_critique
+    card: agent_cards/cost_token_economics_antagonist.yaml
+    status: planned
+
+  - id: project_management_specialist
+    role: specialist
+    domain: project_management
+    card: agent_cards/project_management_specialist.yaml
+    status: planned
+
+  - id: project_management_antagonist
+    role: antagonist
+    domain: project_management_critique
+    card: agent_cards/project_management_antagonist.yaml
+    status: planned
+
+  - id: documentation_standards_specialist
+    role: specialist
+    domain: documentation_standards
+    card: agent_cards/documentation_standards_specialist.yaml
+    status: planned
+
+  - id: documentation_standards_antagonist
+    role: antagonist
+    domain: documentation_standards_critique
+    card: agent_cards/documentation_standards_antagonist.yaml
+    status: planned
+
+  - id: quality_governance_specialist
+    role: specialist
+    domain: quality_governance
+    card: agent_cards/quality_governance_specialist.yaml
+    status: planned
+
+  - id: quality_governance_antagonist
+    role: antagonist
+    domain: quality_governance_critique
+    card: agent_cards/quality_governance_antagonist.yaml
+    status: planned

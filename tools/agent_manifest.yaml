@@ -1,0 +1,1197 @@
+# FORGE Agent Manifest — all 68 specialist↔antagonist pairs + non-pair agents
+# Used by: python tools/scaffold_agent.py --batch tools/agent_manifest.yaml
+# schema_version: v1
+
+agents:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 1: Structural / Mechanical (pairs 1-10)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: structural_mechanics_specialist
+    role: specialist
+    domain: "Structural Mechanics — Stress, Strain, Beams, Plates, Shells"
+    domain_short: "Structural Mechanics"
+    pair: structural_mechanics_antagonist
+    status: planned
+
+  - id: structural_mechanics_antagonist
+    role: antagonist
+    domain: "Structural Mechanics Critique"
+    domain_short: "Structural Mechanics"
+    pair: structural_mechanics_specialist
+    status: planned
+
+  - id: structural_fea_specialist
+    role: specialist
+    domain: "Structural FEA — Finite Element Analysis, Mesh Quality, Solvers"
+    domain_short: "Structural FEA"
+    pair: structural_fea_antagonist
+    status: planned
+
+  - id: structural_fea_antagonist
+    role: antagonist
+    domain: "Structural FEA Critique"
+    domain_short: "Structural FEA"
+    pair: structural_fea_specialist
+    status: planned
+
+  - id: fatigue_fracture_antagonist
+    role: antagonist
+    domain: "Fatigue & Fracture Mechanics Critique"
+    domain_short: "Fatigue & Fracture"
+    pair: fatigue_fracture_specialist
+    status: planned
+
+  - id: vibration_modal_specialist
+    role: specialist
+    domain: "Vibration & Modal Analysis — Natural Frequencies, Mode Shapes, FRF"
+    domain_short: "Vibration & Modal"
+    pair: vibration_modal_antagonist
+    status: planned
+
+  - id: vibration_modal_antagonist
+    role: antagonist
+    domain: "Vibration & Modal Analysis Critique"
+    domain_short: "Vibration & Modal"
+    pair: vibration_modal_specialist
+    status: planned
+
+  - id: dynamics_multibody_specialist
+    role: specialist
+    domain: "Dynamics & Multibody — Rigid Body Dynamics, MBD, Transient Loads"
+    domain_short: "Dynamics & Multibody"
+    pair: dynamics_multibody_antagonist
+    status: planned
+
+  - id: dynamics_multibody_antagonist
+    role: antagonist
+    domain: "Dynamics & Multibody Critique"
+    domain_short: "Dynamics & Multibody"
+    pair: dynamics_multibody_specialist
+    status: planned
+
+  - id: mechanisms_kinematics_specialist
+    role: specialist
+    domain: "Mechanisms & Kinematics — Linkages, Gears, Cams, Velocity/Acceleration Analysis"
+    domain_short: "Mechanisms & Kinematics"
+    pair: mechanisms_kinematics_antagonist
+    status: planned
+
+  - id: mechanisms_kinematics_antagonist
+    role: antagonist
+    domain: "Mechanisms & Kinematics Critique"
+    domain_short: "Mechanisms & Kinematics"
+    pair: mechanisms_kinematics_specialist
+    status: planned
+
+  - id: fasteners_joints_specialist
+    role: specialist
+    domain: "Fasteners & Joints — Bolted Joints, Welds, Adhesives, Preload"
+    domain_short: "Fasteners & Joints"
+    pair: fasteners_joints_antagonist
+    status: planned
+
+  - id: fasteners_joints_antagonist
+    role: antagonist
+    domain: "Fasteners & Joints Critique"
+    domain_short: "Fasteners & Joints"
+    pair: fasteners_joints_specialist
+    status: planned
+
+  - id: composites_layup_specialist
+    role: specialist
+    domain: "Composites Layup — CLT, Ply Orientation, First Ply Failure, Interlaminar Shear"
+    domain_short: "Composites Layup"
+    pair: composites_layup_antagonist
+    status: planned
+
+  - id: composites_layup_antagonist
+    role: antagonist
+    domain: "Composites Layup Critique"
+    domain_short: "Composites Layup"
+    pair: composites_layup_specialist
+    status: planned
+
+  - id: additive_manufacturing_specialist
+    role: specialist
+    domain: "Additive Manufacturing — FDM, LPBF, Support Structures, DfAM, Post-Processing"
+    domain_short: "Additive Manufacturing"
+    pair: additive_manufacturing_antagonist
+    status: planned
+
+  - id: additive_manufacturing_antagonist
+    role: antagonist
+    domain: "Additive Manufacturing Critique"
+    domain_short: "Additive Manufacturing"
+    pair: additive_manufacturing_specialist
+    status: planned
+
+  - id: dfa_dfm_specialist
+    role: specialist
+    domain: "DFA/DFM — Design for Assembly, Design for Manufacture, Tolerance Stack-up"
+    domain_short: "DFA/DFM"
+    pair: dfa_dfm_antagonist
+    status: planned
+
+  - id: dfa_dfm_antagonist
+    role: antagonist
+    domain: "DFA/DFM Critique"
+    domain_short: "DFA/DFM"
+    pair: dfa_dfm_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 2: Materials (pairs 11-13)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: materials_selection_specialist
+    role: specialist
+    domain: "Materials Selection — Ashby Charts, CES EduPack, Property Databases, Trade Studies"
+    domain_short: "Materials Selection"
+    pair: materials_selection_antagonist
+    status: planned
+
+  - id: materials_selection_antagonist
+    role: antagonist
+    domain: "Materials Selection Critique"
+    domain_short: "Materials Selection"
+    pair: materials_selection_specialist
+    status: planned
+
+  - id: corrosion_degradation_specialist
+    role: specialist
+    domain: "Corrosion & Degradation — Galvanic, SCC, Oxidation, Fatigue Corrosion, Coatings"
+    domain_short: "Corrosion & Degradation"
+    pair: corrosion_degradation_antagonist
+    status: planned
+
+  - id: corrosion_degradation_antagonist
+    role: antagonist
+    domain: "Corrosion & Degradation Critique"
+    domain_short: "Corrosion & Degradation"
+    pair: corrosion_degradation_specialist
+    status: planned
+
+  - id: thermal_management_specialist
+    role: specialist
+    domain: "Thermal Management — Heat Sinks, TIMs, PCMs, Cooling Loops, Junction Temperature"
+    domain_short: "Thermal Management"
+    pair: thermal_management_antagonist
+    status: planned
+
+  - id: thermal_management_antagonist
+    role: antagonist
+    domain: "Thermal Management Critique"
+    domain_short: "Thermal Management"
+    pair: thermal_management_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 3: Thermal / Fluids (pairs 14-17)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: heat_transfer_specialist
+    role: specialist
+    domain: "Heat Transfer — Conduction, Convection, Radiation, Heat Exchangers"
+    domain_short: "Heat Transfer"
+    pair: heat_transfer_antagonist
+    status: planned
+
+  - id: heat_transfer_antagonist
+    role: antagonist
+    domain: "Heat Transfer Critique"
+    domain_short: "Heat Transfer"
+    pair: heat_transfer_specialist
+    status: planned
+
+  - id: fluids_hydraulics_specialist
+    role: specialist
+    domain: "Fluids & Hydraulics — Incompressible Flow, Pipe Systems, Pumps, Actuators"
+    domain_short: "Fluids & Hydraulics"
+    pair: fluids_hydraulics_antagonist
+    status: planned
+
+  - id: fluids_hydraulics_antagonist
+    role: antagonist
+    domain: "Fluids & Hydraulics Critique"
+    domain_short: "Fluids & Hydraulics"
+    pair: fluids_hydraulics_specialist
+    status: planned
+
+  - id: cfd_specialist
+    role: specialist
+    domain: "CFD — Mesh Quality, Solver Selection, Turbulence Models, Convergence"
+    domain_short: "CFD"
+    pair: cfd_antagonist
+    status: planned
+
+  - id: cfd_antagonist
+    role: antagonist
+    domain: "CFD Critique"
+    domain_short: "CFD"
+    pair: cfd_specialist
+    status: planned
+
+  - id: aerodynamics_antagonist
+    role: antagonist
+    domain: "Aerodynamics Critique"
+    domain_short: "Aerodynamics"
+    pair: aerodynamics_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 4: Aerodynamics specializations (pairs 18-22)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: airfoils_wings_specialist
+    role: specialist
+    domain: "Airfoils & Wings — Section Analysis, Lift Curve, Drag Polar, Wing Loading"
+    domain_short: "Airfoils & Wings"
+    pair: airfoils_wings_antagonist
+    status: planned
+
+  - id: airfoils_wings_antagonist
+    role: antagonist
+    domain: "Airfoils & Wings Critique"
+    domain_short: "Airfoils & Wings"
+    pair: airfoils_wings_specialist
+    status: planned
+
+  - id: propulsion_systems_specialist
+    role: specialist
+    domain: "Propulsion Systems — Jets, Rockets, Electric Propulsion, Thrust-to-Weight"
+    domain_short: "Propulsion Systems"
+    pair: propulsion_systems_antagonist
+    status: planned
+
+  - id: propulsion_systems_antagonist
+    role: antagonist
+    domain: "Propulsion Systems Critique"
+    domain_short: "Propulsion Systems"
+    pair: propulsion_systems_specialist
+    status: planned
+
+  - id: rotor_bemt_specialist
+    role: specialist
+    domain: "Rotor BEMT — Blade Element Momentum Theory, Hover & Forward Flight, Tip Loss"
+    domain_short: "Rotor BEMT"
+    pair: rotor_bemt_antagonist
+    status: planned
+
+  - id: rotor_bemt_antagonist
+    role: antagonist
+    domain: "Rotor BEMT Critique"
+    domain_short: "Rotor BEMT"
+    pair: rotor_bemt_specialist
+    status: planned
+
+  - id: coaxial_interference_specialist
+    role: specialist
+    domain: "Coaxial Interference — Coaxial Rotor Interaction, Induced Velocity, Thrust Loss"
+    domain_short: "Coaxial Interference"
+    pair: coaxial_interference_antagonist
+    status: planned
+
+  - id: coaxial_interference_antagonist
+    role: antagonist
+    domain: "Coaxial Interference Critique"
+    domain_short: "Coaxial Interference"
+    pair: coaxial_interference_specialist
+    status: planned
+
+  - id: motor_selection_specialist
+    role: specialist
+    domain: "Motor Selection — BLDC/PMSM, kV Rating, Torque-Speed, Thermal Limits, ESC"
+    domain_short: "Motor Selection"
+    pair: motor_selection_antagonist
+    status: planned
+
+  - id: motor_selection_antagonist
+    role: antagonist
+    domain: "Motor Selection Critique"
+    domain_short: "Motor Selection"
+    pair: motor_selection_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 5: Electrical / Power (pairs 23-28)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: magnetics_em_fields_specialist
+    role: specialist
+    domain: "Magnetics & EM Fields — Flux, Permeability, Reluctance, Inductance, Eddy Currents"
+    domain_short: "Magnetics & EM Fields"
+    pair: magnetics_em_fields_antagonist
+    status: planned
+
+  - id: magnetics_em_fields_antagonist
+    role: antagonist
+    domain: "Magnetics & EM Fields Critique"
+    domain_short: "Magnetics & EM Fields"
+    pair: magnetics_em_fields_specialist
+    status: planned
+
+  - id: electric_machines_specialist
+    role: specialist
+    domain: "Electric Machines — Motors, Generators, PMSM, Efficiency Maps, Thermal Ratings"
+    domain_short: "Electric Machines"
+    pair: electric_machines_antagonist
+    status: planned
+
+  - id: electric_machines_antagonist
+    role: antagonist
+    domain: "Electric Machines Critique"
+    domain_short: "Electric Machines"
+    pair: electric_machines_specialist
+    status: planned
+
+  - id: power_electronics_specialist
+    role: specialist
+    domain: "Power Electronics — Converters, Switching Losses, Gate Drive, EMI, Thermal"
+    domain_short: "Power Electronics"
+    pair: power_electronics_antagonist
+    status: planned
+
+  - id: power_electronics_antagonist
+    role: antagonist
+    domain: "Power Electronics Critique"
+    domain_short: "Power Electronics"
+    pair: power_electronics_specialist
+    status: planned
+
+  - id: battery_energy_storage_specialist
+    role: specialist
+    domain: "Battery & Energy Storage — Cell Chemistry, C-Rate, SoC/SoH, Thermal, BMS"
+    domain_short: "Battery & Energy Storage"
+    pair: battery_energy_storage_antagonist
+    status: planned
+
+  - id: battery_energy_storage_antagonist
+    role: antagonist
+    domain: "Battery & Energy Storage Critique"
+    domain_short: "Battery & Energy Storage"
+    pair: battery_energy_storage_specialist
+    status: planned
+
+  - id: power_distribution_specialist
+    role: specialist
+    domain: "Power Distribution — Bus Architecture, Fusing, Wire Sizing, Load Analysis, Harness"
+    domain_short: "Power Distribution"
+    pair: power_distribution_antagonist
+    status: planned
+
+  - id: power_distribution_antagonist
+    role: antagonist
+    domain: "Power Distribution Critique"
+    domain_short: "Power Distribution"
+    pair: power_distribution_specialist
+    status: planned
+
+  - id: emi_emc_specialist
+    role: specialist
+    domain: "EMI/EMC — Radiated/Conducted Emissions, Shielding, Filtering, DO-160/MIL-STD-461"
+    domain_short: "EMI/EMC"
+    pair: emi_emc_antagonist
+    status: planned
+
+  - id: emi_emc_antagonist
+    role: antagonist
+    domain: "EMI/EMC Critique"
+    domain_short: "EMI/EMC"
+    pair: emi_emc_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 6: RF / Comms (pairs 29-31)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: rf_comms_specialist
+    role: specialist
+    domain: "RF & Comms — Link Budget, Modulation, Propagation, Data Rate, Spectrum"
+    domain_short: "RF & Comms"
+    pair: rf_comms_antagonist
+    status: planned
+
+  - id: rf_comms_antagonist
+    role: antagonist
+    domain: "RF & Comms Critique"
+    domain_short: "RF & Comms"
+    pair: rf_comms_specialist
+    status: planned
+
+  - id: antennas_link_budget_specialist
+    role: specialist
+    domain: "Antennas & Link Budget — Gain, Pattern, EIRP, G/T, Fade Margin, Polarisation"
+    domain_short: "Antennas & Link Budget"
+    pair: antennas_link_budget_antagonist
+    status: planned
+
+  - id: antennas_link_budget_antagonist
+    role: antagonist
+    domain: "Antennas & Link Budget Critique"
+    domain_short: "Antennas & Link Budget"
+    pair: antennas_link_budget_specialist
+    status: planned
+
+  - id: avionics_architecture_specialist
+    role: specialist
+    domain: "Avionics Architecture — Databus (CAN/ARINC/MIL-STD-1553), Integration, DO-178C"
+    domain_short: "Avionics Architecture"
+    pair: avionics_architecture_antagonist
+    status: planned
+
+  - id: avionics_architecture_antagonist
+    role: antagonist
+    domain: "Avionics Architecture Critique"
+    domain_short: "Avionics Architecture"
+    pair: avionics_architecture_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 7: Embedded / Software (pairs 32-34)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: embedded_firmware_specialist
+    role: specialist
+    domain: "Embedded Firmware — MCU, RTOS, HAL, Drivers, Bootloader, OTA Updates"
+    domain_short: "Embedded Firmware"
+    pair: embedded_firmware_antagonist
+    status: planned
+
+  - id: embedded_firmware_antagonist
+    role: antagonist
+    domain: "Embedded Firmware Critique"
+    domain_short: "Embedded Firmware"
+    pair: embedded_firmware_specialist
+    status: planned
+
+  - id: real_time_systems_specialist
+    role: specialist
+    domain: "Real-Time Systems — RTOS Scheduling, WCET, Deadline Verification, Priority Inversion"
+    domain_short: "Real-Time Systems"
+    pair: real_time_systems_antagonist
+    status: planned
+
+  - id: real_time_systems_antagonist
+    role: antagonist
+    domain: "Real-Time Systems Critique"
+    domain_short: "Real-Time Systems"
+    pair: real_time_systems_specialist
+    status: planned
+
+  - id: sensors_imu_gnss_specialist
+    role: specialist
+    domain: "Sensors, IMU & GNSS — Accelerometer, Gyroscope, GPS, Magnetometer, Error Models"
+    domain_short: "Sensors, IMU & GNSS"
+    pair: sensors_imu_gnss_antagonist
+    status: planned
+
+  - id: sensors_imu_gnss_antagonist
+    role: antagonist
+    domain: "Sensors, IMU & GNSS Critique"
+    domain_short: "Sensors, IMU & GNSS"
+    pair: sensors_imu_gnss_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 8: Controls / GNC (pairs 35-40)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: sensor_fusion_specialist
+    role: specialist
+    domain: "Sensor Fusion — Kalman Filter, EKF, UKF, Complementary Filter, Observability"
+    domain_short: "Sensor Fusion"
+    pair: sensor_fusion_antagonist
+    status: planned
+
+  - id: sensor_fusion_antagonist
+    role: antagonist
+    domain: "Sensor Fusion Critique"
+    domain_short: "Sensor Fusion"
+    pair: sensor_fusion_specialist
+    status: planned
+
+  - id: controls_flight_control_specialist
+    role: specialist
+    domain: "Controls & Flight Control — PID, LQR, Gain Scheduling, Stability Margins, H-Inf"
+    domain_short: "Controls & Flight Control"
+    pair: controls_flight_control_antagonist
+    status: planned
+
+  - id: controls_flight_control_antagonist
+    role: antagonist
+    domain: "Controls & Flight Control Critique"
+    domain_short: "Controls & Flight Control"
+    pair: controls_flight_control_specialist
+    status: planned
+
+  - id: gnc_guidance_navigation_specialist
+    role: specialist
+    domain: "GNC — Guidance, Navigation, Trajectory Planning, Waypoints, Path Following"
+    domain_short: "GNC Guidance & Navigation"
+    pair: gnc_guidance_navigation_antagonist
+    status: planned
+
+  - id: gnc_guidance_navigation_antagonist
+    role: antagonist
+    domain: "GNC Critique"
+    domain_short: "GNC Guidance & Navigation"
+    pair: gnc_guidance_navigation_specialist
+    status: planned
+
+  - id: system_identification_specialist
+    role: specialist
+    domain: "System Identification — Frequency Sweep, PRBS, Bode Plot, Transfer Function Fit"
+    domain_short: "System Identification"
+    pair: system_identification_antagonist
+    status: planned
+
+  - id: system_identification_antagonist
+    role: antagonist
+    domain: "System Identification Critique"
+    domain_short: "System Identification"
+    pair: system_identification_specialist
+    status: planned
+
+  - id: estimation_kalman_specialist
+    role: specialist
+    domain: "Estimation & Kalman — KF, EKF, UKF, Particle Filter, IMM, RMSE, NEES"
+    domain_short: "Estimation & Kalman"
+    pair: estimation_kalman_antagonist
+    status: planned
+
+  - id: estimation_kalman_antagonist
+    role: antagonist
+    domain: "Estimation & Kalman Critique"
+    domain_short: "Estimation & Kalman"
+    pair: estimation_kalman_specialist
+    status: planned
+
+  - id: flight_dynamics_specialist
+    role: specialist
+    domain: "Flight Dynamics — 6-DOF, Stability Derivatives, Trim, Linearisation, Dutch Roll"
+    domain_short: "Flight Dynamics"
+    pair: flight_dynamics_antagonist
+    status: planned
+
+  - id: flight_dynamics_antagonist
+    role: antagonist
+    domain: "Flight Dynamics Critique"
+    domain_short: "Flight Dynamics"
+    pair: flight_dynamics_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 9: Mission / Systems (pairs 41-46)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: mission_performance_specialist
+    role: specialist
+    domain: "Mission Performance — Range, Endurance, Payload, Speed, Ceiling, Hover Efficiency"
+    domain_short: "Mission Performance"
+    pair: mission_performance_antagonist
+    status: planned
+
+  - id: mission_performance_antagonist
+    role: antagonist
+    domain: "Mission Performance Critique"
+    domain_short: "Mission Performance"
+    pair: mission_performance_specialist
+    status: planned
+
+  - id: energy_maneuverability_specialist
+    role: specialist
+    domain: "Energy Maneuverability — E-M Diagram, Turn Rate, Load Factor, Specific Excess Power"
+    domain_short: "Energy Maneuverability"
+    pair: energy_maneuverability_antagonist
+    status: planned
+
+  - id: energy_maneuverability_antagonist
+    role: antagonist
+    domain: "Energy Maneuverability Critique"
+    domain_short: "Energy Maneuverability"
+    pair: energy_maneuverability_specialist
+    status: planned
+
+  - id: reliability_engineering_specialist
+    role: specialist
+    domain: "Reliability Engineering — MTBF, FTA, RBD, FMEA, Reliability Allocation, MIL-HDBK-217"
+    domain_short: "Reliability Engineering"
+    pair: reliability_engineering_antagonist
+    status: planned
+
+  - id: reliability_engineering_antagonist
+    role: antagonist
+    domain: "Reliability Engineering Critique"
+    domain_short: "Reliability Engineering"
+    pair: reliability_engineering_specialist
+    status: planned
+
+  - id: safety_hazards_fmea_specialist
+    role: specialist
+    domain: "Safety, Hazards & FMEA — Hazard Analysis, FMEA/FMECA, FTA, DAL, ARP4761"
+    domain_short: "Safety, Hazards & FMEA"
+    pair: safety_hazards_fmea_antagonist
+    status: planned
+
+  - id: safety_hazards_fmea_antagonist
+    role: antagonist
+    domain: "Safety, Hazards & FMEA Critique"
+    domain_short: "Safety, Hazards & FMEA"
+    pair: safety_hazards_fmea_specialist
+    status: planned
+
+  - id: systems_engineering_specialist
+    role: specialist
+    domain: "Systems Engineering — SysML, V-Model, ConOps, ICD, Stakeholder Requirements"
+    domain_short: "Systems Engineering"
+    pair: systems_engineering_antagonist
+    status: planned
+
+  - id: systems_engineering_antagonist
+    role: antagonist
+    domain: "Systems Engineering Critique"
+    domain_short: "Systems Engineering"
+    pair: systems_engineering_specialist
+    status: planned
+
+  - id: requirements_traceability_specialist
+    role: specialist
+    domain: "Requirements & Traceability — Requirements Flow, Verification Matrix, DM, DOORS"
+    domain_short: "Requirements & Traceability"
+    pair: requirements_traceability_antagonist
+    status: planned
+
+  - id: requirements_traceability_antagonist
+    role: antagonist
+    domain: "Requirements & Traceability Critique"
+    domain_short: "Requirements & Traceability"
+    pair: requirements_traceability_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 10: SE & Testing (pairs 47-48)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: verification_validation_specialist
+    role: specialist
+    domain: "Verification & Validation — V&V Plans, Test Procedures, Acceptance Criteria, DO-160"
+    domain_short: "Verification & Validation"
+    pair: verification_validation_antagonist
+    status: planned
+
+  - id: verification_validation_antagonist
+    role: antagonist
+    domain: "Verification & Validation Critique"
+    domain_short: "Verification & Validation"
+    pair: verification_validation_specialist
+    status: planned
+
+  - id: test_engineering_specialist
+    role: specialist
+    domain: "Test Engineering — Test Planning, Fixtures, Data Acquisition, Statistical Test Design"
+    domain_short: "Test Engineering"
+    pair: test_engineering_antagonist
+    status: planned
+
+  - id: test_engineering_antagonist
+    role: antagonist
+    domain: "Test Engineering Critique"
+    domain_short: "Test Engineering"
+    pair: test_engineering_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 11: Math / Optimisation (pairs 49-54)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: uncertainty_quantification_specialist
+    role: specialist
+    domain: "Uncertainty Quantification — UQ, Sobol Indices, Global Sensitivity, PCE, DACE"
+    domain_short: "Uncertainty Quantification"
+    pair: uncertainty_quantification_antagonist
+    status: planned
+
+  - id: uncertainty_quantification_antagonist
+    role: antagonist
+    domain: "Uncertainty Quantification Critique"
+    domain_short: "Uncertainty Quantification"
+    pair: uncertainty_quantification_specialist
+    status: planned
+
+  - id: monte_carlo_doe_specialist
+    role: specialist
+    domain: "Monte Carlo & DOE — MC Sampling, Latin Hypercube, RSM, Full Factorial, Taguchi"
+    domain_short: "Monte Carlo & DOE"
+    pair: monte_carlo_doe_antagonist
+    status: planned
+
+  - id: monte_carlo_doe_antagonist
+    role: antagonist
+    domain: "Monte Carlo & DOE Critique"
+    domain_short: "Monte Carlo & DOE"
+    pair: monte_carlo_doe_specialist
+    status: planned
+
+  - id: optimization_bayesian_specialist
+    role: specialist
+    domain: "Bayesian Optimisation — BO, Gaussian Process Surrogate, Acquisition Functions, EI"
+    domain_short: "Bayesian Optimisation"
+    pair: optimization_bayesian_antagonist
+    status: planned
+
+  - id: optimization_bayesian_antagonist
+    role: antagonist
+    domain: "Bayesian Optimisation Critique"
+    domain_short: "Bayesian Optimisation"
+    pair: optimization_bayesian_specialist
+    status: planned
+
+  - id: numerical_methods_specialist
+    role: specialist
+    domain: "Numerical Methods — ODE/PDE Solvers, Quadrature, Root-Finding, Interpolation"
+    domain_short: "Numerical Methods"
+    pair: numerical_methods_antagonist
+    status: planned
+
+  - id: numerical_methods_antagonist
+    role: antagonist
+    domain: "Numerical Methods Critique"
+    domain_short: "Numerical Methods"
+    pair: numerical_methods_specialist
+    status: planned
+
+  - id: pde_formulations_specialist
+    role: specialist
+    domain: "PDE Formulations — Discretisation, FEM/FDM/FVM, Weak Form, Stability, Convergence"
+    domain_short: "PDE Formulations"
+    pair: pde_formulations_antagonist
+    status: planned
+
+  - id: pde_formulations_antagonist
+    role: antagonist
+    domain: "PDE Formulations Critique"
+    domain_short: "PDE Formulations"
+    pair: pde_formulations_specialist
+    status: planned
+
+  - id: geometry_meshing_specialist
+    role: specialist
+    domain: "Geometry & Meshing — Mesh Generation, Quality Metrics, Smoothing, CAD Import"
+    domain_short: "Geometry & Meshing"
+    pair: geometry_meshing_antagonist
+    status: planned
+
+  - id: geometry_meshing_antagonist
+    role: antagonist
+    domain: "Geometry & Meshing Critique"
+    domain_short: "Geometry & Meshing"
+    pair: geometry_meshing_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 12: CAD / Simulation (pairs 55-58)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: cad_parametric_modeling_specialist
+    role: specialist
+    domain: "CAD & Parametric Modelling — Feature Trees, Parametric Families, OCCT, STEP"
+    domain_short: "CAD & Parametric Modelling"
+    pair: cad_parametric_modeling_antagonist
+    status: planned
+
+  - id: cad_parametric_modeling_antagonist
+    role: antagonist
+    domain: "CAD & Parametric Modelling Critique"
+    domain_short: "CAD & Parametric Modelling"
+    pair: cad_parametric_modeling_specialist
+    status: planned
+
+  - id: topology_optimization_specialist
+    role: specialist
+    domain: "Topology Optimisation — SIMP, Level Set, Density Filter, Volume Constraint"
+    domain_short: "Topology Optimisation"
+    pair: topology_optimization_antagonist
+    status: planned
+
+  - id: topology_optimization_antagonist
+    role: antagonist
+    domain: "Topology Optimisation Critique"
+    domain_short: "Topology Optimisation"
+    pair: topology_optimization_specialist
+    status: planned
+
+  - id: runtime_topological_self_assembly_specialist
+    role: specialist
+    domain: "Runtime Topological Self-Assembly — Dynamic Topology, Graph Rewriting, Emergent Structure"
+    domain_short: "Runtime Topological Self-Assembly"
+    pair: runtime_topological_self_assembly_antagonist
+    status: planned
+
+  - id: runtime_topological_self_assembly_antagonist
+    role: antagonist
+    domain: "Runtime Topological Self-Assembly Critique"
+    domain_short: "Runtime Topological Self-Assembly"
+    pair: runtime_topological_self_assembly_specialist
+    status: planned
+
+  - id: simulation_toolchain_integration_specialist
+    role: specialist
+    domain: "Simulation Toolchain Integration — Co-Simulation, preCICE, Tool Coupling, Data Exchange"
+    domain_short: "Simulation Toolchain Integration"
+    pair: simulation_toolchain_integration_antagonist
+    status: planned
+
+  - id: simulation_toolchain_integration_antagonist
+    role: antagonist
+    domain: "Simulation Toolchain Integration Critique"
+    domain_short: "Simulation Toolchain Integration"
+    pair: simulation_toolchain_integration_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # GROUP 13: Infrastructure / MLOps (pairs 59-68)
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: mcp_tooling_specialist
+    role: specialist
+    domain: "MCP Tooling — MCP Server Design, Tool Registration, Schema, Transport, Auth"
+    domain_short: "MCP Tooling"
+    pair: mcp_tooling_antagonist
+    status: planned
+
+  - id: mcp_tooling_antagonist
+    role: antagonist
+    domain: "MCP Tooling Critique"
+    domain_short: "MCP Tooling"
+    pair: mcp_tooling_specialist
+    status: planned
+
+  - id: a2a_protocol_specialist
+    role: specialist
+    domain: "A2A Protocol — Agent-to-Agent Messaging, Task Routing, Blackboard, Contract Enforcement"
+    domain_short: "A2A Protocol"
+    pair: a2a_protocol_antagonist
+    status: planned
+
+  - id: a2a_protocol_antagonist
+    role: antagonist
+    domain: "A2A Protocol Critique"
+    domain_short: "A2A Protocol"
+    pair: a2a_protocol_specialist
+    status: planned
+
+  - id: security_secrets_vault_specialist
+    role: specialist
+    domain: "Security & Secrets Vault — Secrets Management, Auth, Vault, RBAC, Zero-Trust"
+    domain_short: "Security & Secrets Vault"
+    pair: security_secrets_vault_antagonist
+    status: planned
+
+  - id: security_secrets_vault_antagonist
+    role: antagonist
+    domain: "Security & Secrets Vault Critique"
+    domain_short: "Security & Secrets Vault"
+    pair: security_secrets_vault_specialist
+    status: planned
+
+  - id: cryptography_integrity_specialist
+    role: specialist
+    domain: "Cryptography & Integrity — Hashing, Signing, Encryption, Certificate Management"
+    domain_short: "Cryptography & Integrity"
+    pair: cryptography_integrity_antagonist
+    status: planned
+
+  - id: cryptography_integrity_antagonist
+    role: antagonist
+    domain: "Cryptography & Integrity Critique"
+    domain_short: "Cryptography & Integrity"
+    pair: cryptography_integrity_specialist
+    status: planned
+
+  - id: data_engineering_logging_specialist
+    role: specialist
+    domain: "Data Engineering & Logging — Logging Pipelines, Schemas, ETL, Retention, GDPR"
+    domain_short: "Data Engineering & Logging"
+    pair: data_engineering_logging_antagonist
+    status: planned
+
+  - id: data_engineering_logging_antagonist
+    role: antagonist
+    domain: "Data Engineering & Logging Critique"
+    domain_short: "Data Engineering & Logging"
+    pair: data_engineering_logging_specialist
+    status: planned
+
+  - id: observability_monitoring_specialist
+    role: specialist
+    domain: "Observability & Monitoring — Metrics, Distributed Tracing, Dashboards, Alerting, SLOs"
+    domain_short: "Observability & Monitoring"
+    pair: observability_monitoring_antagonist
+    status: planned
+
+  - id: observability_monitoring_antagonist
+    role: antagonist
+    domain: "Observability & Monitoring Critique"
+    domain_short: "Observability & Monitoring"
+    pair: observability_monitoring_specialist
+    status: planned
+
+  - id: cost_token_economics_specialist
+    role: specialist
+    domain: "Cost & Token Economics — Token Budgets, API Cost Modelling, Run Economics, ROI"
+    domain_short: "Cost & Token Economics"
+    pair: cost_token_economics_antagonist
+    status: planned
+
+  - id: cost_token_economics_antagonist
+    role: antagonist
+    domain: "Cost & Token Economics Critique"
+    domain_short: "Cost & Token Economics"
+    pair: cost_token_economics_specialist
+    status: planned
+
+  - id: project_management_specialist
+    role: specialist
+    domain: "Project Management — Scheduling, Milestones, Risk Register, JIRA, Earned Value"
+    domain_short: "Project Management"
+    pair: project_management_antagonist
+    status: planned
+
+  - id: project_management_antagonist
+    role: antagonist
+    domain: "Project Management Critique"
+    domain_short: "Project Management"
+    pair: project_management_specialist
+    status: planned
+
+  - id: documentation_standards_specialist
+    role: specialist
+    domain: "Documentation Standards — API Docs, Markdown/AsciiDoc, OpenAPI, DITA, Doc-as-Code"
+    domain_short: "Documentation Standards"
+    pair: documentation_standards_antagonist
+    status: planned
+
+  - id: documentation_standards_antagonist
+    role: antagonist
+    domain: "Documentation Standards Critique"
+    domain_short: "Documentation Standards"
+    pair: documentation_standards_specialist
+    status: planned
+
+  - id: quality_governance_specialist
+    role: specialist
+    domain: "Quality & Governance — QA Processes, Audit Trails, ISO 9001, AS9100, Traceability"
+    domain_short: "Quality & Governance"
+    pair: quality_governance_antagonist
+    status: planned
+
+  - id: quality_governance_antagonist
+    role: antagonist
+    domain: "Quality & Governance Critique"
+    domain_short: "Quality & Governance"
+    pair: quality_governance_specialist
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NON-PAIR: Command agents
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: forge_orchestrator
+    role: command
+    domain: "FORGE Orchestrator — Top-level workflow routing, agent spawning, task decomposition"
+    domain_short: "FORGE Orchestrator"
+    status: planned
+
+  - id: forge_arbiter
+    role: command
+    domain: "FORGE Arbiter — Dispute resolution, deadlock breaking, verdict aggregation"
+    domain_short: "FORGE Arbiter"
+    status: planned
+
+  - id: forge_project_manager
+    role: command
+    domain: "FORGE Project Manager — Sprint planning, milestone tracking, resource allocation"
+    domain_short: "FORGE Project Manager"
+    status: planned
+
+  - id: forge_maintenance_orchestrator
+    role: command
+    domain: "FORGE Maintenance Orchestrator — Self-maintenance, anti-drift, schema audits"
+    domain_short: "FORGE Maintenance Orchestrator"
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NON-PAIR: Knowledge / Memory
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: vault_librarian
+    role: librarian
+    domain: "Vault Librarian — Knowledge retrieval, vault reads/writes, provenance lookup"
+    domain_short: "Vault Librarian"
+    status: planned
+
+  - id: vault_librarian_antagonist
+    role: antagonist
+    domain: "Vault Librarian Critique — Provenance challenge, stale data detection"
+    domain_short: "Vault Librarian"
+    pair: vault_librarian
+    status: planned
+
+  - id: prompt_engineer_antagonist
+    role: antagonist
+    domain: "Prompt Engineer Critique — Prompt quality, injection risk, instruction clarity"
+    domain_short: "Prompt Engineering"
+    pair: prompt_engineer
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NON-PAIR: Verifiers
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: provenance_verifier
+    role: verifier
+    domain: "Provenance Verifier — Source specificity, tool version, input hash gate"
+    domain_short: "Provenance Verifier"
+    status: planned
+
+  - id: contradiction_verifier
+    role: verifier
+    domain: "Contradiction Verifier — Cross-agent consistency, logical contradiction detection"
+    domain_short: "Contradiction Verifier"
+    status: planned
+
+  - id: confidence_calibrator
+    role: verifier
+    domain: "Confidence Calibrator — Declared vs measured confidence, Brier score tracking"
+    domain_short: "Confidence Calibrator"
+    status: planned
+
+  - id: verifier_redteam_antagonist
+    role: antagonist
+    domain: "Verifier Red-Team — Adversarial inputs that attempt to bypass verification gates"
+    domain_short: "Verifier Red-Team"
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NON-PAIR: Testers
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: tester_core_runtime
+    role: tester
+    domain: "Tester — Core Runtime — Agent invocation, task lifecycle, blackboard I/O"
+    domain_short: "Tester Core Runtime"
+    status: planned
+
+  - id: tester_memory_system
+    role: tester
+    domain: "Tester — Memory System — Vault read/write, strategy retrieval, tool_prefs load"
+    domain_short: "Tester Memory System"
+    status: planned
+
+  - id: tester_debate_a2a
+    role: tester
+    domain: "Tester — Debate A2A — Specialist↔antagonist debate protocol, arbitration"
+    domain_short: "Tester Debate A2A"
+    status: planned
+
+  - id: tester_mcp_wrappers
+    role: tester
+    domain: "Tester — MCP Wrappers — Tool invocation, schema validation, error codes"
+    domain_short: "Tester MCP Wrappers"
+    status: planned
+
+  - id: tester_verifier_redteam
+    role: tester
+    domain: "Tester — Verifier Red-Team — Adversarial fixture injection, gate bypass attempts"
+    domain_short: "Tester Verifier Red-Team"
+    status: planned
+
+  - id: tester_contracts_interfaces
+    role: tester
+    domain: "Tester — Contracts & Interfaces — Output contract compliance, schema validation"
+    domain_short: "Tester Contracts & Interfaces"
+    status: planned
+
+  - id: tester_ops_observability
+    role: tester
+    domain: "Tester — Ops & Observability — Metrics emission, log format, alert routing"
+    domain_short: "Tester Ops & Observability"
+    status: planned
+
+  - id: tester_maintenance_mesh
+    role: tester
+    domain: "Tester — Maintenance Mesh — Schema audits, drift detection, fixture integrity"
+    domain_short: "Tester Maintenance Mesh"
+    status: planned
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # NON-PAIR: Maintenance mesh
+  # ──────────────────────────────────────────────────────────────────────────
+
+  - id: catalog_librarian
+    role: maintenance
+    domain: "Catalog Librarian — Agent catalogue, capability index, skill matrix maintenance"
+    domain_short: "Catalog Librarian"
+    status: planned
+
+  - id: schema_auditor
+    role: maintenance
+    domain: "Schema Auditor — YAML/JSON schema compliance, version drift detection"
+    domain_short: "Schema Auditor"
+    status: planned
+
+  - id: fixture_integrity_agent
+    role: maintenance
+    domain: "Fixture Integrity — Test fixture hash verification, golden file comparison"
+    domain_short: "Fixture Integrity"
+    status: planned
+
+  - id: provider_matrix_watcher
+    role: maintenance
+    domain: "Provider Matrix Watcher — LLM provider status, model availability, fallback routing"
+    domain_short: "Provider Matrix Watcher"
+    status: planned
+
+  - id: router_config_auditor
+    role: maintenance
+    domain: "Router Config Auditor — Task routing rules, agent selection logic, config drift"
+    domain_short: "Router Config Auditor"
+    status: planned
+
+  - id: prompt_registry_auditor
+    role: maintenance
+    domain: "Prompt Registry Auditor — Prompt version compliance, changelog completeness"
+    domain_short: "Prompt Registry Auditor"
+    status: planned
+
+  - id: risk_register_monitor
+    role: maintenance
+    domain: "Risk Register Monitor — RISK_REGISTER.md staleness, open risk review scheduling"
+    domain_short: "Risk Register Monitor"
+    status: planned
+
+  - id: degraded_mode_monitor
+    role: maintenance
+    domain: "Degraded Mode Monitor — Agent fallback activation, capability reduction tracking"
+    domain_short: "Degraded Mode Monitor"
+    status: planned
+
+  - id: drift_monitor
+    role: maintenance
+    domain: "Drift Monitor — Registry vs filesystem drift detection, missing file alerting"
+    domain_short: "Drift Monitor"
+    status: planned
+
+  - id: ops_consistency_auditor
+    role: maintenance
+    domain: "Ops Consistency Auditor — Cross-system config consistency, IaC drift detection"
+    domain_short: "Ops Consistency Auditor"
+    status: planned
+
+  - id: maintenance_global_antagonist
+    role: antagonist
+    domain: "Maintenance Global Antagonist — Challenges all maintenance agent conclusions"
+    domain_short: "Maintenance Global"
+    status: planned

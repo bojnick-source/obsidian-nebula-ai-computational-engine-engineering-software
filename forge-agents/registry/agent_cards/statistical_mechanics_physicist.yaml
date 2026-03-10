@@ -1,0 +1,18 @@
+id: statistical_mechanics_physicist
+name: Statistical Mechanics Physicist
+version: 1.0.0
+role: specialist
+domain: statistical_mechanics
+status: v1
+antagonist_pair: physics_antagonist
+capabilities:
+- partition_function_computation
+- thermodynamic_limit_analysis
+- ergodicity_assessment
+- phase_transition_analysis
+- classical_quantum_statistics
+tools_allowed:
+- python_numerical
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/statistical_mechanics_physicist/v1.0.0.md
+notes: Statistical mechanics with thermodynamic limit validity and ergodicity checks.

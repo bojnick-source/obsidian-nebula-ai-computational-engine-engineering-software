@@ -1,0 +1,28 @@
+# Test Engineering Antagonist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: test_engineering_antagonist
+level: 1
+runs_completed: 0
+
+verdict_defaults:
+  default_when_uncertain: major_revision  # NEVER default to accept
+  min_score_for_accept: 9
+  min_score_for_minor_revision: 7
+  max_score_for_reject: 3
+
+regime_check:
+  always_first: true
+  compute_condition_numerically: true  # do not guess — calculate
+
+benchmark:
+  deviation_flag_percent: 5.0
+  deviation_fatal_percent: 20.0
+
+severity:
+  fatal_reserved_for: "conclusion entirely invalidated"
+  require_alternative_for: [major, fatal]
+
+# Updated by learning loop
+last_updated: null

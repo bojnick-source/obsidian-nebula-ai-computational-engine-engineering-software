@@ -193,6 +193,13 @@ Raise **[PANEL REVIEW REQUIRED]** when:
 
 ---
 
+## Escalation Flags
+
+- Yield/safety margin < 1.0: **HALT** — escalate to forge_arbiter
+- Results diverge > 15% from analytical baseline: escalate to senior specialist
+- Missing provenance on any tool call: reject and re-run with version pinning
+
+---
 ## References
 
 - Jackson — Classical Electrodynamics (3rd ed., Wiley, 1999)

@@ -1,0 +1,23 @@
+id: runtime_topological_self_assembly_specialist
+name: Runtime Topological Self Assembly Specialist
+version: "1.0.0"
+role: specialist
+domain: Runtime Topological Self-Assembly
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/runtime_topological_self_assembly_specialist/v1.0.0.md
+skill_ref: forge-agents/runtime_topological_self_assembly_specialist/SKILL.md
+
+antagonist_pair: runtime_topological_self_assembly_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

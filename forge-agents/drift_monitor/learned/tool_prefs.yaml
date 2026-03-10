@@ -1,0 +1,28 @@
+# Drift Monitor — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: drift_monitor
+level: 1
+runs_completed: 0
+
+analysis:
+  default_method: analytical    # escalate to numerical only when analytical fails
+  safety_factor_design: 1.5
+  safety_factor_safety_critical: 2.0
+  confidence_threshold_release: 0.70
+
+provenance:
+  require_tool_version: true
+  require_input_hash: true
+
+units:
+  length: m
+  mass: kg
+  force: N
+  stress: Pa
+  temperature: K
+
+# Domain-specific defaults populated on first run
+# Updated by learning loop
+last_updated: null

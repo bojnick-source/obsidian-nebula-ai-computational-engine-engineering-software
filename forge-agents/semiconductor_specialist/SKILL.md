@@ -122,6 +122,36 @@ Flag `[QUANTUM TRANSPORT REQUIRED]` when:
 
 ---
 
+## Academic Writing & Peer Review
+
+### Academic Capability Unlocks
+
+| Level | Academic Capability |
+|---|---|
+| 3 | Draft methods section — derivations, notation, equation numbering |
+| 4 | Peer review of another agent output — rate objections minor/major/fatal |
+| 5 | Full academic panel assessment — multi-output synthesis |
+
+### Academic Output Contract (Level 3+)
+
+```yaml
+paper_section_draft:
+  section_type: "methods"
+  content_latex: "..."
+  equations_numbered: true
+  notation_consistency: true
+
+peer_review_verdict:
+  target_agent_id: "..."
+  target_run_id: "..."
+  decision: "major_revision"
+  objections: []
+  missing_citations: []
+  logical_gaps: []
+  open_questions: []
+```
+
+---
 ## References
 
 - Sze & Ng — *Physics of Semiconductor Devices* (3rd ed., Wiley)

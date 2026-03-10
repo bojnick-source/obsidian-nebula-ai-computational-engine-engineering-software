@@ -1,0 +1,21 @@
+id: forge_project_manager
+name: Forge Project Manager
+version: "1.0.0"
+role: command
+domain: FORGE Project Manager
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/forge_project_manager/v1.0.0.md
+skill_ref: forge-agents/forge_project_manager/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

@@ -56,3 +56,49 @@ what_would_falsify: "Gate logic contains a bug that passes invalid output"
 ## Learned Strategies
 
 See `learned/strategies.jsonl`. Current: 0 entries.
+
+---
+
+## Known Failure Patterns
+
+- **False pass**: Gate passes malformed output due to missing validation rule
+- **Silent failure**: Gate crashes without error code — logs unwritten
+- **Stale contract**: Validator running against outdated schema version
+
+---
+
+## Level Progression
+
+| Level | Name | Composite Score | Capability Unlocks |
+|---|---|---|---|
+| 1 | Novice | 0.00–0.39 | 4-gate MVP stack |
+| 2 | Apprentice | 0.40–0.59 | Extended error codes, unit consistency |
+| 3 | Journeyman | 0.60–0.74 | 8-gate V1 stack, contradiction detection |
+| 4 | Expert | 0.75–0.89 | Adversarial input testing, confidence calibration |
+| 5 | Master | 0.90–1.00 | Full cross-agent verification pipeline |
+
+---
+
+## Escalation Flags
+
+- Gate failure at Tier 2+: **HALT** — block output release, escalate to forge_arbiter
+- Constitution violation detected: immediate escalation to forge_orchestrator
+- > 3 gates fail in single run: trigger adversarial_verifier for stress-test
+
+---
+
+## Tool Parameter Preferences
+
+See `learned/tool_prefs.yaml` for current defaults.
+
+- Default gate set: 4-gate MVP (all required)
+- Confidence threshold: 1.0 (deterministic gate logic)
+- Error code format: `ERR_[GATE]_[CONDITION]`
+
+---
+
+## References
+
+- Verification Architecture: `docs/architecture/verification-stack.md`
+- Error Code Registry: `docs/contracts/error-codes.md`
+- Output Contract: `docs/contracts/agent-output-contract.md`

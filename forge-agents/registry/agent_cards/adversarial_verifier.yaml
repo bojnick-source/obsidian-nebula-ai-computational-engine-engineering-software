@@ -1,0 +1,17 @@
+id: adversarial_verifier
+name: Adversarial Verifier
+version: 1.0.0
+role: verifier
+domain: adversarial_verification
+status: mvp
+capabilities:
+- adversarial_input_testing
+- boundary_condition_stress
+- malformed_output_detection
+- edge_case_enumeration
+tools_allowed:
+- verifier_gates
+- cross_agent_log
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/adversarial_verifier/v1.0.0.md
+notes: Attempts to break agents with adversarial inputs and stress-tests output contracts.

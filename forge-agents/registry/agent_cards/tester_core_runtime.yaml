@@ -1,0 +1,21 @@
+id: tester_core_runtime
+name: Tester Core Runtime
+version: "1.0.0"
+role: tester
+domain: Tester Core Runtime
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_core_runtime/v1.0.0.md
+skill_ref: forge-agents/tester_core_runtime/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

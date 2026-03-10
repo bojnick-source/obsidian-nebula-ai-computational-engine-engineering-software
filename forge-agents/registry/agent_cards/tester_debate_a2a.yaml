@@ -1,0 +1,21 @@
+id: tester_debate_a2a
+name: Tester Debate A2A
+version: "1.0.0"
+role: tester
+domain: Tester Debate A2A
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_debate_a2a/v1.0.0.md
+skill_ref: forge-agents/tester_debate_a2a/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

@@ -1,0 +1,21 @@
+id: tester_ops_observability
+name: Tester Ops Observability
+version: "1.0.0"
+role: tester
+domain: Tester Ops & Observability
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/tester_ops_observability/v1.0.0.md
+skill_ref: forge-agents/tester_ops_observability/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

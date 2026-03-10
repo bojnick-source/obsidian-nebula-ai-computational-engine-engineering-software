@@ -1,7 +1,127 @@
-schema_version: "v1"
-# V1 feature — antagonist pairs not active at MVP
+schema_version: "v2"
+# FORGE Antagonist Pairs Registry
+# Updated: 2026-03-10
+# All 68 canonical specialist↔antagonist pairs + universal critics
 
 pairs:
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 1 — Structural & Mechanical
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: structural_mechanics_specialist
+    antagonist: structural_mechanics_antagonist
+    debate_scope:
+      - linear_elastic_regime_validity
+      - boundary_condition_idealization
+      - mesh_convergence_check
+      - safety_factor_justification
+    reviewer: academic_peer_reviewer
+
+  - specialist: structural_fea_specialist
+    antagonist: structural_fea_antagonist
+    debate_scope:
+      - solver_selection_justification
+      - convergence_study_adequacy
+      - element_type_appropriateness
+      - contact_formulation_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: fatigue_fracture_specialist
+    antagonist: fatigue_fracture_antagonist
+    debate_scope:
+      - stress_concentration_factor_accuracy
+      - sn_curve_data_provenance
+      - mean_stress_correction_method
+      - fracture_mechanics_regime_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: vibration_modal_specialist
+    antagonist: vibration_modal_antagonist
+    debate_scope:
+      - damping_ratio_justification
+      - mode_shape_completeness
+      - excitation_frequency_coverage
+      - boundary_condition_idealization
+    reviewer: academic_peer_reviewer
+
+  - specialist: dynamics_multibody_specialist
+    antagonist: dynamics_multibody_antagonist
+    debate_scope:
+      - constraint_formulation_validity
+      - integration_scheme_stability
+      - joint_model_accuracy
+      - rigid_body_assumption_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: mechanisms_kinematics_specialist
+    antagonist: mechanisms_kinematics_antagonist
+    debate_scope:
+      - degree_of_freedom_count
+      - singularity_identification
+      - clearance_and_tolerance_stack
+      - transmission_angle_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: fasteners_joints_specialist
+    antagonist: fasteners_joints_antagonist
+    debate_scope:
+      - torque_preload_calculation
+      - bearing_stress_validity
+      - fatigue_load_fraction_assumption
+      - material_compatibility_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: composites_layup_specialist
+    antagonist: composites_layup_antagonist
+    debate_scope:
+      - laminate_theory_applicability
+      - failure_criterion_selection
+      - interlaminar_shear_check
+      - moisture_thermal_knockdown
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 2 — Materials
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: additive_manufacturing_specialist
+    antagonist: additive_manufacturing_antagonist
+    debate_scope:
+      - process_parameter_validity
+      - anisotropy_knockdown_factors
+      - support_structure_adequacy
+      - post_processing_requirement_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: dfa_dfm_specialist
+    antagonist: dfa_dfm_antagonist
+    debate_scope:
+      - assembly_sequence_feasibility
+      - tolerance_stack_up_analysis
+      - part_count_reduction_validity
+      - tooling_access_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: materials_selection_specialist
+    antagonist: materials_selection_antagonist
+    debate_scope:
+      - property_data_provenance
+      - environmental_degradation_factors
+      - manufacturing_route_compatibility
+      - cost_performance_trade_off
+    reviewer: academic_peer_reviewer
+
+  - specialist: corrosion_degradation_specialist
+    antagonist: corrosion_degradation_antagonist
+    debate_scope:
+      - corrosion_mechanism_identification
+      - galvanic_couple_assessment
+      - coating_effectiveness_data
+      - service_life_prediction_validity
+    reviewer: academic_peer_reviewer
+
+  # Legacy materials pair (kept for backward compatibility)
   - specialist: me_specialist
     antagonist: materials_antagonist
     debate_scope:
@@ -14,13 +134,584 @@ pairs:
     debate_scope:
       - thermal_material_property_challenges
 
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 3 — Thermal & Fluids
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: thermal_management_specialist
+    antagonist: thermal_management_antagonist
+    debate_scope:
+      - thermal_resistance_network_accuracy
+      - contact_resistance_assumption
+      - radiation_view_factor_completeness
+      - transient_vs_steady_state_justification
+    reviewer: academic_peer_reviewer
+
+  - specialist: heat_transfer_specialist
+    antagonist: heat_transfer_antagonist
+    debate_scope:
+      - convection_correlation_applicability
+      - turbulence_model_selection
+      - boundary_condition_thermal_accuracy
+      - conjugate_heat_transfer_coupling
+    reviewer: academic_peer_reviewer
+
+  - specialist: fluids_hydraulics_specialist
+    antagonist: fluids_hydraulics_antagonist
+    debate_scope:
+      - pipe_flow_regime_check
+      - loss_coefficient_provenance
+      - pump_curve_accuracy
+      - cavitation_margin_adequacy
+    reviewer: academic_peer_reviewer
+
+  - specialist: cfd_specialist
+    antagonist: cfd_antagonist
+    debate_scope:
+      - turbulence_model_appropriateness
+      - mesh_independence_study
+      - boundary_condition_validity
+      - numerical_diffusion_assessment
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 4 — Aerodynamics
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: aerodynamics_specialist
+    antagonist: aerodynamics_antagonist
+    debate_scope:
+      - compressibility_correction_check
+      - boundary_layer_model_validity
+      - reynolds_number_regime_applicability
+      - wake_interference_assessment
+    reviewer: academic_peer_reviewer
+
+  - specialist: airfoils_wings_specialist
+    antagonist: airfoils_wings_antagonist
+    debate_scope:
+      - lift_curve_slope_accuracy
+      - stall_model_validity
+      - induced_drag_estimation_method
+      - aeroelastic_coupling_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: propulsion_systems_specialist
+    antagonist: propulsion_systems_antagonist
+    debate_scope:
+      - thrust_model_accuracy
+      - propulsive_efficiency_estimate
+      - fuel_flow_model_validity
+      - throttle_response_dynamics
+    reviewer: academic_peer_reviewer
+
+  - specialist: rotor_bemt_specialist
+    antagonist: rotor_bemt_antagonist
+    debate_scope:
+      - inflow_model_validity
+      - blade_element_discretization
+      - tip_loss_correction_accuracy
+      - swirl_recovery_assumption
+    reviewer: academic_peer_reviewer
+
+  - specialist: coaxial_interference_specialist
+    antagonist: coaxial_interference_antagonist
+    debate_scope:
+      - rotor_wake_interaction_model
+      - induced_velocity_correction
+      - separation_distance_effect
+      - power_loading_prediction_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: motor_selection_specialist
+    antagonist: motor_selection_antagonist
+    debate_scope:
+      - kv_rating_validation
+      - thermal_derating_factors
+      - efficiency_map_accuracy
+      - battery_compatibility_check
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 5 — Electrical & Power
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: magnetics_em_fields_specialist
+    antagonist: magnetics_em_fields_antagonist
+    debate_scope:
+      - permeability_nonlinearity_check
+      - eddy_current_loss_model
+      - fringing_flux_estimation
+      - saturation_margin_adequacy
+    reviewer: academic_peer_reviewer
+
+  - specialist: electric_machines_specialist
+    antagonist: electric_machines_antagonist
+    debate_scope:
+      - torque_ripple_estimation
+      - iron_loss_model_accuracy
+      - thermal_derating_validity
+      - efficiency_map_provenance
+    reviewer: academic_peer_reviewer
+
+  - specialist: power_electronics_specialist
+    antagonist: power_electronics_antagonist
+    debate_scope:
+      - switching_loss_calculation
+      - thermal_junction_model
+      - emi_filter_adequacy
+      - derating_under_temperature
+    reviewer: academic_peer_reviewer
+
+  - specialist: battery_energy_storage_specialist
+    antagonist: battery_energy_storage_antagonist
+    debate_scope:
+      - soc_estimation_accuracy
+      - capacity_fade_model_validity
+      - thermal_runaway_risk_assessment
+      - cycle_life_prediction_provenance
+    reviewer: academic_peer_reviewer
+
+  - specialist: power_distribution_specialist
+    antagonist: power_distribution_antagonist
+    debate_scope:
+      - load_flow_accuracy
+      - fault_current_calculation
+      - cable_sizing_margin
+      - protection_coordination_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: emi_emc_specialist
+    antagonist: emi_emc_antagonist
+    debate_scope:
+      - emission_limit_applicability
+      - shielding_effectiveness_model
+      - conducted_vs_radiated_path
+      - grounding_strategy_validity
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 6 — RF & Communications
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: rf_comms_specialist
+    antagonist: rf_comms_antagonist
+    debate_scope:
+      - link_budget_accuracy
+      - path_loss_model_applicability
+      - modulation_scheme_selection
+      - interference_margin_adequacy
+    reviewer: academic_peer_reviewer
+
+  - specialist: antennas_link_budget_specialist
+    antagonist: antennas_link_budget_antagonist
+    debate_scope:
+      - gain_pattern_accuracy
+      - polarization_mismatch_loss
+      - atmospheric_attenuation_model
+      - multipath_fading_assessment
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 7 — Embedded & Real-Time Systems
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: avionics_architecture_specialist
+    antagonist: avionics_architecture_antagonist
+    debate_scope:
+      - data_bus_latency_budget
+      - redundancy_architecture_adequacy
+      - do178_compliance_check
+      - power_budget_allocation
+    reviewer: academic_peer_reviewer
+
+  - specialist: embedded_firmware_specialist
+    antagonist: embedded_firmware_antagonist
+    debate_scope:
+      - interrupt_latency_analysis
+      - stack_overflow_risk
+      - memory_layout_correctness
+      - rtos_task_priority_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: real_time_systems_specialist
+    antagonist: real_time_systems_antagonist
+    debate_scope:
+      - worst_case_execution_time
+      - schedulability_analysis_validity
+      - jitter_tolerance_assessment
+      - deadline_miss_handling
+    reviewer: academic_peer_reviewer
+
+  - specialist: sensors_imu_gnss_specialist
+    antagonist: sensors_imu_gnss_antagonist
+    debate_scope:
+      - noise_density_characterization
+      - bias_instability_model
+      - gnss_multipath_assessment
+      - sensor_fusion_compatibility
+    reviewer: academic_peer_reviewer
+
+  - specialist: sensor_fusion_specialist
+    antagonist: sensor_fusion_antagonist
+    debate_scope:
+      - observability_analysis
+      - noise_model_accuracy
+      - filter_divergence_risk
+      - computational_load_estimate
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 8 — Controls & GNC
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: controls_flight_control_specialist
+    antagonist: controls_flight_control_antagonist
+    debate_scope:
+      - stability_margin_adequacy
+      - actuator_saturation_handling
+      - robustness_to_model_uncertainty
+      - wind_gust_rejection_performance
+    reviewer: academic_peer_reviewer
+
+  - specialist: gnc_guidance_navigation_specialist
+    antagonist: gnc_guidance_navigation_antagonist
+    debate_scope:
+      - trajectory_accuracy_assessment
+      - navigation_error_propagation
+      - guidance_law_optimality
+      - gnss_denied_fallback_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: system_identification_specialist
+    antagonist: system_identification_antagonist
+    debate_scope:
+      - excitation_signal_persistency
+      - model_order_selection
+      - validation_data_independence
+      - uncertainty_bound_coverage
+    reviewer: academic_peer_reviewer
+
+  - specialist: estimation_kalman_specialist
+    antagonist: estimation_kalman_antagonist
+    debate_scope:
+      - process_noise_tuning_justification
+      - measurement_noise_characterization
+      - filter_consistency_check
+      - nonlinear_approximation_validity
+    reviewer: academic_peer_reviewer
+
+  # Legacy controls pair
   - specialist: controls_specialist
     antagonist: safety_se_specialist
     debate_scope:
       - safety_margin_challenges
       - failure_mode_challenges
 
-  # Physics antagonist pairs
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 9 — Mission & Flight Performance
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: flight_dynamics_specialist
+    antagonist: flight_dynamics_antagonist
+    debate_scope:
+      - aerodynamic_derivative_accuracy
+      - mass_property_uncertainty
+      - atmospheric_model_validity
+      - coupling_term_significance
+    reviewer: academic_peer_reviewer
+
+  - specialist: mission_performance_specialist
+    antagonist: mission_performance_antagonist
+    debate_scope:
+      - range_endurance_calculation
+      - payload_fraction_accuracy
+      - reserve_fuel_adequacy
+      - degraded_mode_performance
+    reviewer: academic_peer_reviewer
+
+  - specialist: energy_maneuverability_specialist
+    antagonist: energy_maneuverability_antagonist
+    debate_scope:
+      - ps_diagram_accuracy
+      - energy_state_transition_validity
+      - thrust_available_model
+      - envelope_limit_conservatism
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 10 — Systems Engineering & Testing
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: reliability_engineering_specialist
+    antagonist: reliability_engineering_antagonist
+    debate_scope:
+      - failure_rate_data_provenance
+      - system_reliability_model_validity
+      - redundancy_effectiveness_estimate
+      - mtbf_prediction_confidence
+    reviewer: academic_peer_reviewer
+
+  - specialist: safety_hazards_fmea_specialist
+    antagonist: safety_hazards_fmea_antagonist
+    debate_scope:
+      - hazard_identification_completeness
+      - severity_rating_justification
+      - mitigation_effectiveness_evidence
+      - residual_risk_acceptance_criteria
+    reviewer: academic_peer_reviewer
+
+  - specialist: systems_engineering_specialist
+    antagonist: systems_engineering_antagonist
+    debate_scope:
+      - requirement_completeness_check
+      - interface_definition_coverage
+      - trade_study_methodology
+      - validation_plan_adequacy
+    reviewer: academic_peer_reviewer
+
+  - specialist: requirements_traceability_specialist
+    antagonist: requirements_traceability_antagonist
+    debate_scope:
+      - allocation_coverage_check
+      - derived_requirement_justification
+      - verification_method_adequacy
+      - parent_child_consistency
+    reviewer: academic_peer_reviewer
+
+  - specialist: verification_validation_specialist
+    antagonist: verification_validation_antagonist
+    debate_scope:
+      - test_coverage_completeness
+      - acceptance_criteria_measurability
+      - independence_of_vv_team
+      - anomaly_resolution_adequacy
+    reviewer: academic_peer_reviewer
+
+  - specialist: test_engineering_specialist
+    antagonist: test_engineering_antagonist
+    debate_scope:
+      - test_environment_representativeness
+      - instrumentation_uncertainty
+      - sample_size_adequacy
+      - pass_fail_criterion_objectivity
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 11 — Mathematics & Optimisation
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: uncertainty_quantification_specialist
+    antagonist: uncertainty_quantification_antagonist
+    debate_scope:
+      - input_uncertainty_characterization
+      - propagation_method_validity
+      - sensitivity_index_accuracy
+      - epistemic_vs_aleatory_separation
+    reviewer: academic_peer_reviewer
+
+  - specialist: monte_carlo_doe_specialist
+    antagonist: monte_carlo_doe_antagonist
+    debate_scope:
+      - sample_size_convergence_check
+      - correlation_structure_specification
+      - response_surface_accuracy
+      - design_space_coverage
+    reviewer: academic_peer_reviewer
+
+  - specialist: optimization_bayesian_specialist
+    antagonist: optimization_bayesian_antagonist
+    debate_scope:
+      - surrogate_model_validity
+      - acquisition_function_selection
+      - convergence_criterion_adequacy
+      - prior_specification_justification
+    reviewer: academic_peer_reviewer
+
+  - specialist: numerical_methods_specialist
+    antagonist: numerical_methods_antagonist
+    debate_scope:
+      - discretization_error_estimate
+      - stability_analysis_completeness
+      - convergence_order_verification
+      - rounding_error_propagation
+    reviewer: academic_peer_reviewer
+
+  - specialist: pde_formulations_specialist
+    antagonist: pde_formulations_antagonist
+    debate_scope:
+      - weak_form_correctness
+      - boundary_condition_type_validity
+      - well_posedness_check
+      - existence_uniqueness_claim
+    reviewer: academic_peer_reviewer
+
+  # Mathematics specialist pairs
+  - specialist: linear_algebra_mathematician
+    antagonist: mathematics_antagonist
+    debate_scope:
+      - numerical_stability_audit
+      - solver_algorithm_correctness
+      - condition_number_impact
+      - convergence_verification
+    reviewer: academic_peer_reviewer
+
+  - specialist: statistics_probability_mathematician
+    antagonist: mathematics_antagonist
+    debate_scope:
+      - assumption_satisfaction
+      - multiple_comparisons_control
+      - causality_claim_validity
+      - power_and_effect_size
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 12 — CAD & Simulation Toolchain
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: geometry_meshing_specialist
+    antagonist: geometry_meshing_antagonist
+    debate_scope:
+      - mesh_quality_metric_completeness
+      - element_aspect_ratio_assessment
+      - boundary_layer_resolution_adequacy
+      - geometric_fidelity_check
+    reviewer: academic_peer_reviewer
+
+  - specialist: cad_parametric_modeling_specialist
+    antagonist: cad_parametric_modeling_antagonist
+    debate_scope:
+      - parametric_dependency_graph_validity
+      - tolerance_specification_completeness
+      - design_intent_capture_adequacy
+      - feature_order_robustness
+    reviewer: academic_peer_reviewer
+
+  - specialist: topology_optimization_specialist
+    antagonist: topology_optimization_antagonist
+    debate_scope:
+      - simp_penalization_parameter
+      - filter_radius_adequacy
+      - load_path_connectivity_check
+      - manufacturing_constraint_coverage
+    reviewer: academic_peer_reviewer
+
+  - specialist: runtime_topological_self_assembly_specialist
+    antagonist: runtime_topological_self_assembly_antagonist
+    debate_scope:
+      - assembly_rule_completeness
+      - interference_detection_coverage
+      - constraint_satisfaction_validity
+      - emergent_geometry_stability
+    reviewer: academic_peer_reviewer
+
+  - specialist: simulation_toolchain_integration_specialist
+    antagonist: simulation_toolchain_integration_antagonist
+    debate_scope:
+      - data_format_compatibility
+      - solver_coupling_accuracy
+      - provenance_chain_integrity
+      - automation_failure_mode_coverage
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # GROUP 13 — Infrastructure & MLOps
+  # ══════════════════════════════════════════════════════════════════════════
+
+  - specialist: mcp_tooling_specialist
+    antagonist: mcp_tooling_antagonist
+    debate_scope:
+      - tool_schema_completeness
+      - error_handling_coverage
+      - version_pinning_practice
+      - timeout_and_retry_strategy
+    reviewer: academic_peer_reviewer
+
+  - specialist: a2a_protocol_specialist
+    antagonist: a2a_protocol_antagonist
+    debate_scope:
+      - message_schema_validity
+      - routing_rule_completeness
+      - blackboard_consistency_guarantee
+      - task_contract_enforcement
+    reviewer: academic_peer_reviewer
+
+  - specialist: security_secrets_vault_specialist
+    antagonist: security_secrets_vault_antagonist
+    debate_scope:
+      - secret_rotation_policy
+      - access_control_granularity
+      - audit_log_completeness
+      - encryption_at_rest_standard
+    reviewer: academic_peer_reviewer
+
+  - specialist: cryptography_integrity_specialist
+    antagonist: cryptography_integrity_antagonist
+    debate_scope:
+      - algorithm_selection_currency
+      - key_length_adequacy
+      - hash_chain_validity
+      - signature_verification_completeness
+    reviewer: academic_peer_reviewer
+
+  - specialist: data_engineering_logging_specialist
+    antagonist: data_engineering_logging_antagonist
+    debate_scope:
+      - schema_evolution_compatibility
+      - log_retention_policy_adequacy
+      - pii_handling_compliance
+      - query_performance_scalability
+    reviewer: academic_peer_reviewer
+
+  - specialist: observability_monitoring_specialist
+    antagonist: observability_monitoring_antagonist
+    debate_scope:
+      - metric_coverage_completeness
+      - alert_threshold_justification
+      - trace_sampling_strategy
+      - slo_definition_measurability
+    reviewer: academic_peer_reviewer
+
+  - specialist: cost_token_economics_specialist
+    antagonist: cost_token_economics_antagonist
+    debate_scope:
+      - token_budget_allocation_accuracy
+      - model_cost_per_task_estimate
+      - caching_strategy_effectiveness
+      - roi_calculation_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: project_management_specialist
+    antagonist: project_management_antagonist
+    debate_scope:
+      - schedule_estimate_realism
+      - dependency_identification_completeness
+      - risk_register_coverage
+      - resource_allocation_validity
+    reviewer: academic_peer_reviewer
+
+  - specialist: documentation_standards_specialist
+    antagonist: documentation_standards_antagonist
+    debate_scope:
+      - completeness_check
+      - audience_appropriateness
+      - cross_reference_accuracy
+      - version_control_compliance
+    reviewer: academic_peer_reviewer
+
+  - specialist: quality_governance_specialist
+    antagonist: quality_governance_antagonist
+    debate_scope:
+      - process_compliance_evidence
+      - non_conformance_closure_validity
+      - audit_trail_completeness
+      - corrective_action_effectiveness
+    reviewer: academic_peer_reviewer
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # PHYSICS ANTAGONIST PAIRS
+  # ══════════════════════════════════════════════════════════════════════════
+
   - specialist: electrodynamics_physicist
     antagonist: physics_antagonist
     debate_scope:
@@ -57,26 +748,10 @@ pairs:
       - phonon_model_completeness
     reviewer: academic_peer_reviewer
 
-  # Mathematics antagonist pairs
-  - specialist: linear_algebra_mathematician
-    antagonist: mathematics_antagonist
-    debate_scope:
-      - numerical_stability_audit
-      - solver_algorithm_correctness
-      - condition_number_impact
-      - convergence_verification
-    reviewer: academic_peer_reviewer
+  # ══════════════════════════════════════════════════════════════════════════
+  # UNIVERSAL ACADEMIC PANEL (multi-agent outputs)
+  # ══════════════════════════════════════════════════════════════════════════
 
-  - specialist: statistics_probability_mathematician
-    antagonist: mathematics_antagonist
-    debate_scope:
-      - assumption_satisfaction
-      - multiple_comparisons_control
-      - causality_claim_validity
-      - power_and_effect_size
-    reviewer: academic_peer_reviewer
-
-  # Universal academic panel (multi-agent outputs)
   - specialist: all
     antagonist: academic_peer_reviewer
     debate_scope:
@@ -90,10 +765,18 @@ notes: |
   Antagonist debate is V1 only. At MVP, single-specialist path with no debate.
   Debate is activated by SWITCH_NO_ANTAGONIST being OFF (default in full mode).
 
-  V1 adds three new antagonist roles:
-  - physics_antagonist: attacks regime validity in all physics agent outputs
-  - mathematics_antagonist: attacks numerical stability and statistical assumptions
-  - academic_peer_reviewer: universal cross-domain reviewer with brutally high standards
+  Pair activation rules:
+  - MVP: no debate — single specialist path only
+  - V1: per-domain antagonist active for specialist↔antagonist pairs
+  - V1: physics_antagonist active for all physics agent outputs
+  - V1: mathematics_antagonist active for all math agent outputs
+  - V2: academic_peer_reviewer as universal final-authority gate
 
-  academic_peer_reviewer is the final-authority critique signal and may override
-  lower-authority antagonist verdicts in a panel review context.
+  Verdict hierarchy (when multiple antagonists active):
+  1. physics_antagonist / mathematics_antagonist — domain-specific fatal conditions
+  2. specialist-domain antagonist — engineering/domain objections
+  3. academic_peer_reviewer — cross-domain consistency, reproducibility, pre-pub gate
+  academic_peer_reviewer may override lower-authority verdicts in panel review context.
+
+  reviewer field (optional): specifies which agent provides the final arbiter verdict.
+  If omitted, forge_arbiter resolves impasse through majority-vote protocol.

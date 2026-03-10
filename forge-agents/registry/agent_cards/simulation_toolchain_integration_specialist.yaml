@@ -1,0 +1,23 @@
+id: simulation_toolchain_integration_specialist
+name: Simulation Toolchain Integration Specialist
+version: "1.0.0"
+role: specialist
+domain: Simulation Toolchain Integration
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/simulation_toolchain_integration_specialist/v1.0.0.md
+skill_ref: forge-agents/simulation_toolchain_integration_specialist/SKILL.md
+
+antagonist_pair: simulation_toolchain_integration_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

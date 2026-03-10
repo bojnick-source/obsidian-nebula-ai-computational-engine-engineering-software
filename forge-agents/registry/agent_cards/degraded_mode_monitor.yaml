@@ -1,0 +1,21 @@
+id: degraded_mode_monitor
+name: Degraded Mode Monitor
+version: "1.0.0"
+role: maintenance
+domain: Degraded Mode Monitor
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/degraded_mode_monitor/v1.0.0.md
+skill_ref: forge-agents/degraded_mode_monitor/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

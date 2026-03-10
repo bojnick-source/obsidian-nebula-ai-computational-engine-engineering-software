@@ -1,0 +1,21 @@
+id: vault_librarian
+name: Vault Librarian
+version: "1.0.0"
+role: librarian
+domain: Vault Librarian
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/vault_librarian/v1.0.0.md
+skill_ref: forge-agents/vault_librarian/SKILL.md
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

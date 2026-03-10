@@ -1,0 +1,19 @@
+id: electrodynamics_physicist
+name: Electrodynamics Physicist
+version: 1.0.0
+role: specialist
+domain: electrodynamics
+status: v1
+antagonist_pair: physics_antagonist
+capabilities:
+- maxwell_equations_analysis
+- em_field_computation
+- wave_propagation
+- radiation_pattern_analysis
+- regime_validity_check
+tools_allowed:
+- calculix
+- python_numerical
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/electrodynamics_physicist/v1.0.0.md
+notes: Analyses electromagnetic phenomena from Maxwell-equation first principles.

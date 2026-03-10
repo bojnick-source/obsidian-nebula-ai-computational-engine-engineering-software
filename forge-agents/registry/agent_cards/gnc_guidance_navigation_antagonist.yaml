@@ -1,0 +1,27 @@
+id: gnc_guidance_navigation_antagonist
+name: Gnc Guidance Navigation Antagonist
+version: "1.0.0"
+role: antagonist
+domain: GNC Guidance & Navigation
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/gnc_guidance_navigation_antagonist/v1.0.0.md
+skill_ref: forge-agents/gnc_guidance_navigation_antagonist/SKILL.md
+
+antagonist_pair: gnc_guidance_navigation_specialist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence
+  - verdict
+  - rigour_score
+  - objections
+  - summary_critique
