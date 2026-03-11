@@ -67,7 +67,8 @@ jobs:
         run: |
           pip install pytest pytest-asyncio pyyaml numpy python-frontmatter
           pip install anthropic httpx asyncio-throttle watchdog
-          pip install -e forge_agent/ || pip install -e forge_agent/ --no-build-isolation || true
+          pip install fastmcp pydantic jinja2
+          pip install -e "forge_agent/[mcp]" || pip install -e "forge_agent/[mcp]" --no-build-isolation || true
           pip install -e forge-assembly/ || pip install -e forge-assembly/ --no-build-isolation || true
           pip install -e forge-output/ || pip install -e forge-output/ --no-build-isolation || true
       - name: Run tests
