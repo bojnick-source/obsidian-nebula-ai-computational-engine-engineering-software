@@ -50,7 +50,7 @@ No unverified data enters the vault. Every specialist output and every tool resu
 **V1 — deferred from MVP**
 - Hidden assumption scan (LLM-assisted)
 - All non-obvious assumptions must be explicitly listed
-- Fail action: reject with `ERR_HIDDEN_ASSUMPTION`
+- Fail action: reject with `ERR_VERIFY_HIDDEN_ASSUMPTION`
 
 ### Gate 7: Adversarial Falsification
 **V1 — deferred from MVP**

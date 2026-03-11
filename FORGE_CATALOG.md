@@ -79,7 +79,7 @@ The trust boundary. Every agent output passes through:
 2. Unit Gate — units present, normalized, internally consistent
 3. Dimensional Gate — equation dimensionality checks
 4. Provenance Gate — sources parseable, specific, not fabricated
-5. Contradiction Gate — vault lookup for conflicting claims (V1 at MVP)
+5. Contradiction Gate — vault lookup for conflicting claims (V1 — deferred from MVP)
 6. Assumption Gate — hidden assumptions disclosed
 7. Adversarial Falsification — failure mode challenges
 8. Confidence Calibration — evidence quality scoring

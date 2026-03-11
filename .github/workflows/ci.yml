@@ -28,7 +28,7 @@ jobs:
         run: |
           find . -name "*.yaml" -o -name "*.yml" | \
             grep -v ".github/workflows" | \
-            xargs yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" || true
+            xargs yamllint -d "{extends: default, rules: {line-length: {max: 120}}}"
 
   build-cmake:
     name: CMake configure check
@@ -53,4 +53,4 @@ jobs:
       - name: Install ruff
         run: pip install ruff
       - name: Lint
-        run: ruff check . --ignore E501 || true
+        run: ruff check . --ignore E501

@@ -58,10 +58,10 @@ metadata:
 
 ## Retry Policy
 
-- Maximum 3 retries per invocation
-- Exponential backoff: 1s, 2s, 4s
-- New `invocation_id` on each retry
-- After 3 failures: activate degraded mode
+- Maximum 4 total attempts per request (1 initial attempt + up to 3 retries)
+- Exponential backoff between retries: 1s, 2s, 4s
+- New `invocation_id` for each attempt
+- If all attempts fail, activate degraded mode on the final attempt
 
 ---
 

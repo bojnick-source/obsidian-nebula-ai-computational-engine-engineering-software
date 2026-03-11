@@ -10,9 +10,9 @@
 |---|---|---|---|---|
 | Primary LLM provider unavailable | Model Router | `DEGRADED_PROVIDER` | Route to secondary provider | Primary health check passes for >60s |
 | All providers unavailable | Model Router | `DEGRADED_NO_LLM` | Halt non-lite tasks; queue for retry | Any provider health check passes |
-| CalculiX subprocess fails >2× | FEA Wrapper | `DEGRADED_SOLVER` | Stub solver output; flag result for manual review | Wrapper smoke test passes |
-| GMSH subprocess fails >2× | Mesh Wrapper | `DEGRADED_MESH` | Flag task; halt solver phase | Wrapper smoke test passes |
-| Vault write fails >2× | Memory System | `DEGRADED_VAULT_WRITE` | Halt pipeline; escalate | Vault write test passes |
+| CalculiX subprocess fails 3× (3 failed attempts) | FEA Wrapper | `DEGRADED_SOLVER` | Stub solver output; flag result for manual review | Wrapper smoke test passes |
+| GMSH subprocess fails 3× (3 failed attempts) | Mesh Wrapper | `DEGRADED_MESH` | Flag task; halt solver phase | Wrapper smoke test passes |
+| Vault write fails 3× (3 failed attempts) | Memory System | `DEGRADED_VAULT_WRITE` | Halt pipeline; escalate | Vault write test passes |
 | Vault read fails | Memory System | `DEGRADED_VAULT_READ` | Continue with empty context; add gap flags | Vault read test passes |
 | Verification gate fails | Verification | `DEGRADED_VERIFY_FAIL` | Reject output; do not write to vault | — (output must be resubmitted) |
 | Cost threshold exceeded | Cost Tracker | `DEGRADED_COST_LIMIT` | Pause task queue; alert; await approval | Budget approved or threshold raised |

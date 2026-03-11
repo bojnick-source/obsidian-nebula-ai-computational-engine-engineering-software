@@ -76,12 +76,13 @@ See `forge-learning/configs/engineering_constitution.yaml` for the YAML version 
 
 The Quality Evaluator checks every agent output against all four tiers. The verification stack's Assumption Gate (V1) uses Tier 4 principles to check for hidden assumptions.
 
-```
-Tier 1 violation → ERR_CONSTITUTION_TIER1 → pipeline halt → escalate
-Tier 2 violation → ERR_CONSTITUTION_TIER2 → gate fail → reject output
-Tier 3 violation → WARN_CONSTITUTION_TIER3 → flag + require justification
-Tier 4 miss → INFO_CONSTITUTION_TIER4 → note in output, no block
-```
+The evaluator maps tier violations onto the standard error / warning / info signals defined in
+`docs/contracts/error-codes.md` (see that document for the complete, versioned catalog). Conceptually:
+
+- Tier 1 violation → pipeline halt + escalation
+- Tier 2 violation → gate failure + output rejection
+- Tier 3 violation → warning + justification required
+- Tier 4 miss → informational note in output (no block)
 
 ---
 
