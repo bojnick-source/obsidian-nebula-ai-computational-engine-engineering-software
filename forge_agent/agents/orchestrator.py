@@ -19,10 +19,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-import yaml
 
 from forge_agent.agents.verifier import VerificationResult, VerifierAgent
-from forge_agent.core.context_assembler import ObsidianAwareContextAssembler
 from forge_agent.core.logger import AgentLogger
 from forge_agent.core.mcp_manager import MCPManager
 from forge_agent.core.ptc_engine import PTCEngine

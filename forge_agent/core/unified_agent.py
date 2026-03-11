@@ -14,12 +14,9 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
-import sys
 import time
 import uuid
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -27,9 +24,8 @@ from forge_agent.core.container_state import ContainerState
 from forge_agent.core.context_assembler import ObsidianAwareContextAssembler
 from forge_agent.core.intelligence_router import IntelligenceRouter
 from forge_agent.core.logger import AgentLogger
-from forge_agent.core.loop_guard import AgentLoopGuard, LoopDivergenceError, LoopLimitError
+from forge_agent.core.loop_guard import AgentLoopGuard, LoopDivergenceError
 from forge_agent.core.mcp_manager import MCPManager
-from forge_agent.core.provider_clients import clients as provider_clients
 from forge_agent.core.ptc_engine import PTCEngine
 from forge_agent.core.retry import RetryConfig, retry_api_call
 from forge_agent.core.shutdown import GracefulShutdown

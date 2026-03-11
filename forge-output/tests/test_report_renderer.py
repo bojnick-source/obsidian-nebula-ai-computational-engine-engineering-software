@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from pathlib import Path
 
 import pytest
 
-from forge_output.event_schema import EventType, ForgeEvent
+from forge_output.event_schema import ForgeEvent
 from forge_output.reports.assembler import ReportAssembler
 
 

@@ -1,8 +1,5 @@
 """Tests for ObsidianVaultManager read/write/search roundtrip."""
-import asyncio
 import pytest
-import tempfile
-from pathlib import Path
 
 from forge_agent.memory.obsidian_manager import ObsidianVaultManager, _slug, _tokenize
 

@@ -45,8 +45,8 @@ input:
     - id: LC-006
       description: >
         Crash arrest: Fz = 350 N (10g drop test, per MIL-STD-810G Method 516.8)
-    critical_case: LC-006
-    required_safety_factor: 1.5
+  load_critical_case: LC-006
+  required_safety_factor: 1.5
   interfaces:
     - id: IF-001
       description: >

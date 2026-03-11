@@ -6,13 +6,13 @@ domain: linear_algebra
 status: v1
 antagonist_pair: mathematics_antagonist
 capabilities:
-- matrix_analysis
-- numerical_stability_audit
-- solver_selection
-- condition_number_analysis
-- convergence_verification
+  - matrix_analysis
+  - numerical_stability_audit
+  - solver_selection
+  - condition_number_analysis
+  - convergence_verification
 tools_allowed:
-- python_numerical
+  - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/linear_algebra_mathematician/v1.0.0.md
 notes: Linear algebra with numerical stability and condition number analysis.

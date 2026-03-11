@@ -6,7 +6,6 @@ context for the agent, injecting relevant vault excerpts up to max_vault_tokens.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 

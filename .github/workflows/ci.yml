@@ -28,7 +28,7 @@ jobs:
         run: |
           find . -name "*.yaml" -o -name "*.yml" | \
             grep -v ".github/workflows" | \
-            xargs yamllint -d "{extends: default, rules: {line-length: {max: 120}}}"
+            xargs yamllint
 
   build-cmake:
     name: CMake configure check

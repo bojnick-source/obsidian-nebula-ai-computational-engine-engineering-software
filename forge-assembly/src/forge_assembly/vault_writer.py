@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 import frontmatter
-import yaml
 
 from forge_assembly.disassembly import DisassemblyResult, format_disassembly_table
 from forge_assembly.interference import InterferenceIssue

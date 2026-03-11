@@ -8,7 +8,7 @@ from forge_assembly.disassembly import build_disassembly_dag, format_disassembly
 from forge_assembly.fasteners import FastenerSpec, FASTENER_TOOL_MAP
 from forge_assembly.maintenance import ServiceLevel, classify_maintenance_access
 from forge_assembly.mass_props import compute_mass_properties
-from forge_assembly.placement import ComponentPlacement, ComponentPlacer
+from forge_assembly.placement import ComponentPlacer
 
 
 # ─────────────────────────────────────────────────────────────────────────────

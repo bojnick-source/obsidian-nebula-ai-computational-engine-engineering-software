@@ -126,7 +126,7 @@ class ForgeRunWorkflow:
         ctx = {"run_id": inp.run_id, "trace_id": inp.trace_id, "task": inp.task_input}
 
         # Phase 1: Intake
-        intake_result = await workflow.execute_activity(
+        await workflow.execute_activity(
             run_intake,
             args=[inp.task_input],
             start_to_close_timeout=timedelta(minutes=2),

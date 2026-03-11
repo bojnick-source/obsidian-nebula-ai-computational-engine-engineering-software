@@ -1,7 +1,6 @@
 """Tests for MCP circuit breaker and timeout behaviour."""
 import asyncio
 import pytest
-import time
 
 from forge_agent.core.retry import CircuitBreaker, CircuitState, RetryConfig, retry_api_call
 

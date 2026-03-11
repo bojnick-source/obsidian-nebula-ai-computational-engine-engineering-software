@@ -6,13 +6,10 @@ Tests for forge_agent/core/governance.py — covers both fixes:
 
 import hashlib
 import json
-import tempfile
 from pathlib import Path
 
-import pytest
 
 from forge_agent.core.governance import (
-    SHA256_REQUIRED_PREFIXES,
     WRITE_PERMISSIONS,
     _content_hash,
     _normalize_path,

@@ -58,7 +58,6 @@ def specialist_skill_md(spec: dict[str, Any]) -> str:
     agent_id = spec["id"]
     domain = spec["domain"]
     domain_short = spec.get("domain_short", domain.split("—")[0].strip())
-    pair = spec.get("pair", f"{agent_id.replace('_specialist', '_antagonist')}")
     caps = spec.get("capabilities", _default_specialist_capabilities(domain_short))
     tools = spec.get("tools", _default_specialist_tools(domain_short))
     failure_patterns = spec.get("failure_patterns", _default_failure_patterns(domain_short))
@@ -599,7 +598,7 @@ def agent_card_yaml(spec: dict[str, Any]) -> str:
     lines = [
         f"id: {agent_id}",
         f"name: {_title(agent_id)}",
-        f'version: "1.0.0"',
+        'version: "1.0.0"',
         f"role: {role}",
         f"domain: {domain}",
         f"status: {status}",
@@ -643,7 +642,6 @@ def agent_card_yaml(spec: dict[str, Any]) -> str:
 def tool_prefs_yaml(spec: dict[str, Any]) -> str:
     agent_id = spec["id"]
     role = spec["role"]
-    domain_short = spec.get("domain_short", spec["domain"].split("—")[0].strip())
 
     if role == "antagonist":
         return textwrap.dedent(f"""\

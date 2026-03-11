@@ -6,13 +6,13 @@ domain: statistics_probability
 status: v1
 antagonist_pair: mathematics_antagonist
 capabilities:
-- statistical_test_selection
-- assumption_satisfaction_check
-- multiple_comparisons_control
-- causality_inference
-- power_analysis
+  - statistical_test_selection
+  - assumption_satisfaction_check
+  - multiple_comparisons_control
+  - causality_inference
+  - power_analysis
 tools_allowed:
-- python_numerical
+  - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/statistics_probability_mathematician/v1.0.0.md
 notes: Statistical analysis with rigorous assumption checking and causal inference
