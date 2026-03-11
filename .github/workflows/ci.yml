@@ -54,3 +54,20 @@ jobs:
         run: pip install ruff
       - name: Lint
         run: ruff check . --ignore E501
+
+  run-tests:
+    name: Python tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-asyncio pyyaml
+          pip install -e forge_agent/ || true
+          pip install -e forge-assembly/ || true
+          pip install -e forge-output/ || true
+      - name: Run tests
+        run: pytest --tb=short -q

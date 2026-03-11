@@ -46,14 +46,14 @@ class TestAgentLoopGuard:
         guard.record_tool_call("fea_run", {"mesh": "coarse"})  # same as first but not 3rd consecutive
         # Should not raise
 
-    def test_different_tools_no_divergence(self):
+    def test_same_tool_same_args_raises_at_threshold(self):
+        # Calling the same (tool, args) combo ≥ threshold times must raise.
+        # divergence_threshold=3: first 2 calls ok, 3rd raises.
         guard = AgentLoopGuard(divergence_threshold=3)
-        for _ in range(5):
-            guard.record_tool_call("tool_a", {"x": 1})  # same args but different run
-        # Only raises for same (tool, args) combo ≥ threshold
-        # After 3 calls it raises:
+        guard.record_tool_call("tool_a", {"x": 1})
+        guard.record_tool_call("tool_a", {"x": 1})
         with pytest.raises(LoopDivergenceError):
-            guard.record_tool_call("tool_a", {"x": 1})  # already triggered at 3
+            guard.record_tool_call("tool_a", {"x": 1})  # 3rd identical call → raises
 
     def test_reset_clears_state(self):
         guard = AgentLoopGuard(max_iterations=5)

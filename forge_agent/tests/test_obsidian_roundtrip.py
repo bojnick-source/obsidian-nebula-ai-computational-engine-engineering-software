@@ -32,8 +32,11 @@ async def test_search_returns_relevant_note(tmp_vault):
     vm = ObsidianVaultManager(vault_path=tmp_vault)
     await vm.start()
 
-    await vm.write_note("FEA Convergence Study", "Mesh convergence for finite element analysis stress")
-    await vm.write_note("CFD Pressure Drop", "Navier-Stokes flow pressure drop pipe")
+    # Include title in frontmatter so it is preserved after re-index from disk
+    await vm.write_note("FEA Convergence Study", "Mesh convergence for finite element analysis stress",
+                        frontmatter={"title": "FEA Convergence Study"})
+    await vm.write_note("CFD Pressure Drop", "Navier-Stokes flow pressure drop pipe",
+                        frontmatter={"title": "CFD Pressure Drop"})
     await vm.flush()
 
     # Force re-index

@@ -29,5 +29,12 @@ python_version = "3.11"
 strict = true
 
 [tool.pytest.ini_options]
-testpaths = ["forge-tests"]
+testpaths = [
+    "forge-tests",
+    "tests",
+    "tools/tests",
+    "forge_agent/tests",
+    "forge-assembly/tests",
+    "forge-output/tests",
+]
 addopts = "-v --tb=short"
