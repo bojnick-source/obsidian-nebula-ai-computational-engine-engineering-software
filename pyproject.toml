@@ -37,4 +37,5 @@ testpaths = [
     "forge-assembly/tests",
     "forge-output/tests",
 ]
+pythonpath = ["."]
 addopts = "-v --tb=short"

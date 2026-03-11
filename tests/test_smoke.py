@@ -62,7 +62,7 @@ def test_all_agent_cards_parseable():
             parse_errors.append(f"{card_path.name}: {exc}")
 
     assert parse_errors == [], (
-        f"Agent cards with YAML parse errors:\n" + "\n".join(parse_errors[:10])
+        "Agent cards with YAML parse errors:\n" + "\n".join(parse_errors[:10])
     )
 
 

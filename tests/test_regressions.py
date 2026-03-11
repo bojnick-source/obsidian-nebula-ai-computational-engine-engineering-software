@@ -9,7 +9,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-import yaml
 
 REPO_ROOT = Path(__file__).parent.parent
 
@@ -102,7 +101,7 @@ def test_skill_md_heading_count():
             failing.append(f"{skill_path.parent.name}: {h2_count} headings")
 
     assert failing == [], (
-        f"SKILL.md files with fewer than 8 ## headings:\n" + "\n".join(failing[:10])
+        "SKILL.md files with fewer than 8 ## headings:\n" + "\n".join(failing[:10])
     )
 
 

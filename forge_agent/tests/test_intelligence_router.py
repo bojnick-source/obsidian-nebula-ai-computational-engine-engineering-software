@@ -6,9 +6,8 @@ tested against known trigger vocabulary from the source.
 """
 from __future__ import annotations
 
-import pytest
 
-from forge_agent.core.intelligence_router import IntelligenceRouter, PreTask, _CURRENT_INFO_TRIGGERS, _MATH_TRIGGERS
+from forge_agent.core.intelligence_router import IntelligenceRouter, PreTask
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -135,7 +134,6 @@ def test_infer_domains_empty_for_no_match():
 def test_format_context_empty_returns_empty_string():
     """format_context with no results must return empty string."""
     router = IntelligenceRouter()
-    from forge_agent.core.intelligence_router import PreTaskResult
     result = router.format_context([])
     assert result == ""
 
