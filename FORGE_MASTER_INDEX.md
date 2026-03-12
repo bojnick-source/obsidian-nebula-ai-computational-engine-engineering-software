@@ -72,19 +72,19 @@ Task Intake → Blackboard Init → ME Specialist → GMSH (mesh) → CalculiX (
 
 ### P0 Documents (must freeze first)
 
-- [ ] This index
-- [ ] `docs/planning/catalog/forge-catalog-current.md`
-- [ ] `docs/planning/mvp/v0.1-spec.md`
-- [ ] `docs/planning/mvp/v0.1-acceptance-test.md`
-- [ ] `docs/planning/mvp/mvp-cut-line.md`
-- [ ] All `docs/contracts/` files
-- [ ] `docs/architecture/system-overview.md`
-- [ ] `docs/architecture/core-loop.md`
-- [ ] `docs/architecture/degraded-modes.md`
-- [ ] `docs/planning/risk/risk-register.md`
-- [ ] `docs/planning/roadmap/tiered-roadmap.md`
-- [ ] Phase 1.x fixtures (blackboard, memory, thinking)
-- [ ] Red-team verifier fixture pack
+- [x] This index
+- [x] `docs/planning/catalog/forge-catalog-current.md`
+- [x] `docs/planning/mvp/v0.1-spec.md`
+- [x] `docs/planning/mvp/v0.1-acceptance-test.md`
+- [x] `docs/planning/mvp/mvp-cut-line.md`
+- [x] All `docs/contracts/` files
+- [x] `docs/architecture/system-overview.md`
+- [x] `docs/architecture/core-loop.md`
+- [x] `docs/architecture/degraded-modes.md`
+- [x] `docs/planning/risk/risk-register.md`
+- [x] `docs/planning/roadmap/tiered-roadmap.md`
+- [x] Phase 1.x fixtures (blackboard, memory, thinking)
+- [x] Red-team verifier fixture pack
 - [ ] Decision log (frozen choices only)
 
 ---

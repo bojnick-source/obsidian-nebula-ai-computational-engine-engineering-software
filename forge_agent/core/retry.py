@@ -71,6 +71,10 @@ class CircuitBreaker:
 
     Opens after N consecutive failures; half-opens after reset_timeout_s;
     closes again on first successful call in half-open state.
+
+    In HALF_OPEN exactly ONE probe call is allowed through at a time.
+    Subsequent callers are rejected until the probe succeeds or fails,
+    preventing concurrent requests from hammering an unhealthy endpoint.
     """
     failure_threshold: int = 3
     reset_timeout_s: float = 60.0
@@ -78,19 +82,23 @@ class CircuitBreaker:
     _state: CircuitState = field(default=CircuitState.CLOSED, init=False)
     _failure_count: int = field(default=0, init=False)
     _opened_at: float = field(default=0.0, init=False)
+    _probe_in_flight: bool = field(default=False, init=False)
 
     @property
     def state(self) -> CircuitState:
         if self._state == CircuitState.OPEN:
             if time.monotonic() - self._opened_at >= self.reset_timeout_s:
                 self._state = CircuitState.HALF_OPEN
+                self._probe_in_flight = False  # reset probe gate on transition
         return self._state
 
     def record_success(self) -> None:
         self._failure_count = 0
+        self._probe_in_flight = False
         self._state = CircuitState.CLOSED
 
     def record_failure(self) -> None:
+        self._probe_in_flight = False
         self._failure_count += 1
         if self._failure_count >= self.failure_threshold:
             self._state = CircuitState.OPEN
@@ -101,7 +109,11 @@ class CircuitBreaker:
         if state == CircuitState.CLOSED:
             return True
         if state == CircuitState.HALF_OPEN:
-            return True  # allow probe
+            # Allow only one probe at a time — reject concurrent callers
+            if self._probe_in_flight:
+                return False
+            self._probe_in_flight = True
+            return True
         return False  # OPEN — reject
 
     async def call(self, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
