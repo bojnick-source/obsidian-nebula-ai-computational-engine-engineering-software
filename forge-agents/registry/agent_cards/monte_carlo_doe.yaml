@@ -6,7 +6,8 @@ domain: monte_carlo_doe
 status: planned
 
 description: |
-  Designs experiments and runs Monte Carlo analyses for stochastic performance characterization. STUB — to be fleshed out.
+  Designs experiments and runs Monte Carlo analyses for stochastic performance characterization. STUB — to be
+  fleshed out.
 
 capabilities: []
 

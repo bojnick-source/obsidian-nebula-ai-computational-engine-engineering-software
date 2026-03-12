@@ -138,7 +138,7 @@ def write_summary_report(
 
     lines: list[str] = [
         "=" * 72,
-        f"  Mesh-LHS Morphogenesis Engine — Run Report",
+        "  Mesh-LHS Morphogenesis Engine — Run Report",
         f"  Run ID : {run_id}",
         f"  Config : {config.get('__source', 'design_space.yaml')}",
         "=" * 72,

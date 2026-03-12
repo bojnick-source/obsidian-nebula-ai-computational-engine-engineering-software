@@ -6,7 +6,8 @@ domain: propulsion_systems
 status: planned
 
 description: |
-  Sizes and analyzes propulsion architectures including thrust, specific impulse, and fuel systems. STUB — to be fleshed out.
+  Sizes and analyzes propulsion architectures including thrust, specific impulse, and fuel systems. STUB — to be
+  fleshed out.
 
 capabilities: []
 

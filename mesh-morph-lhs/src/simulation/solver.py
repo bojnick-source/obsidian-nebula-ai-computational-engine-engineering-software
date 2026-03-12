@@ -85,12 +85,12 @@ def solve_truss(state: StructuralState) -> SolverResult:
         if L < 1e-12:
             continue  # degenerate — skip (quality check should have caught this)
 
-        l, m, n = diff / L
+        cx, cy, cz = diff / L
         A = areas[idx]
         k = A * E / L
 
         # Direction cosine vector
-        dc = np.array([l, m, n])
+        dc = np.array([cx, cy, cz])
         # 6x6 global stiffness contribution
         T = np.zeros((2, 6))
         T[0, :3] = dc

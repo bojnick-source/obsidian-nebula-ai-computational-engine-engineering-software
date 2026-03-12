@@ -23,7 +23,6 @@ from .geometry.parametric_mesh import ParametricMesh
 # ── Sampling ──────────────────────────────────────────────────────────────────
 from .sampling.lhs import lhs
 from .sampling.parameter_map import specs_from_config, map_sample_to_params
-from .sampling.adaptive_sampling import adaptive_resample
 
 # ── Simulation ────────────────────────────────────────────────────────────────
 from .simulation.structural_model import build_structural_state
@@ -36,7 +35,7 @@ from .optimization.constraints import (
     invalid_result,
     failed_sim_result,
 )
-from .optimization.ranking import rank_archive, select_elite
+from .optimization.ranking import rank_archive
 from .optimization.refinement import next_population, convergence_check
 
 # ── Utils ─────────────────────────────────────────────────────────────────────

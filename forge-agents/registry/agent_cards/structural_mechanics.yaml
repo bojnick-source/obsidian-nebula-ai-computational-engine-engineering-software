@@ -6,7 +6,8 @@ domain: structural_mechanics
 status: planned
 
 description: |
-  Analyzes static and quasi-static structural integrity, stress, deflection, and margin of safety. STUB — to be fleshed out.
+  Analyzes static and quasi-static structural integrity, stress, deflection, and margin of safety. STUB — to be
+  fleshed out.
 
 capabilities: []
 

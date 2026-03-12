@@ -6,7 +6,8 @@ domain: numerical_methods
 status: planned
 
 description: |
-  Selects and implements numerical algorithms for integration, differentiation, and linear systems. STUB — to be fleshed out.
+  Selects and implements numerical algorithms for integration, differentiation, and linear systems. STUB — to be
+  fleshed out.
 
 capabilities: []
 

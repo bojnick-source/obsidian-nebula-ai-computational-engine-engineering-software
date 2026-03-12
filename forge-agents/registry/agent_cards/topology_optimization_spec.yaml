@@ -6,7 +6,8 @@ domain: topology_optimization_domain
 status: planned
 
 description: |
-  Applies density-based and level-set topology optimization methods to structural layout problems. STUB — to be fleshed out.
+  Applies density-based and level-set topology optimization methods to structural layout problems. STUB — to be
+  fleshed out.
 
 capabilities: []
 

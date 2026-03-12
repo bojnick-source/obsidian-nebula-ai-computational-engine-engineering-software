@@ -117,7 +117,6 @@ def make_grid_mesh(
 
 def make_hex_mesh(rings: int = 3, spacing: float = 1.0) -> MeshState:
     """Hexagonal/honeycomb-pattern lattice in the XY plane."""
-    from collections import defaultdict
 
     pts: dict[tuple[int, int], list[float]] = {}
 

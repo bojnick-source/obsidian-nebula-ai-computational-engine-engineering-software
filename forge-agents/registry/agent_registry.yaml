@@ -1347,10 +1347,293 @@ agents:
     role: workflow
     domain: structural_fea
     card: agent_cards/simulation_fea.yaml
-    status: v1
+    status: planned
 
   - id: simulation_fea_antagonist
     role: antagonist
     domain: structural_fea_critique
     card: agent_cards/simulation_fea.yaml
+    status: planned
+
+  # ── PART TWO ANTAGONISTS + UNREGISTERED SPECIALISTS ─────────────────────
+  - id: forge_orchestrator_antagonist
+    role: antagonist
+    domain: forge_orchestration_critique
+    card: agent_cards/forge_orchestrator.yaml
+    status: planned
+
+  - id: forge_arbiter_antagonist
+    role: antagonist
+    domain: forge_arbitration_critique
+    card: agent_cards/forge_arbiter.yaml
+    status: planned
+
+  - id: forge_project_manager_antagonist
+    role: antagonist
+    domain: forge_project_management_critique
+    card: agent_cards/forge_project_manager.yaml
+    status: planned
+
+  - id: forge_maintenance_orchestrator_antagonist
+    role: antagonist
+    domain: forge_maintenance_critique
+    card: agent_cards/forge_maintenance_orchestrator.yaml
+    status: planned
+
+  - id: structural_verifier_antagonist
+    role: antagonist
+    domain: verification_critique
+    card: agent_cards/verifier.yaml
+    status: planned
+
+  - id: adversarial_verifier_antagonist
+    role: antagonist
+    domain: adversarial_verification_critique
+    card: agent_cards/adversarial_verifier.yaml
+    status: planned
+
+  - id: provenance_verifier_antagonist
+    role: antagonist
+    domain: provenance_verification_critique
+    card: agent_cards/provenance_verifier.yaml
+    status: planned
+
+  - id: contradiction_verifier_antagonist
+    role: antagonist
+    domain: contradiction_verification_critique
+    card: agent_cards/contradiction_verifier.yaml
+    status: planned
+
+  - id: confidence_calibrator_antagonist
+    role: antagonist
+    domain: confidence_calibration_critique
+    card: agent_cards/confidence_calibrator.yaml
+    status: planned
+
+  - id: tester_core_runtime_antagonist
+    role: antagonist
+    domain: core_runtime_testing_critique
+    card: agent_cards/tester_core_runtime.yaml
+    status: planned
+
+  - id: tester_memory_system_antagonist
+    role: antagonist
+    domain: memory_system_testing_critique
+    card: agent_cards/tester_memory_system.yaml
+    status: planned
+
+  - id: tester_debate_a2a_antagonist
+    role: antagonist
+    domain: debate_a2a_testing_critique
+    card: agent_cards/tester_debate_a2a.yaml
+    status: planned
+
+  - id: tester_mcp_wrappers_antagonist
+    role: antagonist
+    domain: mcp_wrappers_testing_critique
+    card: agent_cards/tester_mcp_wrappers.yaml
+    status: planned
+
+  - id: tester_verifier_redteam_antagonist
+    role: antagonist
+    domain: verifier_redteam_testing_critique
+    card: agent_cards/tester_verifier_redteam.yaml
+    status: planned
+
+  - id: tester_contracts_interfaces_antagonist
+    role: antagonist
+    domain: contracts_interfaces_testing_critique
+    card: agent_cards/tester_contracts_interfaces.yaml
+    status: planned
+
+  - id: tester_ops_observability_antagonist
+    role: antagonist
+    domain: ops_observability_testing_critique
+    card: agent_cards/tester_ops_observability.yaml
+    status: planned
+
+  - id: tester_maintenance_mesh_antagonist
+    role: antagonist
+    domain: maintenance_mesh_testing_critique
+    card: agent_cards/tester_maintenance_mesh.yaml
+    status: planned
+
+  - id: catalog_librarian_antagonist
+    role: antagonist
+    domain: catalog_librarian_critique
+    card: agent_cards/catalog_librarian.yaml
+    status: planned
+
+  - id: schema_auditor_antagonist
+    role: antagonist
+    domain: schema_auditing_critique
+    card: agent_cards/schema_auditor.yaml
+    status: planned
+
+  - id: fixture_integrity_agent_antagonist
+    role: antagonist
+    domain: fixture_integrity_critique
+    card: agent_cards/fixture_integrity_agent.yaml
+    status: planned
+
+  - id: provider_matrix_watcher_antagonist
+    role: antagonist
+    domain: provider_matrix_critique
+    card: agent_cards/provider_matrix_watcher.yaml
+    status: planned
+
+  - id: router_config_auditor_antagonist
+    role: antagonist
+    domain: router_config_critique
+    card: agent_cards/router_config_auditor.yaml
+    status: planned
+
+  - id: prompt_registry_auditor_antagonist
+    role: antagonist
+    domain: prompt_registry_critique
+    card: agent_cards/prompt_registry_auditor.yaml
+    status: planned
+
+  - id: risk_register_monitor_antagonist
+    role: antagonist
+    domain: risk_register_critique
+    card: agent_cards/risk_register_monitor.yaml
+    status: planned
+
+  - id: degraded_mode_monitor_antagonist
+    role: antagonist
+    domain: degraded_mode_critique
+    card: agent_cards/degraded_mode_monitor.yaml
+    status: planned
+
+  - id: drift_monitor_antagonist
+    role: antagonist
+    domain: drift_monitoring_critique
+    card: agent_cards/drift_monitor.yaml
+    status: planned
+
+  - id: ops_consistency_auditor_antagonist
+    role: antagonist
+    domain: ops_consistency_critique
+    card: agent_cards/ops_consistency_auditor.yaml
+    status: planned
+
+  - id: forge_redteam_global
+    role: specialist
+    domain: forge_redteam
+    card: agent_cards/forge_redteam_global.yaml
+    status: planned
+
+  - id: forge_redteam_global_antagonist
+    role: antagonist
+    domain: forge_redteam_critique
+    card: agent_cards/forge_redteam_global.yaml
+    status: planned
+
+  - id: algebraic_topology_mathematician
+    role: specialist
+    domain: algebraic_topology
+    card: agent_cards/algebraic_topology_mathematician.yaml
+    status: planned
+
+  - id: astrophysics_specialist
+    role: specialist
+    domain: astrophysics
+    card: agent_cards/astrophysics_specialist.yaml
+    status: planned
+
+  - id: atmospheric_physicist
+    role: specialist
+    domain: atmospheric_physics
+    card: agent_cards/atmospheric_physicist.yaml
+    status: planned
+
+  - id: biomedical_engineer
+    role: specialist
+    domain: biomedical_engineering
+    card: agent_cards/biomedical_engineer.yaml
+    status: planned
+
+  - id: biophysics_specialist
+    role: specialist
+    domain: biophysics
+    card: agent_cards/biophysics_specialist.yaml
+    status: planned
+
+  - id: category_theory_mathematician
+    role: specialist
+    domain: category_theory
+    card: agent_cards/category_theory_mathematician.yaml
+    status: planned
+
+  - id: complex_analysis_mathematician
+    role: specialist
+    domain: complex_analysis
+    card: agent_cards/complex_analysis_mathematician.yaml
+    status: planned
+
+  - id: condensed_matter_physicist
+    role: specialist
+    domain: condensed_matter
+    card: agent_cards/condensed_matter_physicist.yaml
+    status: planned
+
+  - id: geophysics_specialist
+    role: specialist
+    domain: geophysics
+    card: agent_cards/geophysics_specialist.yaml
+    status: planned
+
+  - id: geotechnical_specialist
+    role: specialist
+    domain: geotechnical
+    card: agent_cards/geotechnical_specialist.yaml
+    status: planned
+
+  - id: mathematical_logic_mathematician
+    role: specialist
+    domain: mathematical_logic
+    card: agent_cards/mathematical_logic_mathematician.yaml
+    status: planned
+
+  - id: nuclear_physicist
+    role: specialist
+    domain: nuclear_physics
+    card: agent_cards/nuclear_physicist.yaml
+    status: planned
+
+  - id: number_theory_mathematician
+    role: specialist
+    domain: number_theory
+    card: agent_cards/number_theory_mathematician.yaml
+    status: planned
+
+  - id: optics_photonics_physicist
+    role: specialist
+    domain: optics_photonics
+    card: agent_cards/optics_photonics_physicist.yaml
+    status: planned
+
+  - id: propulsion_specialist
+    role: specialist
+    domain: propulsion
+    card: agent_cards/propulsion_specialist.yaml
+    status: planned
+
+  - id: quantum_field_theory_physicist
+    role: specialist
+    domain: quantum_field_theory
+    card: agent_cards/quantum_field_theory_physicist.yaml
+    status: planned
+
+  - id: robotics_specialist
+    role: specialist
+    domain: robotics
+    card: agent_cards/robotics_specialist.yaml
+    status: planned
+
+  - id: systems_integration_specialist
+    role: specialist
+    domain: systems_integration
+    card: agent_cards/systems_integration_specialist.yaml
     status: planned

@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import numpy as np
 
-from .ranking import select_elite
 from ..sampling.adaptive_sampling import adaptive_resample
 from ..sampling.parameter_map import ParameterSpec
 

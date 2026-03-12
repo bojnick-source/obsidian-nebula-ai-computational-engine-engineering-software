@@ -6,7 +6,6 @@ excluded from surrogate training and Pareto analysis.
 
 from __future__ import annotations
 
-import numpy as np
 
 from ..geometry.parametric_mesh import MorphedMesh
 from ..simulation.solver import SolverResult

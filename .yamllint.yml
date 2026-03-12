@@ -1,6 +1,10 @@
 ---
 extends: default
 
+ignore: |
+  briefcase/node_modules/
+  node_modules/
+
 rules:
   line-length:
     max: 120
@@ -9,3 +13,5 @@ rules:
     max-spaces-after: -1  # allow alignment spacing in config files
   document-start: disable  # many files legitimately omit ---
   comments-indentation: disable  # test/config comments don't require strict alignment
+  comments:
+    min-spaces-from-content: 1  # allow single space before inline comments
