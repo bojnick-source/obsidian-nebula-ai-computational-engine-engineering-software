@@ -48,12 +48,16 @@ class TestAgentLoopGuard:
 
     def test_different_tools_no_divergence(self):
         guard = AgentLoopGuard(divergence_threshold=3)
-        for _ in range(5):
-            guard.record_tool_call("tool_a", {"x": 1})  # same args but different run
-        # Only raises for same (tool, args) combo ≥ threshold
-        # After 3 calls it raises:
+        # Different tools have independent counters; same args on different tools don't interfere
+        guard.record_tool_call("tool_a", {"x": 1})
+        guard.record_tool_call("tool_b", {"x": 1})
+        guard.record_tool_call("tool_c", {"x": 1})
+        guard.record_tool_call("tool_a", {"x": 1})
+        guard.record_tool_call("tool_b", {"x": 1})
+        # Each tool called ≤ 2 times; threshold=3 not yet reached for any
+        # Third call to tool_a triggers divergence:
         with pytest.raises(LoopDivergenceError):
-            guard.record_tool_call("tool_a", {"x": 1})  # already triggered at 3
+            guard.record_tool_call("tool_a", {"x": 1})  # 3rd call to tool_a raises
 
     def test_reset_clears_state(self):
         guard = AgentLoopGuard(max_iterations=5)

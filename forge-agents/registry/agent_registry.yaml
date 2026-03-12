@@ -1290,3 +1290,158 @@ agents:
     domain: global_redteam
     card: agent_cards/forge_redteam_global.yaml
     status: planned
+
+  # ── PRE-EXISTING STUBS (14 domains) ───────────────────────────────────────
+  - id: chemical_process_specialist
+    role: specialist
+    domain: chemical_process
+    card: agent_cards/chemical_process.yaml
+    status: planned
+  - id: chemical_process_antagonist
+    role: antagonist
+    domain: chemical_process
+    card: agent_cards/chemical_process.yaml
+    status: planned
+
+  - id: civil_structural_specialist
+    role: specialist
+    domain: civil_structural
+    card: agent_cards/civil_structural.yaml
+    status: planned
+  - id: civil_structural_antagonist
+    role: antagonist
+    domain: civil_structural
+    card: agent_cards/civil_structural.yaml
+    status: planned
+
+  - id: composite_structures_specialist
+    role: specialist
+    domain: composite_structures
+    card: agent_cards/composite_structures.yaml
+    status: planned
+  - id: composite_structures_antagonist
+    role: antagonist
+    domain: composite_structures
+    card: agent_cards/composite_structures.yaml
+    status: planned
+
+  - id: cryogenic_specialist
+    role: specialist
+    domain: cryogenic
+    card: agent_cards/cryogenic.yaml
+    status: planned
+  - id: cryogenic_antagonist
+    role: antagonist
+    domain: cryogenic
+    card: agent_cards/cryogenic.yaml
+    status: planned
+
+  - id: environmental_specialist
+    role: specialist
+    domain: environmental
+    card: agent_cards/environmental.yaml
+    status: planned
+  - id: environmental_antagonist
+    role: antagonist
+    domain: environmental
+    card: agent_cards/environmental.yaml
+    status: planned
+
+  - id: manufacturing_specialist
+    role: specialist
+    domain: manufacturing
+    card: agent_cards/manufacturing.yaml
+    status: planned
+  - id: manufacturing_antagonist
+    role: antagonist
+    domain: manufacturing
+    card: agent_cards/manufacturing.yaml
+    status: planned
+
+  - id: nuclear_specialist
+    role: specialist
+    domain: nuclear
+    card: agent_cards/nuclear.yaml
+    status: planned
+  - id: nuclear_antagonist
+    role: antagonist
+    domain: nuclear
+    card: agent_cards/nuclear.yaml
+    status: planned
+
+  - id: photonics_optical_specialist
+    role: specialist
+    domain: photonics_optical
+    card: agent_cards/photonics_optical.yaml
+    status: planned
+  - id: photonics_optical_antagonist
+    role: antagonist
+    domain: photonics_optical
+    card: agent_cards/photonics_optical.yaml
+    status: planned
+
+  - id: quantum_engineering_specialist
+    role: specialist
+    domain: quantum_engineering
+    card: agent_cards/quantum_engineering.yaml
+    status: planned
+  - id: quantum_engineering_antagonist
+    role: antagonist
+    domain: quantum_engineering
+    card: agent_cards/quantum_engineering.yaml
+    status: planned
+
+  - id: rf_microwave_specialist
+    role: specialist
+    domain: rf_microwave
+    card: agent_cards/rf_microwave.yaml
+    status: planned
+  - id: rf_microwave_antagonist
+    role: antagonist
+    domain: rf_microwave
+    card: agent_cards/rf_microwave.yaml
+    status: planned
+
+  - id: robotics_kinematics_specialist
+    role: specialist
+    domain: robotics_kinematics
+    card: agent_cards/robotics_kinematics.yaml
+    status: planned
+  - id: robotics_kinematics_antagonist
+    role: antagonist
+    domain: robotics_kinematics
+    card: agent_cards/robotics_kinematics.yaml
+    status: planned
+
+  - id: semiconductor_specialist
+    role: specialist
+    domain: semiconductor
+    card: agent_cards/semiconductor.yaml
+    status: planned
+  - id: semiconductor_antagonist
+    role: antagonist
+    domain: semiconductor
+    card: agent_cards/semiconductor.yaml
+    status: planned
+
+  - id: simulation_fea_specialist
+    role: specialist
+    domain: simulation_fea
+    card: agent_cards/simulation_fea.yaml
+    status: planned
+  - id: simulation_fea_antagonist
+    role: antagonist
+    domain: simulation_fea
+    card: agent_cards/simulation_fea.yaml
+    status: planned
+
+  - id: tribology_specialist
+    role: specialist
+    domain: tribology
+    card: agent_cards/tribology.yaml
+    status: planned
+  - id: tribology_antagonist
+    role: antagonist
+    domain: tribology
+    card: agent_cards/tribology.yaml
+    status: planned

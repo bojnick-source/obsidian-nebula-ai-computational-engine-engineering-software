@@ -48,12 +48,16 @@ class TokenBudget:
         Cascade: compress history → strip low-priority skills → drop tools.
         Raises BudgetExhausted if budget cannot be respected.
         """
-        estimated = _estimate_tokens(messages, system_prompt, tools, skill_prompts)
+        # Stage 0: history soft limit pre-check (compress even when under total budget)
+        history_tokens = _estimate_tokens(messages, "", [], [])
+        if history_tokens > self.history_soft_limit:
+            messages = _compress_history(messages)
 
+        estimated = _estimate_tokens(messages, system_prompt, tools, skill_prompts)
         if estimated <= self.remaining:
             return messages, system_prompt, tools, skill_prompts
 
-        # 1. Compress history: keep system + last 6 turns + first turn
+        # 1. Compress history
         messages = _compress_history(messages)
         estimated = _estimate_tokens(messages, system_prompt, tools, skill_prompts)
         if estimated <= self.remaining:
@@ -74,6 +78,18 @@ class TokenBudget:
         raise BudgetExhausted(
             f"Token budget exhausted: need ~{estimated}, have {self.remaining}"
         )
+
+    def _estimate_tokens(
+        self,
+        messages: list[dict[str, Any]],
+        system: str,
+        tools: list[dict[str, Any]],
+        skill_prompts: list[str],
+    ) -> int:
+        return _estimate_tokens(messages, system, tools, skill_prompts)
+
+    def _compress_history(self, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return _compress_history(messages)
 
 
 class BudgetExhausted(RuntimeError):

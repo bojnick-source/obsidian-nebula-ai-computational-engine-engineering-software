@@ -51,7 +51,7 @@ async def retry_api_call(
             await asyncio.sleep(delay)
 
     raise RuntimeError(
-        f"All {cfg.max_attempts} retry attempts exhausted"
+        f"All {cfg.max_attempts} retry attempts exhausted: {last_exc}"
     ) from last_exc
 
 

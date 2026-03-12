@@ -30,7 +30,9 @@ class TestTokenBudget:
         assert len(out_msgs) <= 8
 
     def test_skill_prompts_stripped_when_over_budget(self):
-        budget = TokenBudget(total_budget=1_000)  # tiny budget
+        # total ≈ 663 tokens (2×500 chars msgs + 400 sys + 1200 skills + 53 tools) / 4
+        # budget=600 < 663 → cascade fires; after stripping skills ≈ 363 ≤ 600
+        budget = TokenBudget(total_budget=600)
         msgs = _make_messages(2, chars_each=500)  # 1000 chars → 250 tokens
         system = "s" * 400  # 100 tokens
         skill_prompts = ["x" * 1200]  # 300 tokens
@@ -39,7 +41,9 @@ class TestTokenBudget:
         assert out_sp == []
 
     def test_tools_dropped_after_skill_strip(self):
-        budget = TokenBudget(total_budget=500)
+        # total ≈ 313 tokens (2×400 chars msgs + 200 sys + 252 tools) / 4
+        # budget=300 < 313 → cascade fires; after dropping tools ≈ 250 ≤ 300
+        budget = TokenBudget(total_budget=300)
         msgs = _make_messages(2, chars_each=400)
         system = "s" * 200
         tools = [{"name": "t", "description": "d" * 200, "input_schema": {}}]

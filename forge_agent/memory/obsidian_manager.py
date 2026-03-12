@@ -176,8 +176,9 @@ class ObsidianVaultManager:
 
     def _write_sync(self, title: str, content: str, fm: dict, file_path: Path) -> None:
         file_path.parent.mkdir(parents=True, exist_ok=True)
+        fm_out = {"title": title, **fm}  # always persist title so re-index recovers it
         fm_lines = ["---"]
-        for k, v in fm.items():
+        for k, v in fm_out.items():
             fm_lines.append(f"{k}: {v!r}")
         fm_lines.append("---\n")
         fm_text = "\n".join(fm_lines)
