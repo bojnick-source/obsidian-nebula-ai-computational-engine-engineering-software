@@ -8,7 +8,7 @@ Tests for multi_agent_orchestrator.py — covers all three fixes:
 import asyncio
 import pytest
 
-from forge_agent.agents.multi_agent_orchestrator import (
+from forge_agent.core.multi_agent_orchestrator import (
     HumanEscalation,
     MultiAgentOrchestrator,
     TaskAssignment,

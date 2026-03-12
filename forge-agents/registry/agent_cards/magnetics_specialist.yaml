@@ -5,12 +5,7 @@ role: specialist
 domain: magnetics analysis
 status: v1
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/magnetics_specialist/v1.0.0.md
 skill_ref: forge-agents/magnetics_specialist/SKILL.md
 
 mandatory_output_fields:

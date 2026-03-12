@@ -21,10 +21,7 @@ capabilities:
   - synthesis_proposal
   - amnesia_check
 
-tools_allowed: []  # Librarian does not invoke external tools
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/librarian/v1.0.0.md
 
 mandatory_output_fields:
   - operation

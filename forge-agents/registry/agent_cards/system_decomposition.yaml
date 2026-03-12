@@ -34,7 +34,6 @@ tools_allowed:
   - authorized_vault_write   # agent: Librarian — writes to projects/{project_name}/
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/system_decomposition/v1.0.0.md
 
 mandatory_output_fields:
   - system_context          # filled XML block with no empty fields

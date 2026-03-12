@@ -9,13 +9,10 @@ description: |
   Analyzes static and quasi-static structural integrity, stress, deflection, and margin of safety. STUB — to be
   fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/structural_mechanics_specialist/v1.0.0.md
 
 antagonist_pair: structural_mechanics_antagonist
 

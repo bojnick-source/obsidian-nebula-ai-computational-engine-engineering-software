@@ -8,13 +8,10 @@ status: planned
 description: |
   Implements Kalman-family filters for optimal state and parameter estimation. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/estimation_kalman_specialist/v1.0.0.md
 
 antagonist_pair: estimation_kalman_antagonist
 

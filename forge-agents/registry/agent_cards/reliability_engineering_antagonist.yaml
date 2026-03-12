@@ -5,12 +5,7 @@ role: antagonist
 domain: Reliability Engineering
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/reliability_engineering_antagonist/v1.0.0.md
 skill_ref: forge-agents/reliability_engineering_antagonist/SKILL.md
 
 antagonist_pair: reliability_engineering_specialist

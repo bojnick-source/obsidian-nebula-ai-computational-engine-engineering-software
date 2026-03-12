@@ -8,13 +8,10 @@ status: planned
 description: |
   Quantifies aerodynamic interaction and efficiency penalties in coaxial rotor systems. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/coaxial_interference_specialist/v1.0.0.md
 
 antagonist_pair: coaxial_interference_antagonist
 

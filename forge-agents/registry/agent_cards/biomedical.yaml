@@ -37,7 +37,6 @@ tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/biomedical_specialist/v1.0.0.md
 
 mandatory_output_fields:
   - findings

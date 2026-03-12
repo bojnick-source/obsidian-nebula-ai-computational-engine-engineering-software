@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs avionics bus architectures, redundancy schemes, and data flow. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/avionics_architecture_specialist/v1.0.0.md
 
 antagonist_pair: avionics_architecture_antagonist
 

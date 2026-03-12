@@ -8,13 +8,10 @@ status: planned
 description: |
   Ensures electromagnetic compatibility through shielding, filtering, and layout analysis. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/emi_emc_specialist/v1.0.0.md
 
 antagonist_pair: emi_emc_antagonist
 

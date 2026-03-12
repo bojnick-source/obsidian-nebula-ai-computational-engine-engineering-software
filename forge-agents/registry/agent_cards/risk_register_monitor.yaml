@@ -5,12 +5,7 @@ role: maintenance
 domain: Risk Register Monitor
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/risk_register_monitor/v1.0.0.md
 skill_ref: forge-agents/risk_register_monitor/SKILL.md
 
 mandatory_output_fields:

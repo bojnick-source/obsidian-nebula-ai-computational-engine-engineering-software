@@ -68,8 +68,21 @@ jobs:
           pip install pytest pytest-asyncio pyyaml numpy python-frontmatter
           pip install anthropic httpx asyncio-throttle watchdog
           pip install fastmcp pydantic jinja2
-          pip install -e "forge_agent/[mcp]" || pip install -e "forge_agent/[mcp]" --no-build-isolation || true
-          pip install -e forge-assembly/ || pip install -e forge-assembly/ --no-build-isolation || true
-          pip install -e forge-output/ || pip install -e forge-output/ --no-build-isolation || true
+          pip install -e "forge_agent/[mcp]" || pip install -e "forge_agent/[mcp]" --no-build-isolation
+          pip install -e forge-assembly/ || pip install -e forge-assembly/ --no-build-isolation
+          pip install -e forge-output/ || pip install -e forge-output/ --no-build-isolation
       - name: Run tests
         run: pytest --tb=short -q
+
+  validate-registry:
+    name: Agent registry validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pyyaml
+        run: pip install pyyaml
+      - name: Validate registry
+        run: python tools/validate_registry.py

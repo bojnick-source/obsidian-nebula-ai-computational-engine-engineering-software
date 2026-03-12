@@ -11,13 +11,10 @@ description: |
   cross-agent trust relationships, and security posture. Operates at the
   architectural level rather than within any single domain. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/forge_redteam_global/v1.0.0.md
 
 antagonist_pair: forge_redteam_global_antagonist
 

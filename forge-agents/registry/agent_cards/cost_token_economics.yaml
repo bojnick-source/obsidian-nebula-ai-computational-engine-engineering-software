@@ -8,13 +8,10 @@ status: planned
 description: |
   Models token consumption, provider cost curves, and budget controls for LLM workloads. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/cost_token_economics_specialist/v1.0.0.md
 
 antagonist_pair: cost_token_economics_antagonist
 

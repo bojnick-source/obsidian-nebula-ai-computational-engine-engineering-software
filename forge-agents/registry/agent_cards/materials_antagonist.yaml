@@ -23,7 +23,6 @@ tools_allowed:
   - cross_agent_log
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/materials_antagonist/v1.0.0.md
 
 antagonist_pair: materials_specialist
 

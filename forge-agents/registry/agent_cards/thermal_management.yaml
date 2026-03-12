@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs thermal architectures including heat sinks, spreaders, TIMs, and cooling loops. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/thermal_management_specialist/v1.0.0.md
 
 antagonist_pair: thermal_management_antagonist
 

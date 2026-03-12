@@ -5,12 +5,7 @@ role: specialist
 domain: PDE Formulations
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/pde_formulations_specialist/v1.0.0.md
 skill_ref: forge-agents/pde_formulations_specialist/SKILL.md
 
 antagonist_pair: pde_formulations_antagonist

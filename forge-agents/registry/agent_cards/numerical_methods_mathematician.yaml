@@ -13,6 +13,5 @@ capabilities:
 tools_allowed:
   - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/numerical_methods_mathematician/v1.0.0.md
 notes: Numerical methods and computational mathematics with error and convergence
   analysis.

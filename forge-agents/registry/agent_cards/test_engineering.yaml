@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs test setups, instrumentation plans, and acceptance test procedures. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/test_engineering_specialist/v1.0.0.md
 
 antagonist_pair: test_engineering_antagonist
 

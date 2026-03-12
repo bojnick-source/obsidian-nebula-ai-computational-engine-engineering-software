@@ -8,13 +8,10 @@ status: planned
 description: |
   Creates parametric CAD models with robust constraint and feature management. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/cad_parametric_modeling_specialist/v1.0.0.md
 
 antagonist_pair: cad_parametric_modeling_antagonist
 

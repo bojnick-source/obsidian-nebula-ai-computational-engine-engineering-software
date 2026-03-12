@@ -32,7 +32,6 @@ tools_allowed:
   - authorized_vault_write     # write to forge-agents/
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/prompt_engineer/v1.0.0.md
 
 mandatory_output_fields:
   - findings

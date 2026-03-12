@@ -8,13 +8,10 @@ status: planned
 description: |
   Selects antenna types and computes end-to-end link budgets. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/antennas_link_budget_specialist/v1.0.0.md
 
 antagonist_pair: antennas_link_budget_antagonist
 

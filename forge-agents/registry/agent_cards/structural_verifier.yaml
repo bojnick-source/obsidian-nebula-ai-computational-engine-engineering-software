@@ -12,6 +12,5 @@ capabilities:
 tools_allowed:
   - verifier_gates
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/structural_verifier/v1.0.0.md
 notes: Validates ME and structural specialist outputs against the output contract
   schema.

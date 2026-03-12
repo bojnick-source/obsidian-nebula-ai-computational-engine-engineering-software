@@ -69,7 +69,6 @@ capabilities:
   - vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/assembly_specialist/v1.0.0.md
 output_contract_type: "analysis"
 
 hard_failure_conditions:

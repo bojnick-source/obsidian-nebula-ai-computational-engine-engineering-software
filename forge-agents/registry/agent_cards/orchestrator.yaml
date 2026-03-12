@@ -30,7 +30,6 @@ tools_allowed:
   - agent_dispatch             # invoke other agents
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/orchestrator/v1.0.0.md
 
 routing_table:
   project_start: system_decomposition

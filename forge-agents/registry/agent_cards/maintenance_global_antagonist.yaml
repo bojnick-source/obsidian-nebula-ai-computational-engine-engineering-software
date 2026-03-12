@@ -5,12 +5,7 @@ role: antagonist
 domain: Maintenance Global
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/maintenance_global_antagonist/v1.0.0.md
 skill_ref: forge-agents/maintenance_global_antagonist/SKILL.md
 
 mandatory_output_fields:

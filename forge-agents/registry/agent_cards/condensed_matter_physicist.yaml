@@ -5,12 +5,7 @@ role: specialist
 domain: condensed matter
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/condensed_matter_physicist/v1.0.0.md
 skill_ref: forge-agents/condensed_matter_physicist/SKILL.md
 
 antagonist_pair: condensed_matter_antagonist

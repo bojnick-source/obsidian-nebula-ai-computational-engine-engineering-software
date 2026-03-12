@@ -1,5 +1,14 @@
+# DEPRECATED — forge_agent/agents/orchestrator.py (v1)
+#
+# Superseded by forge_agent/core/multi_agent_orchestrator.py (v2).
+# v2 fixes: XML output parsing (not json.loads), real dependency graph
+# (topological sort + asyncio.gather), vault write persistence.
+#
+# unified_agent.py now imports from core.multi_agent_orchestrator.
+# This file is kept for reference only. Do not import in new code.
+
 """
-MultiAgentOrchestrator — committee mode.
+MultiAgentOrchestrator — committee mode (v1 — DEPRECATED).
 
 Lifecycle per problem:
   1. Route → select specialists + mathematicians
@@ -20,7 +29,7 @@ from pathlib import Path
 from typing import Any
 
 
-from forge_agent.agents.verifier import VerificationResult, VerifierAgent
+from forge_agent.core.verifier import VerificationResult, VerifierAgent
 from forge_agent.core.logger import AgentLogger
 from forge_agent.core.mcp_manager import MCPManager
 from forge_agent.core.ptc_engine import PTCEngine

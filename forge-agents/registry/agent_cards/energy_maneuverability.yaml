@@ -8,13 +8,10 @@ status: planned
 description: |
   Analyzes specific excess power, climb performance, and maneuver envelopes. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/energy_maneuverability_specialist/v1.0.0.md
 
 antagonist_pair: energy_maneuverability_antagonist
 

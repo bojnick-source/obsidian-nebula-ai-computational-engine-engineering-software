@@ -5,12 +5,7 @@ role: antagonist
 domain: Runtime Topological Self-Assembly
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/runtime_topological_self_assembly_antagonist/v1.0.0.md
 skill_ref: forge-agents/runtime_topological_self_assembly_antagonist/SKILL.md
 
 antagonist_pair: runtime_topological_self_assembly_specialist

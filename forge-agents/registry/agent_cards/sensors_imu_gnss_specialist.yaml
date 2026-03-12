@@ -5,12 +5,7 @@ role: specialist
 domain: Sensors, IMU & GNSS
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/sensors_imu_gnss_specialist/v1.0.0.md
 skill_ref: forge-agents/sensors_imu_gnss_specialist/SKILL.md
 
 antagonist_pair: sensors_imu_gnss_antagonist

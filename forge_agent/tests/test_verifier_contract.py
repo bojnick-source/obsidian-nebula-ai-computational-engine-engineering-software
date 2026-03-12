@@ -1,6 +1,6 @@
 """Tests for AgentOutputContract static validator and VerifierAgent."""
 
-from forge_agent.agents.verifier import AgentOutputContract, ContractViolation
+from forge_agent.core.verifier import AgentOutputContract, ContractViolation
 
 
 VALID_OUTPUT = {

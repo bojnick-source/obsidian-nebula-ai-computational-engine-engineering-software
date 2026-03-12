@@ -80,7 +80,6 @@ tools_allowed:
   - bash                     # run Swan/ToPy/OpenMDAO, pip install, numpy I/O
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/topology_optimization/v1.1.0.md
 
 mandatory_output_fields:
   - component_id

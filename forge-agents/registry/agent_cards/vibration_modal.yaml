@@ -8,13 +8,10 @@ status: planned
 description: |
   Computes natural frequencies, mode shapes, and dynamic response of structures. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/vibration_modal_specialist/v1.0.0.md
 
 antagonist_pair: vibration_modal_antagonist
 

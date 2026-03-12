@@ -44,7 +44,6 @@ tools_allowed:
   - web_search
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/chemical_process_specialist/v1.0.0.md
 
 mandatory_output_fields:
   - findings

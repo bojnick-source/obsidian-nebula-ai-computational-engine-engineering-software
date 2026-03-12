@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs and verifies bolted, riveted, welded, and bonded joints. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/fasteners_joints_specialist/v1.0.0.md
 
 antagonist_pair: fasteners_joints_antagonist
 

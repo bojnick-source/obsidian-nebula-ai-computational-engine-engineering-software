@@ -41,4 +41,3 @@ mandatory_output_fields:
   - gaps_identified
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/photonics_optical_specialist/v1.0.0.md

@@ -8,13 +8,10 @@ status: planned
 description: |
   Assesses fatigue life, crack growth, and fracture mechanics for cyclic loading. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/fatigue_fracture_specialist/v1.0.0.md
 
 antagonist_pair: fatigue_fracture_antagonist
 

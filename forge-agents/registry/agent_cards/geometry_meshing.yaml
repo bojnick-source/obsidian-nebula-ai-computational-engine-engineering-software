@@ -8,13 +8,10 @@ status: planned
 description: |
   Generates and validates computational meshes for FEA and CFD. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/geometry_meshing_specialist/v1.0.0.md
 
 antagonist_pair: geometry_meshing_antagonist
 

@@ -48,4 +48,3 @@ mandatory_output_fields:
   - singularity_warning
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/robotics_kinematics_specialist/v1.0.0.md

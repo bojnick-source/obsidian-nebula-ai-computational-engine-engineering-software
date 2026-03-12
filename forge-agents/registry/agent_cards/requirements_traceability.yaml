@@ -8,13 +8,10 @@ status: planned
 description: |
   Maintains requirements databases and end-to-end traceability matrices. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/requirements_traceability_specialist/v1.0.0.md
 
 antagonist_pair: requirements_traceability_antagonist
 

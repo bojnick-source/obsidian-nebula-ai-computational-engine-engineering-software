@@ -49,4 +49,3 @@ mandatory_output_fields:
   - thermal_margin_C
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/semiconductor_specialist/v1.0.0.md

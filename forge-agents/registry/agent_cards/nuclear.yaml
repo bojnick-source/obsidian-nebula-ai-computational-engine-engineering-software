@@ -53,7 +53,6 @@ tools_allowed:
   - web_search   # for NIST XCOM data retrieval
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/nuclear_specialist/v1.0.0.md
 
 does_not_do:
   - reactor_design

@@ -25,7 +25,6 @@ tools_allowed:
   - calculix
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/me_specialist/v1.0.0.md
 
 antagonist_pair: materials_antagonist
 

@@ -8,13 +8,10 @@ status: planned
 description: |
   Models rigid and flexible multibody systems with joints and actuators. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/dynamics_multibody_specialist/v1.0.0.md
 
 antagonist_pair: dynamics_multibody_antagonist
 

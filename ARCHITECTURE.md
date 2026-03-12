@@ -52,13 +52,24 @@ forge_agent/
 │   ├── governance.py            # Role-based access control
 │   ├── mcp_manager.py           # MCP server lifecycle management
 │   └── ...
-├── agents/                  # Agent persona modules (prompt constants)
-│   ├── orchestrator.py          # Orchestrator persona
-│   ├── verifier.py              # Verifier persona
-│   ├── specialists/             # Engineering domain specialists
+├── core/                    # Infrastructure (routing, governance, orchestration)
+│   ├── multi_agent_orchestrator.py  # v2 orchestrator (XML parsing, dep graph, vault persistence)
+│   ├── orchestrator_v1_deprecated.py # v1 legacy — kept for reference only
+│   ├── verifier.py              # Quality gate (verifies agent output contracts)
+│   ├── intelligence_router.py   # Classifies tasks → picks specialist
+│   ├── unified_agent.py         # Top-level async agent loop
+│   ├── governance.py            # Role-based access control
+│   ├── mcp_manager.py           # MCP server lifecycle management
+│   └── ...
+├── agents/                  # Domain agent persona modules (prompt constants only)
+│   ├── domain_specialists/      # Cross-cutting specializations (acoustics, controls, materials,
+│   │                            #   plasma, systems, thermal_fluids)
+│   ├── engineers/               # Engineering domain agents (mechanical_engineer,
+│   │                            #   electrical_engineer, biomedical, propulsion, robotics, …)
 │   ├── mathematicians/          # Mathematics domain specialists
 │   ├── physicists/              # Physics domain specialists
-│   └── engineers/               # Extended engineering specialists
+│   └── specialists/             # Redirect shims only — all content moved to engineers/ or
+│                                #   domain_specialists/ (kept for backwards compatibility)
 ├── memory/                  # Obsidian vault integration (MCP server)
 │   ├── obsidian_manager.py      # Vault CRUD + TF-IDF search
 │   └── obsidian_mcp_server.py   # FastMCP server exposing vault tools

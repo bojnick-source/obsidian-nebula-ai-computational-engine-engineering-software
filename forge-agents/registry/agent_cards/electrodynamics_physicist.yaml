@@ -15,5 +15,4 @@ tools_allowed:
   - calculix
   - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/electrodynamics_physicist/v1.0.0.md
 notes: Analyses electromagnetic phenomena from Maxwell-equation first principles.

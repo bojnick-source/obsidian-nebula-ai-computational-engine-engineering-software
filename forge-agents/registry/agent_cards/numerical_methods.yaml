@@ -9,13 +9,10 @@ description: |
   Selects and implements numerical algorithms for integration, differentiation, and linear systems. STUB — to be
   fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/numerical_methods_specialist/v1.0.0.md
 
 antagonist_pair: numerical_methods_antagonist
 

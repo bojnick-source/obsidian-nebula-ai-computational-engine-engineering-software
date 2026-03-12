@@ -14,5 +14,4 @@ capabilities:
 tools_allowed:
   - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/quantum_mechanics_physicist/v1.0.0.md
 notes: Solves quantum mechanical problems with explicit regime validity checks.

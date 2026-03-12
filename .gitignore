@@ -63,3 +63,12 @@ logs/
 
 # Node (if any tooling)
 node_modules/
+
+# Rust / Tauri build artifacts
+briefcase/src-tauri/target/
+
+# Linter caches
+.ruff_cache/
+
+# Generated mesh-morph-lhs pipeline outputs (run artifacts, not source)
+mesh-morph-lhs/results/

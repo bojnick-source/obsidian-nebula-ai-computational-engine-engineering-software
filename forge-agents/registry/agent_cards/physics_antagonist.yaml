@@ -32,7 +32,6 @@ tools_allowed:
   - dimensional_checker
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/physics_antagonist/v1.0.0.md
 skill_ref: forge-agents/physics_antagonist/SKILL.md
 
 antagonist_pair:

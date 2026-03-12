@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs and evaluates motors, generators, and transformers including loss mechanisms. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/electric_machines_specialist/v1.0.0.md
 
 antagonist_pair: electric_machines_antagonist
 

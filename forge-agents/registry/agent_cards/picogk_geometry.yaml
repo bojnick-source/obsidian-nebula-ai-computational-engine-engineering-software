@@ -47,7 +47,6 @@ tools_allowed:
   - bash                     # execute PicoGK Python scripts, pip install
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/picogk_geometry/v1.0.0.md
 
 mandatory_output_fields:
   - component_id

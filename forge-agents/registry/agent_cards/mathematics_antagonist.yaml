@@ -32,7 +32,6 @@ tools_allowed:
   - error_bound_checker
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/mathematics_antagonist/v1.0.0.md
 skill_ref: forge-agents/mathematics_antagonist/SKILL.md
 
 antagonist_pair:

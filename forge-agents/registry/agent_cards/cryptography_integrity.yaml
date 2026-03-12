@@ -8,13 +8,10 @@ status: planned
 description: |
   Selects cryptographic algorithms, manages key lifecycle, and assesses side-channel risks. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/cryptography_integrity_specialist/v1.0.0.md
 
 antagonist_pair: cryptography_integrity_antagonist
 

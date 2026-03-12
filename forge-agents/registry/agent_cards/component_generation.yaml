@@ -56,7 +56,6 @@ tools_allowed:
   - specialist_ME            # load conditions analysis (Step 1)
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/component_generation/v1.0.0.md
 
 mandatory_output_fields:
   - component_id

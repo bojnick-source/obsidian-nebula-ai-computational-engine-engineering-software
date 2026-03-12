@@ -9,13 +9,10 @@ description: |
   Designs experiments and runs Monte Carlo analyses for stochastic performance characterization. STUB — to be
   fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/monte_carlo_doe_specialist/v1.0.0.md
 
 antagonist_pair: monte_carlo_doe_antagonist
 

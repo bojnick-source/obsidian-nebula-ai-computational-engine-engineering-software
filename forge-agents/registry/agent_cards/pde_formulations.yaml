@@ -8,13 +8,10 @@ status: planned
 description: |
   Derives and discretizes partial differential equations for physics simulation. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/pde_formulations_specialist/v1.0.0.md
 
 antagonist_pair: pde_formulations_antagonist
 

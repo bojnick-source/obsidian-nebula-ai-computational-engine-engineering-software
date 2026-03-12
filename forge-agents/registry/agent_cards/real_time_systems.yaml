@@ -8,13 +8,10 @@ status: planned
 description: |
   Analyzes RTOS scheduling, task timing, and worst-case execution time. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/real_time_systems_specialist/v1.0.0.md
 
 antagonist_pair: real_time_systems_antagonist
 

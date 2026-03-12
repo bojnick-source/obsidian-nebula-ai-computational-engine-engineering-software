@@ -338,7 +338,7 @@ async def _run_single(args: argparse.Namespace) -> None:
 
 
 async def _run_committee(args: argparse.Namespace) -> None:
-    from forge_agent.agents.orchestrator import MultiAgentOrchestrator
+    from forge_agent.core.multi_agent_orchestrator import MultiAgentOrchestrator
     cfg = _load_config(args.config)
     router_cfg = _load_model_router()
     orch = MultiAgentOrchestrator(cfg, router_cfg)

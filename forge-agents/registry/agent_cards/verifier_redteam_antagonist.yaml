@@ -5,12 +5,7 @@ role: antagonist
 domain: Verifier Red-Team
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/verifier_redteam_antagonist/v1.0.0.md
 skill_ref: forge-agents/verifier_redteam_antagonist/SKILL.md
 
 mandatory_output_fields:

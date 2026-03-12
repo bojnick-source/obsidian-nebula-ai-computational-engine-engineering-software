@@ -8,13 +8,10 @@ status: planned
 description: |
   Manages system architecture, interface definition, and requirements flow-down. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/systems_engineering_specialist/v1.0.0.md
 
 antagonist_pair: systems_engineering_antagonist
 

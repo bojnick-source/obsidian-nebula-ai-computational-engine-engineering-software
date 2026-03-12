@@ -9,6 +9,7 @@
 | Field | Value |
 |---|---|
 | Catalog Version | v8+ (execution addendum integrated) |
+| Agent Count | 263 (run `python tools/validate_registry.py` for current count) |
 | Active Milestone | v0.1 MVP — structural analysis path (Aladdin-3B motor mount bracket) |
 | Planning Phase | Lane A — baseline freeze candidate |
 | Build Phase | Not started |
@@ -119,11 +120,19 @@ Task Intake → Blackboard Init → ME Specialist → GMSH (mesh) → CalculiX (
 
 See `ARCHITECTURE.md` for the two-layer design (forge-agents/ data vs forge_agent/ runtime).
 
+**Key naming rule:** `forge-agents/` (hyphen = data layer) vs `forge_agent/` (underscore = runtime layer).
+
+**forge_agent/agents/ layout after 2026-03-12 reorganization:**
+- `core/` — infrastructure (orchestrator v2, verifier, governance, routing, MCP)
+- `agents/domain_specialists/` — cross-cutting specializations (acoustics, controls, materials, plasma, systems, thermal_fluids)
+- `agents/engineers/` — engineering domain agents (mechanical_engineer, electrical_engineer, biomedical, propulsion, …)
+- `agents/mathematicians/`, `agents/physicists/` — unchanged
+
 ### Root Files
 - `README.md` — project overview
-- `CLAUDE.md` — developer quick reference (setup, lint, test commands)
+- `CLAUDE.md` — developer quick reference (setup, lint, test commands, known mistake patterns)
 - `ARCHITECTURE.md` — two-layer architecture explanation
-- `CHANGELOG.md` — version history
+- `.github/copilot-instructions.md` — Copilot coding standards and known bug checklist
 
 ### Key Docs
 - `docs/governance/decisions.md` — decision log (frozen choices)

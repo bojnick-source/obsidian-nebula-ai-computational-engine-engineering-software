@@ -8,13 +8,10 @@ status: planned
 description: |
   Models 6-DOF flight dynamics, aerodynamic derivatives, and trim analysis. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/flight_dynamics_specialist/v1.0.0.md
 
 antagonist_pair: flight_dynamics_antagonist
 

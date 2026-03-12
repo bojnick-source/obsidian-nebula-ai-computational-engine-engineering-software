@@ -8,13 +8,10 @@ status: planned
 description: |
   Plans and executes V&V campaigns across analysis, test, inspection, and demonstration. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/verification_validation_specialist/v1.0.0.md
 
 antagonist_pair: verification_validation_antagonist
 

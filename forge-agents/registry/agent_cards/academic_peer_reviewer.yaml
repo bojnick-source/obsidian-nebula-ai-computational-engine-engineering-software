@@ -29,7 +29,6 @@ tools_allowed:
   - literature_db
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/academic_peer_reviewer/v1.0.0.md
 skill_ref: forge-agents/academic_peer_reviewer/SKILL.md
 
 antagonist_pair: all   # reviews output from any FORGE agent

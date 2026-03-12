@@ -8,13 +8,10 @@ status: planned
 description: |
   Designs composite laminates, ply schedules, and evaluates interlaminar strength. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/composites_layup_specialist/v1.0.0.md
 
 antagonist_pair: composites_layup_antagonist
 

@@ -62,7 +62,6 @@ tools_allowed:
   - web_search    # for ECHA/DEFRA current data
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/environmental_specialist/v1.0.0.md
 
 notes: |
   REACH SVHC list updated semi-annually — always check ECHA website for current

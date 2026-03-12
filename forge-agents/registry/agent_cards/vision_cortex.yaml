@@ -82,7 +82,6 @@ tools_allowed:
   - document_parser              # PDF text extraction
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/vision_cortex/v1.0.0.md
 
 mandatory_output_fields:
   - findings                      # summary of all inputs processed

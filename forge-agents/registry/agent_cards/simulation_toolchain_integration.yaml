@@ -8,13 +8,10 @@ status: planned
 description: |
   Integrates heterogeneous simulation tools, manages data exchange formats, and co-simulation. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/simulation_toolchain_integration_specialist/v1.0.0.md
 
 antagonist_pair: simulation_toolchain_integration_antagonist
 

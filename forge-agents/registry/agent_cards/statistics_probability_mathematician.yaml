@@ -14,6 +14,5 @@ capabilities:
 tools_allowed:
   - python_numerical
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/statistics_probability_mathematician/v1.0.0.md
 notes: Statistical analysis with rigorous assumption checking and causal inference
   controls.

@@ -13,8 +13,9 @@ _root = Path(__file__).parent
 if str(_root) not in sys.path:
     sys.path.insert(0, str(_root))
 
-# Sub-package src/ directories
-for _src in ("forge-assembly/src", "forge-output/src", "forge-learning/src"):
-    _src_path = _root / _src
-    if _src_path.exists() and str(_src_path) not in sys.path:
+# Sub-package src/ directories — discovered dynamically so new packages
+# (forge-learning, forge-output, forge-assembly, etc.) are picked up
+# automatically without editing this file.
+for _src_path in sorted(_root.glob("forge-*/src")):
+    if _src_path.is_dir() and str(_src_path) not in sys.path:
         sys.path.insert(0, str(_src_path))

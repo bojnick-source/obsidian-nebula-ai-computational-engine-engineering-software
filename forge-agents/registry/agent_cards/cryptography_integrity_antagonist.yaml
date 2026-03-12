@@ -5,12 +5,7 @@ role: antagonist
 domain: Cryptography & Integrity
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/cryptography_integrity_antagonist/v1.0.0.md
 skill_ref: forge-agents/cryptography_integrity_antagonist/SKILL.md
 
 antagonist_pair: cryptography_integrity_specialist

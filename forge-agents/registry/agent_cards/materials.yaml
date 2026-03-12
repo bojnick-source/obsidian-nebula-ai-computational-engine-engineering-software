@@ -36,7 +36,6 @@ tools_allowed:
   - authorized_vault_write     # agent: Librarian
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/materials_specialist/v1.0.0.md
 
 antagonist_pair: materials_antagonist
 

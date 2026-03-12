@@ -8,13 +8,10 @@ status: planned
 description: |
   Develops and reviews embedded C/C++ firmware for microcontrollers and FPGAs. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/embedded_firmware_specialist/v1.0.0.md
 
 antagonist_pair: embedded_firmware_antagonist
 

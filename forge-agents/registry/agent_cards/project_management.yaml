@@ -8,13 +8,10 @@ status: planned
 description: |
   Plans schedules, manages dependencies, and tracks risk registers for engineering projects. STUB — to be fleshed out.
 
-capabilities: []
-
 tools_allowed:
   - authorized_vault_write
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/project_management_specialist/v1.0.0.md
 
 antagonist_pair: project_management_antagonist
 

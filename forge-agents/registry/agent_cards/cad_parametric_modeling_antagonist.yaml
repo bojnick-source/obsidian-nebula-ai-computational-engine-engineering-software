@@ -5,12 +5,7 @@ role: antagonist
 domain: CAD & Parametric Modelling
 status: planned
 
-capabilities: []  # populated as SKILL.md evolves
-
-tools_allowed: []  # see SKILL.md for current list
-
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/cad_parametric_modeling_antagonist/v1.0.0.md
 skill_ref: forge-agents/cad_parametric_modeling_antagonist/SKILL.md
 
 antagonist_pair: cad_parametric_modeling_specialist

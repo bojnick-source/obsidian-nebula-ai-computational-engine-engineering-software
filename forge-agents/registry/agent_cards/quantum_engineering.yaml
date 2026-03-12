@@ -55,7 +55,6 @@ tools_allowed:
   - web_search   # for current TRL data
 
 output_contract_ref: docs/contracts/agent-output-contract.md
-prompt_ref: forge-agents/prompts/quantum_engineering_specialist/v1.0.0.md
 
 notes: |
   NV magnetometer: 1 pT/√Hz (bulk diamond ensemble, 2025 state of art).
