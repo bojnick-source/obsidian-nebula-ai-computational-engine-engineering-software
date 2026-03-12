@@ -1,3 +1,4 @@
+---
 # Mesh-LHS Morphogenesis Engine — design space definition
 # Each parameter drives one or more morph operators applied to the base mesh.
 
@@ -52,19 +53,19 @@ scoring:
   w_mass: 0.5
   w_stress_penalty: 2.0     # penalty coefficient for yield violations
   w_mesh_penalty: 0.3
-  stress_limit_fraction: 0.8 # fraction of yield_stress before penalty kicks in
+  stress_limit_fraction: 0.8  # fraction of yield_stress before penalty kicks in
 
 # Parameter space — each entry: [name, lower, upper, transform]
 # transform: linear | log | angle
 parameters:
-  - [span_scale,        0.60, 1.80, linear]
-  - [height_scale,      0.50, 1.50, linear]
-  - [thickness,         0.01, 0.10, log]
-  - [curvature_amp,    -0.40, 0.40, linear]
-  - [twist_angle,      -25.0, 25.0, angle]
-  - [cell_skew,         0.00, 0.50, linear]
-  - [lattice_density,   2.00, 10.0, linear]
-  - [branch_bias,      -1.00, 1.00, linear]
+  - [span_scale, 0.60, 1.80, linear]
+  - [height_scale, 0.50, 1.50, linear]
+  - [thickness, 0.01, 0.10, log]
+  - [curvature_amp, -0.40, 0.40, linear]
+  - [twist_angle, -25.0, 25.0, angle]
+  - [cell_skew, 0.00, 0.50, linear]
+  - [lattice_density, 2.00, 10.0, linear]
+  - [branch_bias, -1.00, 1.00, linear]
   - [smoothing_strength, 0.00, 1.00, linear]
 
 # Output control

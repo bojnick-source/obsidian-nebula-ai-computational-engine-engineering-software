@@ -1,3 +1,4 @@
+---
 # Report type → template mapping
 # Used by ReportRenderer to select the appropriate Jinja2 template.
 
