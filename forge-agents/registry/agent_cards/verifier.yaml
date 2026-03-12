@@ -5,6 +5,16 @@ role: verifier
 domain: cross_domain
 status: mvp
 
+description: |
+  Mandatory gate agent that runs 4 verification checks before any specialist
+  output reaches the vault: contract compliance, unit consistency, dimensional
+  plausibility, and provenance chain. Any gate failure rejects the output —
+  no vault write proceeds. V1 adds adversarial, contradiction, and confidence
+  calibration gates.
+
+tools_allowed:
+  - authorized_vault_write
+
 capabilities:
   - contract_gate
   - unit_gate

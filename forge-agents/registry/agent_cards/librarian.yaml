@@ -5,6 +5,13 @@ role: librarian
 domain: cross_domain
 status: mvp
 
+description: |
+  Sole vault write authority for the FORGE system. Executes memory pre-flight
+  (retrieve relevant context before specialist phase) and vault persistence
+  (write verified specialist outputs after verification phase). Detects gaps,
+  contradictions, and amnesia in the knowledge base. No specialist may write
+  to the vault directly — all persistence flows through Librarian.
+
 capabilities:
   - vault_intake
   - vault_retrieval

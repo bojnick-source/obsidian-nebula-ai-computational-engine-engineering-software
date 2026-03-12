@@ -1,4 +1,4 @@
-id: simulation_fea
+id: simulation_fea_specialist
 name: Simulation FEA
 version: "1.0.0"
 role: workflow

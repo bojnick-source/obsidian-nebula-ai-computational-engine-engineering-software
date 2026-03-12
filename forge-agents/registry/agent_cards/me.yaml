@@ -5,6 +5,12 @@ role: specialist
 domain: mechanical_engineering
 status: mvp
 
+description: |
+  Performs structural, stress/strain, fatigue, vibration, and thermal-mechanical
+  analysis using FEA tools (Gmsh + CalculiX). At MVP scope: linear elastic,
+  quasi-static structural analysis only. Produces explicit findings, assumptions,
+  falsifiability criteria, and gap list per the agent output contract.
+
 capabilities:
   - structural_analysis
   - stress_strain_analysis

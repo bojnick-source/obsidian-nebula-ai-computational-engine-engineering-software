@@ -1,4 +1,5 @@
 id: assembly_specialist
+name: Assembly Specialist
 version: "1.0.0"
 role: specialist
 domain: assembly_dfa
@@ -57,6 +58,18 @@ mandatory_output_fields:
   - confidence
   - assembly_status   # "validated" | "issues_found"
 
+capabilities:
+  - coordinate_system_placement
+  - interference_clearance_check
+  - center_of_mass_budget
+  - fastener_specification_validation
+  - dfa_tool_access_check
+  - disassembly_sequence_dag
+  - maintenance_access_classification
+  - vault_write
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/assembly_specialist/v1.0.0.md
 output_contract_type: "analysis"
 
 hard_failure_conditions:
