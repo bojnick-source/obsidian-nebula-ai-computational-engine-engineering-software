@@ -1,0 +1,19 @@
+id: solid_state_physicist
+name: Solid State Physicist
+version: 1.0.0
+role: specialist
+domain: solid_state_physics
+status: v1
+antagonist_pair: physics_antagonist
+capabilities:
+  - band_structure_analysis
+  - dft_computation
+  - phonon_analysis
+  - effective_mass_computation
+  - kpoint_convergence_check
+tools_allowed:
+  - python_numerical
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/solid_state_physicist/v1.0.0.md
+notes: DFT and condensed matter analysis with convergence and functional appropriateness
+  checks.

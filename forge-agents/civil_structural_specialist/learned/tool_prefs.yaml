@@ -1,0 +1,61 @@
+# Civil Structural Specialist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+beam_solver:
+  default: direct_stiffness        # matrix stiffness method
+  continuous_beam_method: moment_distribution  # Hardy Cross iterative
+  element_type: Euler_Bernoulli    # valid when L/d > 10; use Timoshenko for deep beams
+  output_units:
+    moment: kNm
+    shear: kN
+    deflection: mm
+
+foundation:
+  model: terzaghi                  # general bearing capacity (Terzaghi 1943)
+  shape_factors: true              # sc, sq, s_gamma must be included
+  depth_factors: true              # Meyerhof depth corrections
+  groundwater_correction: true     # reduce gamma when GWT within foundation influence zone
+  settlement_method: consolidation # Terzaghi 1D consolidation (V1)
+
+column:
+  buckling_method: euler           # slender columns (KL/r > 120)
+  inelastic_method: perry_robertson # intermediate columns
+  effective_length_factor: 1.0     # pin-pin default; adjust per connection
+
+seismic:
+  code: ASCE_7_22
+  default_method: equivalent_static  # ESM; upgrade to response spectrum at Level 3
+  response_modification_factor_R: null  # must be specified by user per system type
+  importance_factor_Ie: 1.0
+  site_class: D                    # conservative default; update with site data
+  damping_ratio: 0.05              # 5% critical
+
+load_combinations:
+  standard: LRFD
+  governing_combos:
+    - "1.4D"
+    - "1.2D + 1.6L + 0.5(Lr or S or R)"
+    - "1.2D + 1.6(Lr or S or R) + (L or 0.5W)"
+    - "1.2D + 1.0W + L + 0.5(Lr or S or R)"
+    - "0.9D + 1.0W"
+    - "1.2D + 1.0E + L + 0.2S"
+    - "0.9D + 1.0E"
+
+material_defaults:
+  default: reinforced_concrete
+  concrete_fc_MPa: 30              # f'c = 30 MPa default
+  rebar_fy_MPa: 500                # Grade 500N rebar
+  steel_Fy_MPa: 350                # Grade 350 structural steel
+
+deflection_limits:
+  beam_live_load: "L/360"
+  beam_total: "L/240"
+  cantilever_live: "L/180"
+
+units:
+  force: kN
+  moment: kNm
+  stress: MPa
+  length: m
+  deflection: mm

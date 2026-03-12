@@ -22,7 +22,7 @@ from typing import Any
 
 import yaml
 
-from forge_agent.core.retry import CircuitBreaker, RetryConfig, retry_api_call
+from forge_agent.core.retry import CircuitBreaker, retry_api_call
 
 
 @dataclass
@@ -98,7 +98,7 @@ class MCPServer:
 
     async def ping(self) -> bool:
         try:
-            response = await asyncio.wait_for(
+            await asyncio.wait_for(
                 self._send_request("ping", {}),
                 timeout=self.config.timeout_ms / 1000,
             )

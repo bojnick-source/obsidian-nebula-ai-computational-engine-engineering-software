@@ -1,0 +1,49 @@
+# RF & Microwave Specialist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "rf_microwave_specialist"
+level: 1
+runs_completed: 0
+
+smith_chart_preferences:
+  normalisation_impedance_ohm: 50
+  display_mode: "impedance"       # impedance | admittance | both
+
+transmission_line_defaults:
+  type: "microstrip"              # microstrip | stripline | coax | CPW
+  substrate_er: 4.4              # FR4 default
+  substrate_height_mm: 1.6       # standard PCB thickness
+  metal_thickness_um: 35         # 1 oz copper
+  loss_tangent: 0.02             # FR4 at 1 GHz
+
+filter_synthesis_defaults:
+  response: "Chebyshev"          # Butterworth | Chebyshev | elliptic
+  ripple_dB: 0.5                 # passband ripple for Chebyshev
+  order: 5                       # default filter order
+  topology: "LC_ladder"          # LC_ladder | coupled_resonator
+
+noise_defaults:
+  reference_temperature_K: 290   # IEEE standard reference temp
+  cascade_method: "friis"        # friis | noise_wave
+  readout_unit: "dB"             # dB (noise figure) or K (noise temp)
+
+antenna_defaults:
+  simulator: "NEC2"              # wire antenna default
+  polarisation_check: true       # warn if polarisation mismatch not accounted
+  efficiency_assumption: 1.0     # assume 100% efficiency unless substrate known
+
+reference_impedance_ohm: 50
+
+escalation_thresholds:
+  aperture_wavelengths: 10       # trigger [FULL-WAVE EM SIMULATION REQUIRED]
+  element_spacing_lambda: 0.25   # minimum spacing before coupling flagged
+  mmwave_threshold_GHz: 30       # frequency above which mm-wave mode flagged
+  lumped_max_fraction_lambda: 0.1  # structure size / λ above which distributed required
+
+link_budget_defaults:
+  propagation_model: "free_space"
+  polarisation_mismatch_dB: 0.0  # set > 0 when mismatch present
+  implementation_loss_dB: 0.5    # default system implementation margin
+
+# Updated by learning loop
+last_updated: null

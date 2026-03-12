@@ -84,8 +84,6 @@ class KnowledgeDiscoveryAgent:
         units: list[KnowledgeUnit] = []
         try:
             root = ET.fromstring(xml_text)
-            ns = {"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-                  "dc": "http://purl.org/dc/elements/1.1/"}
             items = root.findall(".//item")
             for item in items[:limit]:
                 title_el = item.find("title")

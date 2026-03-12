@@ -2,22 +2,20 @@ id: provider_matrix_watcher
 name: Provider Matrix Watcher
 version: "1.0.0"
 role: maintenance
-domain: provider_matrix_watcher
+domain: Provider Matrix Watcher
 status: planned
 
-description: |
-  Monitors provider health matrix and flags degraded or unavailable model endpoints. STUB — to be fleshed out.
+capabilities: []  # populated as SKILL.md evolves
 
-capabilities: []
-tools_allowed:
-  - authorized_vault_write
+tools_allowed: []  # see SKILL.md for current list
 
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/provider_matrix_watcher/v1.0.0.md
-mandatory_output_fields:
-  - audit_findings
-  - issues_flagged
-  - recommended_actions
+skill_ref: forge-agents/provider_matrix_watcher/SKILL.md
 
-notes: |
-  STUB — status: planned.
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

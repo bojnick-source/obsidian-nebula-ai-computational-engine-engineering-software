@@ -2,22 +2,20 @@ id: schema_auditor
 name: Schema Auditor
 version: "1.0.0"
 role: maintenance
-domain: schema_auditor
+domain: Schema Auditor
 status: planned
 
-description: |
-  Audits YAML schemas across configs and cards for drift from canonical definitions. STUB — to be fleshed out.
+capabilities: []  # populated as SKILL.md evolves
 
-capabilities: []
-tools_allowed:
-  - authorized_vault_write
+tools_allowed: []  # see SKILL.md for current list
 
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/schema_auditor/v1.0.0.md
-mandatory_output_fields:
-  - audit_findings
-  - issues_flagged
-  - recommended_actions
+skill_ref: forge-agents/schema_auditor/SKILL.md
 
-notes: |
-  STUB — status: planned.
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

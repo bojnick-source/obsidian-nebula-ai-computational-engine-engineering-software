@@ -2,22 +2,20 @@ id: degraded_mode_monitor
 name: Degraded Mode Monitor
 version: "1.0.0"
 role: maintenance
-domain: degraded_mode_monitor
+domain: Degraded Mode Monitor
 status: planned
 
-description: |
-  Monitors degraded mode activation events and verifies fallback paths are exercised. STUB — to be fleshed out.
+capabilities: []  # populated as SKILL.md evolves
 
-capabilities: []
-tools_allowed:
-  - authorized_vault_write
+tools_allowed: []  # see SKILL.md for current list
 
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/degraded_mode_monitor/v1.0.0.md
-mandatory_output_fields:
-  - audit_findings
-  - issues_flagged
-  - recommended_actions
+skill_ref: forge-agents/degraded_mode_monitor/SKILL.md
 
-notes: |
-  STUB — status: planned.
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

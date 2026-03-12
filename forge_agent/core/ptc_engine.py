@@ -10,11 +10,9 @@ level; actual sandboxing is via resource limits + restricted globals.
 from __future__ import annotations
 
 import asyncio
-import resource
 import sys
 import textwrap
 from dataclasses import dataclass
-from typing import Any
 
 
 @dataclass

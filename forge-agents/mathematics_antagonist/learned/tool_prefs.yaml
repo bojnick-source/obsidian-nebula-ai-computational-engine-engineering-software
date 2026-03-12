@@ -1,0 +1,54 @@
+# Mathematics Antagonist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: mathematics_antagonist
+level: 1
+runs_completed: 0
+
+numerical_stability:
+  condition_number_warning: 1.0e8          # κ > 1e8 → warning
+  condition_number_fatal: 1.0e12           # κ > 1e12 → fatal in double precision
+  epsilon_machine_double: 2.22e-16
+  normal_equations_always_fatal_if_kappa_above: 1.0e6
+  backward_error_formula: "‖Ax-b‖₂ / ‖b‖₂ ≤ κ(A) × ε_mach"
+  require_pivot: true                       # LU must use partial pivoting
+
+algorithm_selection:
+  spd_system: cholesky                      # correct for symmetric positive definite
+  general_dense: lu_with_partial_pivot
+  large_sparse: iterative_krylov
+  least_squares: qr_decomposition          # NEVER normal equations
+  eigenvalue_sparse: arpack
+
+statistics:
+  alpha_default: 0.05
+  power_minimum: 0.80                      # below this → underpowered flagged as major
+  multiple_comparison_correction: benjamini_hochberg
+  normality_test: shapiro_wilk             # for n < 50; KS for n ≥ 50
+  homoscedasticity_test: levene
+  autocorrelation_test: durbin_watson
+  causal_claim_requires_dag: true
+  observational_causal_requires: "IV or RDD or DiD or RCT"
+  pvalue_cliff: 0.05                       # do not treat as sharp boundary
+
+reproducibility:
+  require_random_seed: true
+  require_software_version: true
+  require_data_hash: true
+  require_algorithm_specification: true
+
+benchmarks:
+  deviation_flag_percent: 5.0
+  deviation_fatal_percent: 20.0
+
+verdict_defaults:
+  normal_equations_used: reject
+  pivot_missing_and_singular: reject
+  power_below_threshold: major_revision
+  p_value_misinterpreted: major_revision
+  causal_claim_without_dag: major_revision
+  conservation_of_probability_violated: reject
+
+# Updated by learning loop
+last_updated: null

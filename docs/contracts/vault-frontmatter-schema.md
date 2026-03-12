@@ -12,9 +12,9 @@
 # Required fields — every note
 id: string              # UUID v4, assigned at creation
 type: enum              # finding | derivation | decision | gap | synthesis | agent-thinking | ilc-link
-domain: string          # mechanical_engineering | materials | electrical | plasma | magnetics |
-                        # controls | thermal_fluids | acoustics | safety_se | biomedical |
-                        # mathematics | cross_domain
+domain: string          # mechanical_engineering | materials | electrical_engineering | plasma |
+                        # magnetics | control_systems | thermal_fluids | acoustics | safety_se |
+                        # biomedical | mathematics | cross_domain
 created_at: string      # ISO8601
 updated_at: string      # ISO8601
 trace_id: string        # task trace ID that created this note

@@ -37,8 +37,8 @@ input:
       description: "Landing impact: Fz=300 N (3g at 1 m/s sink, 2× SF)"
     - id: LC-003
       description: "Ground handling: Fx=20 N (shear at attachment points)"
-    critical_case: LC-002
-    required_safety_factor: 2.0
+  load_critical_case: LC-002
+  required_safety_factor: 2.0
   interfaces:
     - id: IF-001
       description: "Fuselage ↔ Propulsion — motor mount bolt pattern M3×12mm, 4-bolt per mount"

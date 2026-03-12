@@ -1,0 +1,44 @@
+# Statistics & Probability Mathematician — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "statistics_probability_mathematician"
+level: 1
+runs_completed: 0
+
+inference_preferences:
+  language: "Python_scipy_statsmodels"
+  alpha: 0.05                          # default significance level
+  power_target: 0.80                   # minimum acceptable power
+  multiple_comparison: "BH_FDR"       # Benjamini-Hochberg false discovery rate
+  effect_size_convention: "Cohen"      # d for means, f² for regression, w for chi-sq
+  ci_method: "bootstrap_BCa"          # bias-corrected and accelerated bootstrap
+
+regression_preferences:
+  regression_baseline: "OLS_with_robust_SE"   # HC3 heteroscedasticity-consistent SE
+  logistic_solver: "LBFGS"
+  regularisation_default: "none"       # use LASSO/Ridge only when p > n/10
+  vif_threshold: 10.0                  # variance inflation factor for multicollinearity
+
+bayesian_preferences:
+  bayesian_framework: "PyMC"
+  mcmc_sampler: "NUTS"                 # No-U-Turn Sampler (default)
+  mcmc_chains: 4
+  mcmc_draws: 2000
+  mcmc_tune: 1000
+  target_accept: 0.90
+  convergence_rhat_threshold: 1.01    # R-hat > 1.01 → not converged
+  convergence_ess_min: 400            # effective sample size minimum
+
+model_selection_preferences:
+  ic_default: "AIC"                    # use BIC for large n (n > 1000)
+  cv_folds: 5
+  cv_repeats: 10
+  train_test_split: 0.80
+
+nonparametric_preferences:
+  bootstrap_samples: 10000
+  permutation_samples: 10000
+  normality_test: "shapiro_wilk"      # for n < 50; use KS for n >= 50
+
+# Updated by learning loop
+last_updated: null

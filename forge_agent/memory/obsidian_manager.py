@@ -86,6 +86,199 @@ class ObsidianVaultManager:
             return None
         return note.content
 
+    # ---------------------------------------------------------------- MCP server API (sync)
+    # These synchronous methods are called by obsidian_mcp_server.py via FastMCP tools.
+    # They use the in-memory index directly after ensuring it is built.
+
+    def _ensure_indexed_sync(self) -> None:
+        """Build the index synchronously if not yet done (used by sync MCP tools)."""
+        if not self._indexed:
+            self._build_index()
+            self._indexed = True
+
+    def search_notes(
+        self,
+        query: str,
+        top_k: int = 5,
+        domain: str | None = None,
+        tags: list[str] | None = None,
+        min_confidence: float | None = None,
+    ) -> list[Any]:
+        """Synchronous full-text search with optional domain/tag/confidence filters.
+
+        Returns a list of result objects with .path, .title, .excerpt,
+        .frontmatter, .score, and .backlinks attributes.
+        """
+        self._ensure_indexed_sync()
+        if not self._index:
+            return []
+
+        notes = list(self._index.values())
+
+        # Apply domain filter (vault-relative directory prefix)
+        if domain:
+            notes = [n for n in notes if str(n.path).replace("\\", "/").find(domain) >= 0]
+
+        # Apply tag filter
+        if tags:
+            tag_set = set(tags)
+            notes = [
+                n for n in notes
+                if tag_set.intersection(
+                    t.strip() for t in str(n.frontmatter.get("tags", "")).split(",")
+                )
+            ]
+
+        # Apply minimum confidence filter
+        if min_confidence is not None:
+            notes = [
+                n for n in notes
+                if float(n.frontmatter.get("confidence", 1.0)) >= min_confidence
+            ]
+
+        scores = _tfidf_score(query, notes) if notes else {}
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
+
+        # Build backlink map once
+        backlink_map: dict[str, list[str]] = {}
+        for n in self._index.values():
+            for link in _extract_wikilinks(n.content):
+                backlink_map.setdefault(link, []).append(str(n.path))
+
+        results = []
+        for slug, score in ranked:
+            note = self._index.get(slug)
+            if note is None:
+                continue
+            path_str = str(note.path)
+            results.append(_NoteResult(
+                path=path_str,
+                title=note.title,
+                excerpt=note.content[:300],
+                frontmatter=note.frontmatter,
+                score=round(score, 4),
+                backlinks=backlink_map.get(note.title, []),
+            ))
+        return results
+
+    def get_note(self, path: str) -> Any | None:
+        """Return a note by vault-relative path, or None if not found.
+
+        Returns an object with .path, .title, .frontmatter, .body,
+        .sections, .tags, .outgoing_links, and .modified attributes.
+        """
+        self._ensure_indexed_sync()
+        # Search by exact path match across the index
+        target = Path(path)
+        for note in self._index.values():
+            try:
+                if note.path.resolve() == (self.vault_path / target).resolve():
+                    return _FullNote(
+                        path=str(note.path.relative_to(self.vault_path)),
+                        title=note.title,
+                        frontmatter=note.frontmatter,
+                        body=note.content,
+                        sections=_extract_sections(note.content),
+                        tags=[
+                            t.strip()
+                            for t in str(note.frontmatter.get("tags", "")).split(",")
+                            if t.strip()
+                        ],
+                        outgoing_links=_extract_wikilinks(note.content),
+                        modified=note.indexed_at,
+                    )
+            except ValueError:
+                pass
+        return None
+
+    def get_backlinks(self, path: str) -> list[str]:
+        """Return all vault-relative paths whose notes contain [[wiki links]] to path."""
+        self._ensure_indexed_sync()
+        target_stem = Path(path).stem
+        return [
+            str(n.path)
+            for n in self._index.values()
+            if target_stem in _extract_wikilinks(n.content)
+        ]
+
+    def get_tags(self, tag: str) -> list[str]:
+        """Return vault-relative paths of all notes that carry the given tag."""
+        self._ensure_indexed_sync()
+        return [
+            str(n.path)
+            for n in self._index.values()
+            if tag in [
+                t.strip()
+                for t in str(n.frontmatter.get("tags", "")).split(",")
+            ]
+        ]
+
+    def upsert_note(
+        self,
+        path: str,
+        markdown: str,
+        frontmatter: dict | None = None,
+        provenance: dict | None = None,
+    ) -> str:
+        """Create or overwrite a vault note synchronously.
+
+        Returns the absolute path of the written file.
+        """
+        self._ensure_indexed_sync()
+        fm = dict(frontmatter or {})
+        if provenance:
+            fm["_provenance"] = str(provenance)
+        file_path = self.vault_path / path
+        self._write_sync(Path(path).stem, markdown, fm, file_path)
+        slug = _slug(Path(path).stem)
+        self._index[slug] = VaultNote(
+            title=Path(path).stem,
+            path=file_path,
+            content=markdown,
+            frontmatter=fm,
+        )
+        return str(file_path)
+
+    def append_to_note(self, path: str, markdown: str) -> str:
+        """Append markdown to an existing note (creates it if missing).
+
+        Returns the absolute path of the modified file.
+        """
+        self._ensure_indexed_sync()
+        file_path = self.vault_path / path
+        if file_path.exists():
+            existing = file_path.read_text(encoding="utf-8")
+            combined = existing.rstrip() + "\n\n" + markdown
+        else:
+            combined = markdown
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(combined, encoding="utf-8")
+        slug = _slug(Path(path).stem)
+        note = self._index.get(slug)
+        if note:
+            note.content = combined
+        return str(file_path)
+
+    def add_frontmatter(self, path: str, yaml_patch: dict) -> str:
+        """Patch frontmatter fields without touching the note body.
+
+        Returns the absolute path of the modified file.
+        """
+        self._ensure_indexed_sync()
+        file_path = self.vault_path / path
+        if file_path.exists():
+            raw = file_path.read_text(encoding="utf-8")
+            fm, body = _parse_frontmatter(raw)
+        else:
+            fm, body = {}, ""
+        fm.update(yaml_patch)
+        self._write_sync(Path(path).stem, body, fm, file_path)
+        slug = _slug(Path(path).stem)
+        note = self._index.get(slug)
+        if note:
+            note.frontmatter = fm
+        return str(file_path)
+
     # ---------------------------------------------------------------- write
 
     async def write_note(
@@ -243,3 +436,37 @@ def _tfidf_score(query: str, notes: list[VaultNote]) -> dict[str, float]:
 
 def _tokenize(text: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _extract_wikilinks(content: str) -> list[str]:
+    """Return unique page names referenced as [[page name]] in content."""
+    return list(dict.fromkeys(re.findall(r"\[\[([^\]|]+?)(?:\|[^\]]+)?\]\]", content)))
+
+
+def _extract_sections(content: str) -> list[str]:
+    """Return list of heading text found in markdown content."""
+    return re.findall(r"^#{1,6}\s+(.+)$", content, re.MULTILINE)
+
+
+@dataclass
+class _NoteResult:
+    """Lightweight result object returned by search_notes()."""
+    path: str
+    title: str
+    excerpt: str
+    frontmatter: dict
+    score: float
+    backlinks: list[str]
+
+
+@dataclass
+class _FullNote:
+    """Full note object returned by get_note()."""
+    path: str
+    title: str
+    frontmatter: dict
+    body: str
+    sections: list[str]
+    tags: list[str]
+    outgoing_links: list[str]
+    modified: float

@@ -5,7 +5,7 @@
 
 This document is the same as `FORGE_CATALOG.md` at the repo root. It is duplicated here to keep `docs/planning/catalog/` as the canonical historical archive location.
 
-See [FORGE_CATALOG.md](../../../../FORGE_CATALOG.md) for the full content.
+See [FORGE_CATALOG.md](../../../FORGE_CATALOG.md) for the full content.
 
 ---
 

@@ -1,0 +1,55 @@
+# Cryogenic Specialist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+property_database:
+  default: NIST_WebBook            # CryoData fluid properties
+  fluid_preference:
+    helium: He-4                   # saturated, 4.2 K at 1 atm
+    nitrogen: LN2                  # saturated, 77 K at 1 atm
+    hydrogen: LH2                  # saturated, 20.3 K at 1 atm
+    neon: LNe                      # saturated, 27.1 K at 1 atm
+
+mli:
+  layers_default: 30               # 30 layers with double-aluminised mylar + silk net spacer
+  effective_conductivity_mW_per_mK: 0.05  # at < 10⁻⁵ torr; multiply by 10–100 if vacuum degraded
+  vacuum_pressure_required_torr: 1.0e-4   # threshold; warn if not assured
+  emissivity_SS304_at_77K: 0.07    # use 0.07 not 0.03 (polished ideal)
+  emissivity_Al_at_77K: 0.03
+
+vacuum:
+  assumed_pressure_torr: 1.0e-5
+  warn_if_above_torr: 1.0e-4      # MLI degradation warning threshold
+
+coolant:
+  default: LHe4
+  latent_heat_LHe_kJ_per_L: 20.9  # at 4.2 K, 1 atm
+  latent_heat_LN2_kJ_per_L: 161.0 # at 77 K, 1 atm
+
+support_struts:
+  default_material: G10_fiberglass
+  conductivity_integrated_4K_to_300K_W_per_m: 1.28  # Barron Table 3-2
+  use_temperature_dependent_k: true  # G10 k varies significantly; integrate k(T)
+
+radiation_shields:
+  default_shield_T_K: 77           # LN₂ or GM first-stage
+  stefan_boltzmann: 5.67e-8        # W/(m²·K⁴)
+
+cryocooler:
+  default_model: gifford_mcmahon   # GM two-stage (4 K / 77 K)
+  pulse_tube_model: orifice_type
+  jt_inversion_check: true         # always verify T < T_inversion before applying J-T
+
+superconductor:
+  default_material: NbTi
+  Tc_at_zero_field_K: 9.2          # NbTi; suppress per applied B
+  stability_criterion: stekly      # alpha_s = rho_Cu * Jc^2 / (h * (Tc - Top))
+  quench_detection: true           # flag if quench propagation velocity not calculated
+
+units:
+  temperature: K
+  heat_leak: W
+  boiloff_rate: L/day
+  pressure: torr (vacuum), bar (process)
+  length: m
+  area: m2

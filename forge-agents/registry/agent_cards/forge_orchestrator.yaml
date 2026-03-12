@@ -1,25 +1,21 @@
 id: forge_orchestrator
-name: FORGE Orchestrator
+name: Forge Orchestrator
 version: "1.0.0"
-role: orchestrator
-domain: forge_command
+role: command
+domain: FORGE Orchestrator
 status: planned
 
-description: |
-  Top-level FORGE orchestrator: receives tasks, builds agent execution graphs,
-  dispatches to specialists, and assembles final outputs. STUB — to be fleshed out.
+capabilities: []  # populated as SKILL.md evolves
 
-capabilities: []
-tools_allowed:
-  - authorized_vault_write
-  - agent_dispatch
+tools_allowed: []  # see SKILL.md for current list
 
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/forge_orchestrator/v1.0.0.md
-mandatory_output_fields:
-  - task_graph
-  - dispatch_log
-  - final_output
+skill_ref: forge-agents/forge_orchestrator/SKILL.md
 
-notes: |
-  STUB — status: planned. Core command agent; replaces ad-hoc orchestration.
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

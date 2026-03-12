@@ -1,0 +1,43 @@
+# Quantum Mechanics Physicist — learned tool preferences
+# Auto-updated by the learning loop after each successful run.
+
+agent_id: "quantum_mechanics_physicist"
+level: 1
+runs_completed: 0
+
+schrodinger_solver_preferences:
+  primary: "finite_difference_1D"
+  grid_points: 1000              # spatial grid resolution (default)
+  boundary_conditions: "zero"    # Dirichlet zero at box boundaries
+  eigenvalue_method: "scipy_eigh"
+
+electronic_structure_preferences:
+  basis_set: "cc-pVDZ"           # correlation-consistent double-zeta
+  dft_functional: "B3LYP"        # default hybrid GGA functional
+  hf_convergence_threshold: 1e-8 # SCF energy convergence (Hartree)
+  max_scf_cycles: 100
+
+units:
+  energy: "eV"                   # electron-volts for output
+  length: "Angstrom"
+  time: "fs"                     # femtoseconds
+  hbar: 1.0545718e-34            # J·s (SI reference)
+
+perturbation_theory_defaults:
+  order: "first_and_second"
+  degenerate_check: true          # warn if degenerate states found at same energy
+
+wkb_defaults:
+  connection_formula: true        # always apply at classical turning points
+  transmission_coefficient: "gamow"
+
+angular_momentum_defaults:
+  coupling_scheme: "LS"           # LS coupling default; flag for Z > 40
+  spin_orbit_warning_Z: 40        # atomic number above which jj coupling flagged
+
+escalation_thresholds:
+  max_interacting_particles: 2    # trigger [MANY-BODY CALCULATION REQUIRED]
+  correlation_fraction: 0.10      # E_corr / E_total above which HF insufficient
+
+# Updated by learning loop
+last_updated: null

@@ -1,5 +1,4 @@
 """Tests for AgentOutputContract static validator and VerifierAgent."""
-import pytest
 
 from forge_agent.agents.verifier import AgentOutputContract, ContractViolation
 

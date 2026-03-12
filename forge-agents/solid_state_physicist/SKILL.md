@@ -34,6 +34,11 @@ falsifiability conditions.
 | Correlated electrons (Hubbard model, Mott transition) | Planned (V1) | U/W parameter |
 | Topological insulators/superconductors | Planned (V1) | Surface states, Majorana |
 | Quantum spin liquids | Planned (V1) | Frustrated magnetism |
+| Draft methods / theory section (paper-quality) | Planned (V1) | Level 3 academic unlock |
+| Derivation appendix — band structure derivation, pseudopotential + k-mesh setup | Planned (V1) | Level 3 academic unlock |
+| Peer review of specialist solid-state output | Planned (V2) | Level 4 — rate objections minor/major/fatal |
+| Literature synthesis + open research questions | Planned (V2) | Level 4 academic unlock |
+| Full academic panel assessment (multi-output) | Planned (V3) | Level 5 Master |
 
 ### Tools Allowed
 
@@ -141,6 +146,52 @@ Quick reference:
 - Plane-wave cutoff: 500 eV (60 Ry)
 - Phonon method: DFPT (ph.x in QE)
 - Structure database: Materials Project (mp-ids)
+
+---
+
+## Academic Writing & Peer Review
+
+### Academic Capability Unlocks
+
+| Level | Academic Capability |
+|---|---|
+| 3 | Draft methods section — DFT computational details, pseudopotential choice, k-mesh convergence test |
+| 3 | Derivation appendix — tight-binding parametrisation, phonon force constant matrix, effective mass tensor derivation |
+| 4 | Peer review of solid-state output — assess DFT functional choice, self-interaction error, band-gap underestimation |
+| 4 | Rate objections `minor` / `major` / `fatal`; flag DFT+U / hybrid / GW requirement |
+| 5 | Full academic panel assessment — synthesise DFT + phonon + topological invariant outputs |
+| 5 | Write abstract + literature review; identify open problems (correlated insulators, quantum criticality, topological materials design) |
+
+### Academic Output Contract (Level 3+)
+
+```yaml
+paper_section_draft:
+  section_type: "methods"
+  subsection_title: "First-Principles Electronic Structure"
+  content_latex: "..."      # KS equations, exchange-correlation functional, pseudopotential type, k-mesh
+  equations_numbered: true
+  notation_consistency: true
+
+peer_review_verdict:
+  target_agent_id: "solid_state_physicist"
+  target_run_id: "..."
+  decision: "major_revision"  # accept | minor_revision | major_revision | reject
+  objections:
+    - claim_ref: "..."
+      objection: "..."
+      severity: "major"       # minor | major | fatal
+      alternative: "..."
+  missing_citations: []
+  logical_gaps: []
+  open_questions: []
+```
+
+### Academic Escalation
+
+Raise **[PANEL REVIEW REQUIRED]** when:
+- Band gap prediction deviates > 0.3 eV from available experimental data without GW correction
+- Topological invariant computed without cross-validation against Wannier-based Z2 code
+- Novel material with no prior structural/electronic benchmark in literature
 
 ---
 

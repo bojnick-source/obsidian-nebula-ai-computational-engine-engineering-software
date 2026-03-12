@@ -1,0 +1,52 @@
+# Physics Antagonist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+agent_id: physics_antagonist
+level: 1
+runs_completed: 0
+
+regime_checks:
+  electrodynamics:
+    quasi_static_threshold: 0.1         # d/λ < 0.1 required
+    near_field_boundary: 0.159          # r < λ/(2π)
+    far_field_boundary_factor: 2.0      # r > 2D²/λ (Fraunhofer)
+    good_conductor_threshold: 100       # σ/(ωε) > 100 required for PEC
+  quantum_mechanics:
+    non_relativistic_threshold: 0.1    # v/c < 0.1 required
+    classical_limit: 10                 # quantum number n >> 1 for correspondence
+    born_oppenheimer_mass_ratio: 1836  # M_nucleus/m_electron check
+    BO_invalid_if_energy_gap_eV: 0.1   # flag if electronic gap < 0.1 eV
+  statistical_mechanics:
+    classical_equipartition_ratio: 3.0  # T > 3 × ℏω/kB for classical regime
+    thermodynamic_limit_N_min: 1000     # N < 1000 → finite-size warning
+    mean_field_dimension_min: 4         # d ≥ 4 for mean-field exponents (Ising)
+    ergodicity_autocorrelation: true    # require autocorrelation time analysis
+  solid_state:
+    dft_gap_correction_required: true   # always note LDA/GGA underestimate
+    kpoint_convergence_required: true   # require k-mesh convergence test evidence
+    effective_mass_anisotropy_check: true  # always check if tensor vs scalar matters
+    phonon_optical_branch_check: true   # always check if optical branches relevant
+
+benchmark:
+  deviation_flag_percent: 5.0          # flag if deviation from published > 5%
+  deviation_fatal_percent: 20.0        # fatal if > 20% from published
+
+conservation:
+  always_check:
+    - energy
+    - probability  # QM only
+  check_when_relevant:
+    - momentum
+    - angular_momentum
+    - charge
+    - particle_number
+
+verdict_defaults:
+  regime_violation_major: major_revision
+  regime_violation_fatal: reject       # if error > 10% in main finding
+  conservation_violation: reject
+  dimensional_error: reject
+
+# Updated by learning loop
+last_updated: null

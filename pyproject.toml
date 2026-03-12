@@ -29,5 +29,14 @@ python_version = "3.11"
 strict = true
 
 [tool.pytest.ini_options]
-testpaths = ["forge-tests"]
+testpaths = [
+    "forge-tests",
+    "tests",
+    "tools/tests",
+    "forge_agent/tests",
+    "forge-assembly/tests",
+    "forge-output/tests",
+]
+pythonpath = ["."]
 addopts = "-v --tb=short"
+asyncio_default_fixture_loop_scope = "function"

@@ -28,7 +28,7 @@ jobs:
         run: |
           find . -name "*.yaml" -o -name "*.yml" | \
             grep -v ".github/workflows" | \
-            xargs yamllint -d "{extends: default, rules: {line-length: {max: 120}}}" || true
+            xargs yamllint
 
   build-cmake:
     name: CMake configure check
@@ -53,4 +53,23 @@ jobs:
       - name: Install ruff
         run: pip install ruff
       - name: Lint
-        run: ruff check . --ignore E501 || true
+        run: ruff check . --ignore E501
+
+  run-tests:
+    name: Python tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          pip install pytest pytest-asyncio pyyaml numpy python-frontmatter
+          pip install anthropic httpx asyncio-throttle watchdog
+          pip install fastmcp pydantic jinja2
+          pip install -e "forge_agent/[mcp]" || pip install -e "forge_agent/[mcp]" --no-build-isolation || true
+          pip install -e forge-assembly/ || pip install -e forge-assembly/ --no-build-isolation || true
+          pip install -e forge-output/ || pip install -e forge-output/ --no-build-isolation || true
+      - name: Run tests
+        run: pytest --tb=short -q

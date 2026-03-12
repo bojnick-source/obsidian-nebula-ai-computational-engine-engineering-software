@@ -1,7 +1,6 @@
 """Tests for MCP circuit breaker and timeout behaviour."""
 import asyncio
 import pytest
-import time
 
 from forge_agent.core.retry import CircuitBreaker, CircuitState, RetryConfig, retry_api_call
 
@@ -94,7 +93,7 @@ class TestRetryApiCall:
         async def always_fail():
             raise ValueError("permanent")
 
-        with pytest.raises(RuntimeError, match="permanent"):
+        with pytest.raises(RuntimeError, match="retry attempts exhausted"):
             await retry_api_call(
                 always_fail,
                 config=RetryConfig(max_attempts=3, base_delay_s=0.0, jitter_s=0.0),

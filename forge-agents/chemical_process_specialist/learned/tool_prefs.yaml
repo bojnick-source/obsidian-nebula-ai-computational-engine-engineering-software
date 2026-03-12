@@ -1,0 +1,48 @@
+# Chemical Process Specialist — Tool Parameter Preferences
+# Auto-updated by forge learning loop. Edit with care.
+# Last updated: (no runs yet)
+
+eos:
+  default: peng_robinson
+  fallback: ideal_gas
+  ideal_gas_max_pressure_bar: 10
+
+flash:
+  default_type: PT_flash          # specify T and P, solve for phase split
+  vle_method: raoults_law         # for ideal mixtures at low P
+  activity_model: wilson          # for non-ideal liquid phase (V1)
+
+reactor:
+  default_model: CSTR
+  pfr_trigger: "plug-flow justified (e.g., tubular, laminar, catalytic fixed bed)"
+  energy_mode: isothermal         # default; switch to adiabatic/polytropic when specified
+
+kinetics:
+  default: arrhenius              # k = A * exp(-Ea / R / T)
+  pre_exponential_units: "mol/(L·s) or mol/(kg_cat·s)"
+  activation_energy_units: J/mol
+
+distillation:
+  default_method: mccabe_thiele   # binary systems
+  rigorous_method: tray_by_tray   # multicomponent (V3)
+  condenser: total                # default
+
+heat_exchanger:
+  default_method: LMTD
+  correction_factor_F: 1.0        # assume pure counter-current unless specified
+  fouling_factor_default: 0.0002  # m²·K/W (water side)
+
+safety:
+  methodology: HAZOP
+  consequence_required: true      # failure if deviation listed without consequence
+  lopa_trigger: "after HAZOP identifies SIL requirement"
+
+antoine:
+  validity_check: true            # warn if T outside Antoine constant range
+  source_preference: Perry's      # fallback: NIST WebBook
+
+units:
+  pressure: bar
+  temperature: K
+  energy: kJ
+  flow: mol/s

@@ -155,7 +155,7 @@ class AssemblyOrchestrator:
                     trace_id=_trace_id,
                     run_id=_run_id,
                 )
-            except Exception as exc:
+            except Exception:
                 vault_paths = []
 
         # Collect errors

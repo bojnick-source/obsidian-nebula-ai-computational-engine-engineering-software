@@ -2,22 +2,20 @@ id: provenance_verifier
 name: Provenance Verifier
 version: "1.0.0"
 role: verifier
-domain: provenance_verifier
+domain: Provenance Verifier
 status: planned
 
-description: |
-  Verifies citation provenance and source traceability for all specialist claims. STUB — to be fleshed out.
+capabilities: []  # populated as SKILL.md evolves
 
-capabilities: []
-tools_allowed:
-  - authorized_vault_write
+tools_allowed: []  # see SKILL.md for current list
 
 output_contract_ref: docs/contracts/agent-output-contract.md
 prompt_ref: forge-agents/prompts/provenance_verifier/v1.0.0.md
-mandatory_output_fields:
-  - verification_result
-  - issues_found
-  - confidence
+skill_ref: forge-agents/provenance_verifier/SKILL.md
 
-notes: |
-  STUB — status: planned.
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

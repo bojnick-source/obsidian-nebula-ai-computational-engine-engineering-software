@@ -58,6 +58,8 @@ forge-tests/reports/**/*.html
 # Logs
 *.jsonl
 logs/
+# forge-agents learned/ files are runtime data tracked by convention
+!forge-agents/**/learned/*.jsonl
 
 # Node (if any tooling)
 node_modules/

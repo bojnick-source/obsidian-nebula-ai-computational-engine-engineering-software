@@ -1,0 +1,23 @@
+id: number_theory_mathematician
+name: Number Theory Mathematician
+version: "1.0.0"
+role: specialist
+domain: number theory
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/number_theory_mathematician/v1.0.0.md
+skill_ref: forge-agents/number_theory_mathematician/SKILL.md
+
+antagonist_pair: number_theory_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

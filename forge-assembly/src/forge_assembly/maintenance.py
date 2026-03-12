@@ -11,9 +11,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any
 
-from forge_assembly.disassembly import DisassemblyNode, DisassemblyResult
+from forge_assembly.disassembly import DisassemblyResult
 
 
 class ServiceLevel(StrEnum):

@@ -100,6 +100,29 @@ def build_disassembly_dag(
         time_each = _TIME_PER_FASTENER_MIN.get(node.joint_type, 1.0)
         node.estimated_removal_time_min = n_fasteners * time_each
 
+    # Apply tool-access results: interfaces flagged as tool_access_blocked are
+    # physically unreachable with standard tooling.  Mark affected components
+    # non_destructive=False and add an access-prep time penalty so Kahn's sort
+    # places them later in the removal sequence (correct, conservative ordering).
+    blocked_iface_ids: set[str] = {
+        r.interface_id
+        for r in tool_access_results
+        if r.issue_type == "tool_access_blocked" and r.severity == "error"
+    }
+    if blocked_iface_ids:
+        iface_to_components: dict[str, list[str]] = {}
+        for ifc in interfaces:
+            ifc_id = ifc.get("id", "")
+            if ifc_id in blocked_iface_ids:
+                iface_to_components[ifc_id] = ifc.get("component_ids", [])
+        for cids in iface_to_components.values():
+            for cid in cids:
+                if cid in node_map:
+                    node = node_map[cid]
+                    node.non_destructive = False
+                    # Penalise time so blocked components sort later
+                    node.estimated_removal_time_min += 30.0  # access-prep overhead
+
     # Spatial blocking: component A blocks B if A is along B's extraction path
     _resolve_spatial_blocking(placements, node_map)
 

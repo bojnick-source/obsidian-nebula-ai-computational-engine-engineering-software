@@ -7,7 +7,7 @@ Uses Supermemory for agent-optimized retrieval after write.
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 

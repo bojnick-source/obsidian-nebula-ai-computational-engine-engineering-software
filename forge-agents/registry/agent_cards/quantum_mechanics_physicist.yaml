@@ -1,0 +1,18 @@
+id: quantum_mechanics_physicist
+name: Quantum Mechanics Physicist
+version: 1.0.0
+role: specialist
+domain: quantum_mechanics
+status: v1
+antagonist_pair: physics_antagonist
+capabilities:
+  - schrodinger_equation_solutions
+  - perturbation_theory
+  - wavefunction_analysis
+  - many_body_approximations
+  - non_relativistic_limit_check
+tools_allowed:
+  - python_numerical
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/quantum_mechanics_physicist/v1.0.0.md
+notes: Solves quantum mechanical problems with explicit regime validity checks.

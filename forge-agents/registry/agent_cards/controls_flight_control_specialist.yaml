@@ -1,0 +1,23 @@
+id: controls_flight_control_specialist
+name: Controls Flight Control Specialist
+version: "1.0.0"
+role: specialist
+domain: Controls & Flight Control
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/controls_flight_control_specialist/v1.0.0.md
+skill_ref: forge-agents/controls_flight_control_specialist/SKILL.md
+
+antagonist_pair: controls_flight_control_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence
