@@ -57,11 +57,12 @@ freeto_capabilities:
   - semdot_method                        # smooth-edged, better boundary than SIMP
   - octave_compatible                    # no MATLAB commercial license required
   - mit_license                          # open source, Ibhadode/U of Alberta, 1263 LOC
-  does_not_support:
-    - level_set
-    - am_manufacturing_constraints
-    - anisotropic_materials
-    - unstructured_meshes
+
+freeto_does_not_support:
+  - level_set
+  - am_manufacturing_constraints
+  - anisotropic_materials
+  - unstructured_meshes
 
 capabilities:
   - design_space_definition          # non-design solid/void from IF-XXX records

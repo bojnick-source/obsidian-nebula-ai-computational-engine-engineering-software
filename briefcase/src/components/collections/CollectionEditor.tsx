@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useCollectionStore } from "../../store/useCollectionStore";
 import { useVaultStore } from "../../store/useVaultStore";
 import { useUIStore } from "../../store/useUIStore";
-import type { CollectionItem } from "../../types/collection";
 
 export function CollectionEditor() {
   const collections = useCollectionStore((s) => s.collections);
@@ -94,7 +93,6 @@ export function CollectionEditor() {
         {items.map((item, index) => (
           <SlideRow
             key={item.assetId}
-            item={item}
             index={index}
             title={assets[item.assetId]?.title ?? item.assetId}
             onRemove={() => removeAsset(item.assetId)}
@@ -125,12 +123,10 @@ export function CollectionEditor() {
 }
 
 function SlideRow({
-  item,
   index,
   title,
   onRemove,
 }: {
-  item: CollectionItem;
   index: number;
   title: string;
   onRemove: () => void;

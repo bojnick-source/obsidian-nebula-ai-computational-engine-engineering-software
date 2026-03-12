@@ -76,9 +76,9 @@ public:
     EventEmitter(const EventEmitter&) = delete;
     EventEmitter& operator=(const EventEmitter&) = delete;
 
-    // Movable
-    EventEmitter(EventEmitter&&) noexcept;
-    EventEmitter& operator=(EventEmitter&&) noexcept;
+    // Not movable — owns std::mutex
+    EventEmitter(EventEmitter&&) = delete;
+    EventEmitter& operator=(EventEmitter&&) = delete;
 
     // ------------------------------------------------------------------
     // Core emit — serializes event to JSON and publishes

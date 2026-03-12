@@ -56,9 +56,6 @@ EventEmitter::EventEmitter(Config config)
 
 EventEmitter::~EventEmitter() = default;
 
-EventEmitter::EventEmitter(EventEmitter&&) noexcept = default;
-EventEmitter& EventEmitter::operator=(EventEmitter&&) noexcept = default;
-
 // ---------------------------------------------------------------------------
 // emit
 // ---------------------------------------------------------------------------
