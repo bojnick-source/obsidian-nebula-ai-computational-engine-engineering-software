@@ -4,6 +4,7 @@ extends: default
 ignore: |
   briefcase/node_modules/
   node_modules/
+  .github/workflows/
 
 rules:
   line-length:

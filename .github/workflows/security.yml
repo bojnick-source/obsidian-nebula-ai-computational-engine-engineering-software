@@ -21,7 +21,8 @@ jobs:
       - name: Scan for secrets
         run: |
           if [ ! -f ".secrets.baseline" ]; then
-            echo "::error::.secrets.baseline is missing. Please generate it locally with 'detect-secrets scan > .secrets.baseline' and commit it."
+            echo "::error::.secrets.baseline missing." \
+              "Run: detect-secrets scan > .secrets.baseline and commit it."
             exit 1
           fi
           detect-secrets scan --baseline .secrets.baseline
