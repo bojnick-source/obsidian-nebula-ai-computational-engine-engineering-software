@@ -7,6 +7,9 @@ Generates compliant agent files for a new specialist or antagonist:
   - forge-agents/[id]/learned/failure_patterns.jsonl  (empty)
   - forge-agents/[id]/learned/strategies.jsonl         (empty)
   - forge-agents/[id]/learned/tool_prefs.yaml
+  - forge-agents/[id]/gold_runs/README.md
+  - forge-agents/[id]/gold_runs/example_01.md         (stub — populate from first run)
+  - forge-agents/[id]/catalogue.md
   - forge-agents/prompts/[id]/v1.0.0.md
   - forge-agents/registry/agent_cards/[id].yaml
 
@@ -639,6 +642,263 @@ def agent_card_yaml(spec: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def gold_runs_readme(spec: dict[str, Any]) -> str:
+    agent_id = spec["id"]
+    return textwrap.dedent(f"""\
+        # Gold Runs — {_title(agent_id)}
+
+        This directory contains exemplary interaction records for `{agent_id}`.
+        Gold runs serve as positive training examples and quality benchmarks.
+
+        ## File Format
+
+        Each gold run is a markdown file with YAML frontmatter:
+
+        ```
+        ---
+        run_id: gr-NNN
+        task: <one-line task description>
+        difficulty: easy | medium | hard | expert
+        outcome: pass | partial | escalation
+        confidence: 0.00–1.00
+        date: YYYY-MM-DD
+        tags: []
+        ---
+
+        ## Task
+        Full task description provided to the agent.
+
+        ## Reasoning
+        The agent's step-by-step reasoning process.
+
+        ## Answer
+        Final answer with units, equations, citations, and provenance.
+
+        ## What Made This Good
+        Specific criteria: rigour, correctness, escalation behaviour, etc.
+        ```
+
+        ## Usage
+
+        Gold runs are used by:
+        - The learning loop to calibrate strategy selection
+        - The Antagonist to calibrate its false-positive rate
+        - Human reviewers assessing agent capability level
+        - Regression tests (`tests/test_gold_runs.py`)
+
+        ## Status
+
+        Gold runs to be added as the agent accumulates verified correct analyses.
+    """).rstrip()
+
+
+def gold_run_example_01(spec: dict[str, Any]) -> str:
+    agent_id = spec["id"]
+    domain = spec["domain"]
+    domain_short = spec.get("domain_short", domain.split("—")[0].strip())
+    today = "2026-03-12"
+
+    return textwrap.dedent(f"""\
+        ---
+        run_id: gr-001
+        task: "Demonstrate correct {domain_short.lower()} analysis with explicit assumptions"
+        difficulty: medium
+        outcome: pass
+        confidence: 0.00
+        date: {today}
+        tags: [stub, to-be-completed]
+        ---
+
+        ## Task
+
+        *This is a placeholder gold run. Populate with a verified correct analysis
+        from a real run of `{agent_id}` once the agent completes its first successful task.*
+
+        Suggested first gold run task:
+        - A representative {domain_short.lower()} problem at Level 1 (analytical method)
+        - Input parameters should be physically realistic
+        - Result should be verifiable against published values or hand calculation
+
+        ## Reasoning
+
+        *(To be filled in with the actual agent reasoning trace)*
+
+        ## Answer
+
+        *(To be filled in with the verified correct numerical answer, with units,
+        equations, assumptions, and provenance)*
+
+        ## What Made This Good
+
+        *(Document the specific quality criteria: regime validity, safety margin
+        calculation, assumption explicitness, provenance completeness, etc.)*
+    """).rstrip()
+
+
+def catalogue_md(spec: dict[str, Any]) -> str:
+    agent_id = spec["id"]
+    domain = spec["domain"]
+    domain_short = spec.get("domain_short", domain.split("—")[0].strip())
+    role = spec["role"]
+    today = "2026-03-12"
+
+    if role == "antagonist":
+        return textwrap.dedent(f"""\
+            # {_title(agent_id)} — Capability Catalogue
+
+            **Agent ID:** `{agent_id}`
+            **Role:** Antagonist (Domain Critic)
+            **Domain:** {domain}
+            **Last Updated:** {today}
+            **Runs Completed:** 0
+            **Current Level:** 1 (Novice)
+
+            ---
+
+            ## Capability Summary
+
+            The {_title(agent_id)} performs rigorous domain-specific critique of
+            `{spec.get('pair', agent_id.replace('_antagonist', '_specialist'))}` outputs.
+            It identifies regime violations, conservation law failures, dimensional errors,
+            and provenance gaps with quantified consequences and specific remedies.
+
+            ---
+
+            ## Known Strengths
+
+            *(Populated from run history — no runs completed yet)*
+
+            ---
+
+            ## Known Limitations / When to Escalate
+
+            - Do not escalate to antagonist for exploratory/sketch-level analysis
+            - Antagonist critique assumes structured output contract format
+            - False positives on genuinely novel methods — may flag valid approaches
+              as non-standard when they are simply unfamiliar
+
+            ---
+
+            ## Example Tasks (with difficulty ratings)
+
+            | Task | Difficulty | Status |
+            |---|---|---|
+            | Critique an analytical {domain_short.lower()} output | Medium | Planned |
+            | Benchmark deviation assessment | Medium | Planned |
+            | Conservation law audit | Hard | Planned |
+            | Cross-agent consistency review | Expert | Planned |
+
+            ---
+
+            ## Preferred Tool Stack
+
+            *(Populated from learned/tool_prefs.yaml)*
+
+            - No preferred tools yet (no runs completed)
+
+            ---
+
+            ## Failure Modes to Watch
+
+            - **False positive rate**: flagging valid standard methods as errors
+            - **Specificity collapse**: vague objections without specific claim references
+            - **Severity inflation**: all objections rated fatal (destroys signal)
+            - **Missing alternative**: major/fatal objections without a proposed fix
+
+            ---
+
+            ## Run History Summary
+
+            | Metric | Value |
+            |---|---|
+            | Total runs | 0 |
+            | Accept verdicts | 0 |
+            | Minor revision verdicts | 0 |
+            | Major revision verdicts | 0 |
+            | Reject verdicts | 0 |
+            | Mean rigour score | — |
+            | False positive rate | — |
+        """).rstrip()
+    else:
+        return textwrap.dedent(f"""\
+            # {_title(agent_id)} — Capability Catalogue
+
+            **Agent ID:** `{agent_id}`
+            **Role:** {role.title()}
+            **Domain:** {domain}
+            **Last Updated:** {today}
+            **Runs Completed:** 0
+            **Current Level:** 1 (Novice)
+
+            ---
+
+            ## Capability Summary
+
+            The {_title(agent_id)} performs {domain_short.lower()} analysis at Level 1
+            using analytical methods. It produces structured outputs with explicit
+            assumptions, safety margins, and falsifiability conditions per the
+            FORGE Agent Output Contract.
+
+            ---
+
+            ## Known Strengths
+
+            *(Populated from run history — no runs completed yet)*
+
+            ---
+
+            ## Known Limitations / When to Escalate
+
+            - Level 1 only: analytical methods (escalate to numerical at Level 3)
+            - Multi-physics coupling not yet available (Level 4)
+            - Uncertainty quantification not available until Level 4
+            - When safety margin < 0: escalate immediately, do not release
+
+            ---
+
+            ## Example Tasks (with difficulty ratings)
+
+            | Task | Difficulty | Status |
+            |---|---|---|
+            | Basic {domain_short.lower()} sizing calculation | Easy | Planned |
+            | Parametric sensitivity study | Medium | Planned |
+            | {domain_short.title()} design optimisation | Hard | Planned |
+            | Multi-physics {domain_short.lower()} coupling | Expert | Planned (Level 4) |
+
+            ---
+
+            ## Preferred Tool Stack
+
+            *(Populated from learned/tool_prefs.yaml — no runs completed yet)*
+
+            Default stack (Level 1):
+            - `numpy_scipy` — numerical computation
+            - `sympy` — symbolic manipulation
+
+            ---
+
+            ## Failure Modes to Watch
+
+            - Regime violation: method applied outside its validity range
+            - Missing safety margin: result without margin against allowable
+            - Unverified material properties: nominal values without citation
+            - Inappropriate idealisation: non-conservative boundary conditions
+            - Single-point result: no sensitivity to key assumptions
+
+            ---
+
+            ## Run History Summary
+
+            | Metric | Value |
+            |---|---|
+            | Total runs | 0 |
+            | Success rate | — |
+            | Mean confidence | — |
+            | Escalations triggered | 0 |
+            | Strategy reuse rate | — |
+        """).rstrip()
+
+
 def tool_prefs_yaml(spec: dict[str, Any]) -> str:
     agent_id = spec["id"]
     role = spec["role"]
@@ -793,6 +1053,7 @@ def generate_agent(spec: dict[str, Any], overwrite: bool = False, dry_run: bool 
 
     agent_dir = AGENTS_ROOT / agent_id
     learned_dir = agent_dir / "learned"
+    gold_runs_dir = agent_dir / "gold_runs"
     prompt_dir = AGENTS_ROOT / "prompts" / agent_id
     card_dir = AGENTS_ROOT / "registry" / "agent_cards"
 
@@ -839,6 +1100,13 @@ def generate_agent(spec: dict[str, Any], overwrite: bool = False, dry_run: bool 
     _touch(learned_dir / "failure_patterns.jsonl")
     _touch(learned_dir / "strategies.jsonl")
     _write(learned_dir / "tool_prefs.yaml", tool_prefs_yaml(spec), "tool_prefs.yaml")
+
+    # gold_runs/
+    _write(gold_runs_dir / "README.md", gold_runs_readme(spec), "gold_runs/README.md")
+    _write(gold_runs_dir / "example_01.md", gold_run_example_01(spec), "gold_runs/example_01.md")
+
+    # catalogue.md
+    _write(agent_dir / "catalogue.md", catalogue_md(spec), "catalogue.md")
 
     # prompt
     _write(prompt_dir / "v1.0.0.md", prompt_md(spec), "v1.0.0.md")

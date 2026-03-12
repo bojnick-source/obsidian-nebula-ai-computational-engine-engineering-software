@@ -1,0 +1,23 @@
+id: quantum_field_theory_physicist
+name: Quantum Field Theory Physicist
+version: "1.0.0"
+role: specialist
+domain: quantum field theory
+status: planned
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/quantum_field_theory_physicist/v1.0.0.md
+skill_ref: forge-agents/quantum_field_theory_physicist/SKILL.md
+
+antagonist_pair: qft_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

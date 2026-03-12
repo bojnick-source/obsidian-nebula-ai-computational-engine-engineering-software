@@ -148,8 +148,14 @@ void EventEmitter::verification_gate(
     ForgeEvent e;
     e.ts = now_iso8601(); e.run_id = run_id; e.trace_id = trace_id;
     e.event_type = "verification_gate";
-    e.meta_json = details_json;
-    (void)gate; (void)passed; // would encode into meta_json with full JSON lib
+    // Encode gate name and pass/fail status alongside caller-supplied details.
+    std::string meta = R"({"gate":")" + std::string(gate) + R"(","passed":)";
+    meta += passed ? "true" : "false";
+    if (!details_json.empty() && details_json != "{}") {
+        meta += R"(,"details":)" + std::string(details_json);
+    }
+    meta += "}";
+    e.meta_json = std::move(meta);
     emit(e);
 }
 
@@ -160,7 +166,9 @@ void EventEmitter::degraded_mode(
     ForgeEvent e;
     e.ts = now_iso8601(); e.run_id = run_id; e.trace_id = trace_id;
     e.event_type = "degraded_mode";
-    (void)mode; (void)reason; // would encode into meta_json
+    // Encode mode and reason so callers can diagnose degraded state from logs.
+    e.meta_json = R"({"mode":")" + std::string(mode)
+                + R"(","reason":")" + std::string(reason) + R"("})";
     emit(e);
 }
 

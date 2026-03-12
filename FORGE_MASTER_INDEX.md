@@ -73,7 +73,7 @@ Task Intake → Blackboard Init → ME Specialist → GMSH (mesh) → CalculiX (
 ### P0 Documents (must freeze first)
 
 - [x] This index
-- [x] `docs/planning/catalog/forge-catalog-current.md`
+- [x] `docs/planning/catalog/forge-catalog-main.md` (canonical) / `forge-catalog-current.md` (historical)
 - [x] `docs/planning/mvp/v0.1-spec.md`
 - [x] `docs/planning/mvp/v0.1-acceptance-test.md`
 - [x] `docs/planning/mvp/mvp-cut-line.md`
@@ -113,4 +113,24 @@ Task Intake → Blackboard Init → ME Specialist → GMSH (mesh) → CalculiX (
 
 ---
 
-*Last updated: 2026-03-05*
+---
+
+## Repository Structure
+
+See `ARCHITECTURE.md` for the two-layer design (forge-agents/ data vs forge_agent/ runtime).
+
+### Root Files
+- `README.md` — project overview
+- `CLAUDE.md` — developer quick reference (setup, lint, test commands)
+- `ARCHITECTURE.md` — two-layer architecture explanation
+- `CHANGELOG.md` — version history
+
+### Key Docs
+- `docs/governance/decisions.md` — decision log (frozen choices)
+- `docs/planning/risk/risk-register.md` — risk register
+- `docs/planning/roadmap/tiered-roadmap.md` — roadmap
+- `docs/planning/catalog/forge-catalog-main.md` — canonical agent catalog
+
+---
+
+*Last updated: 2026-03-12*
