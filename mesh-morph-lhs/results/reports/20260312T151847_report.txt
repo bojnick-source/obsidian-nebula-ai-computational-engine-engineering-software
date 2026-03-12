@@ -1,0 +1,61 @@
+========================================================================
+  Mesh-LHS Morphogenesis Engine — Run Report
+  Run ID : 20260312T151847
+  Config : config/design_space.yaml
+========================================================================
+
+Total evaluated : 10
+Feasible        : 7
+Infeasible      : 3
+
+Top 10 candidates:
+------------------------------------------------------------------------
+  Rank 1 | Pareto 1 | score 1.44336
+    compliance=1.8408e+01  mass=9.6720e+01
+    max_stress=6.7899e+07  max_disp=1.2849e+00
+    params: {'span_scale': 0.7191774770094557, 'height_scale': 1.27006983987879, 'thickness': 0.014390110505043139, 'curvature_amp': 0.27568892545812484, 'twist_angle': -2.235940804559533, 'cell_skew': 0.051283077725317525, 'lattice_density': 9.74925805269196, 'branch_bias': 0.5471226432267617, 'smoothing_strength': 0.6400731417278263}
+
+  Rank 2 | Pareto 1 | score 1.49599
+    compliance=7.2752e+00  mass=3.9200e+02
+    max_stress=2.1152e+07  max_disp=3.1436e-01
+    params: {'span_scale': 1.4389608353324093, 'height_scale': 0.8768370646787336, 'thickness': 0.05566351696203975, 'curvature_amp': 0.19686637536727847, 'twist_angle': -24.813368586843538, 'cell_skew': 0.1778507348770469, 'lattice_density': 6.436671000764588, 'branch_bias': -0.9887801614624648, 'smoothing_strength': 0.503749364456399}
+
+  Rank 3 | Pareto 1 | score 2.29152
+    compliance=1.4804e+02  mass=8.6502e+01
+    max_stress=3.5850e+08  max_disp=1.6010e+01
+    params: {'span_scale': 1.0486438618300744, 'height_scale': 1.3598779476420273, 'thickness': 0.011012120579723566, 'curvature_amp': -0.03834753891057996, 'twist_angle': -18.531056950944713, 'cell_skew': 0.14935778707971695, 'lattice_density': 8.748226883837896, 'branch_bias': -0.01041920122551121, 'smoothing_strength': 0.006499917822794887}
+
+  Rank 4 | Pareto 2 | score 1.52551
+    compliance=3.8170e+02  mass=2.3309e+02
+    max_stress=2.0948e+08  max_disp=4.5799e+01
+    params: {'span_scale': 1.303283308050755, 'height_scale': 0.5249812046287627, 'thickness': 0.0404134783187147, 'curvature_amp': -0.28246274984363173, 'twist_angle': 8.834502336051607, 'cell_skew': 0.0035439580643751856, 'lattice_density': 4.886244475627544, 'branch_bias': -0.6425699377735057, 'smoothing_strength': 0.8744459704393398}
+
+  Rank 5 | Pareto 2 | score 1.53890
+    compliance=9.3540e+01  mass=5.4639e+02
+    max_stress=7.2044e+07  max_disp=1.2608e+01
+    params: {'span_scale': 0.9017520474257255, 'height_scale': 1.0354181786732068, 'thickness': 0.08227697197183544, 'curvature_amp': -0.08145945539011124, 'twist_angle': 16.880932413386674, 'cell_skew': 0.21698074679486262, 'lattice_density': 5.557193577152105, 'branch_bias': 0.7083632365869801, 'smoothing_strength': 0.9540681879063119}
+
+  Rank 6 | Pareto 3 | score 1.49667
+    compliance=3.8820e+02  mass=6.6038e+02
+    max_stress=1.1232e+08  max_disp=3.2764e+01
+    params: {'span_scale': 1.754069756747878, 'height_scale': 0.7329312300494479, 'thickness': 0.0770383556061734, 'curvature_amp': -0.34172163559716173, 'twist_angle': -8.382946335202472, 'cell_skew': 0.4727190102526019, 'lattice_density': 2.0875185196558803, 'branch_bias': 0.2554239111185277, 'smoothing_strength': 0.15602378414436932}
+
+  Rank 7 | Pareto 3 | score 2.00147
+    compliance=1.0346e+03  mass=3.4438e+02
+    max_stress=3.2159e+08  max_disp=1.3808e+03
+    params: {'span_scale': 1.1049425775816628, 'height_scale': 1.4978105070882686, 'thickness': 0.037117906930730866, 'curvature_amp': 0.00431648114831179, 'twist_angle': 24.62451123367117, 'cell_skew': 0.41410513747717487, 'lattice_density': 6.807835835047797, 'branch_bias': 0.9443107842961898, 'smoothing_strength': 0.29232230831009287}
+
+  Rank 8 | Pareto -1 | score inf
+    compliance=inf  mass=inf
+    max_stress=inf  max_disp=inf
+    params: {'span_scale': 1.4531891542978905, 'height_scale': 0.682620939312597, 'thickness': 0.02151059485581245, 'curvature_amp': -0.22608234331714444, 'twist_angle': -14.308482640586044, 'cell_skew': 0.39138339711238673, 'lattice_density': 7.71446187843915, 'branch_bias': -0.38497963196364193, 'smoothing_strength': 0.7730300836482779}
+
+  Rank 8 | Pareto -1 | score inf
+    compliance=inf  mass=inf
+    max_stress=inf  max_disp=inf
+    params: {'span_scale': 0.7585005327775083, 'height_scale': 1.142118656170808, 'thickness': 0.02810279440365234, 'curvature_amp': 0.11559894610448529, 'twist_angle': 0.8216523305456853, 'cell_skew': 0.34245283627259276, 'lattice_density': 4.1485250910657125, 'branch_bias': -0.4640473435971091, 'smoothing_strength': 0.3039775545740836}
+
+  Rank 8 | Pareto -1 | score inf
+    compliance=inf  mass=inf
+    max_stress=inf  max_disp=inf
+    params: {'span_scale': 1.6673467492356306, 'height_scale': 0.9988688239713811, 'thickness': 0.01965559988927381, 'curvature_amp': 0.382822004432263, 'twist_angle': 10.57026502092949, 'cell_skew': 0.2703391513080182, 'lattice_density': 3.4853650441277235, 'branch_bias': 0.14542214662501673, 'smoothing_strength': 0.47548182824231083}
