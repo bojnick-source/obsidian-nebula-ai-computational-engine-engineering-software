@@ -41,6 +41,28 @@ target_include_directories(forge_events PUBLIC
 # When ZMQ is available, link it:
 # target_link_libraries(forge_events PUBLIC libzmq)
 
+# ── forge-core: solver subsystem (C++ accuracy layer) ────────────────────────
+# Polyglot policy: C++20 float64 for deterministic, accuracy-critical computation.
+# Python orchestration layer: forge-solver/ (atmosphere.py, bemt.py, fea.py,
+#   topology.py, smart_fuselage.py)
+add_library(forge_solver_core STATIC
+    forge-core/src/solver/fea_linear.cpp
+    forge-core/src/solver/bemt_core.cpp
+    forge-core/src/solver/fuselage_aero.cpp
+)
+target_include_directories(forge_solver_core PUBLIC
+    forge-core/include
+)
+set_target_properties(forge_solver_core PROPERTIES
+    CXX_STANDARD 20
+    CXX_STANDARD_REQUIRED ON
+)
+# Require strict IEEE 754 — no fast-math that could alter solver determinism
+target_compile_options(forge_solver_core PRIVATE
+    -fno-fast-math
+    -Wall -Wextra -Wpedantic
+)
+
 # ── forge-core library ────────────────────────────────────────────────────────
 # Populated when source files exist
 # add_subdirectory(forge-core)
@@ -51,4 +73,4 @@ if(FORGE_BUILD_TESTS)
     # add_subdirectory(forge-tests)
 endif()
 
-message(STATUS "FORGE v${PROJECT_VERSION} — planning scaffold (build system placeholder)")
+message(STATUS "FORGE v${PROJECT_VERSION} — polyglot: C++ solver core + Python orchestration")

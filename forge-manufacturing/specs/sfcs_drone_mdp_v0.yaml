@@ -1,0 +1,309 @@
+meta:
+  program_name: "SFCS Drone Manufacturing"
+  owner: "OLYTHI.EONS"
+  scope: "Non-weaponized smart airframe manufacturing (structure + embedded sensing/comms/power distribution)."
+  exclusions:
+    - "No weapon integration"
+    - "No targeting/fire-control"
+    - "No payload optimization guidance"
+    - "No operational deployment guidance"
+  maturity:
+    current: "BLOCK_0"
+    target: "BLOCK_4"
+
+digital_thread:
+  single_source_of_truth:
+    parameter_registry: "db/parameters/sfcs_params.yaml"
+    requirements: "requirements/sfcs_srd.yaml"
+    cad_revisions: "cad/release/<REV_TAG>"
+    toolpaths: "mfg/afp/<REV_TAG>/paths/"
+    process_parameter_sets: "mfg/process_params/"
+  build_manifest_spec:
+    required_fields:
+      - build_id
+      - block_level
+      - cad_rev
+      - afp_path_hash
+      - cure_profile_hash
+      - materials_lot_ids
+      - insert_lot_ids
+      - operator_ids
+      - machine_ids
+      - calibration_set_ids
+      - "environment_log (temp, humidity)"
+      - qc_gate_results
+
+quality_system:
+  configuration_management:
+    policy: >-
+      No build proceeds without frozen manifest and traveler signoff.
+      All deviations require NCR + MRB disposition.
+    frozen_manifest_required: true
+    signed_traveler_required: true
+  nonconformance:
+    ncr_required: true
+    mrb_dispositions:
+      - "use_as_is"
+      - "rework"
+      - "repair"
+      - "scrap"
+  first_article_inspection: true
+  acceptance_data_package:
+    - "Traveler signed"
+    - "Material certs (CoC)"
+    - "NDI report"
+    - "Metrology report"
+    - "Electrical test report (if applicable)"
+    - "Optical continuity/baseline report (if applicable)"
+    - "As-built digital twin export"
+
+process_flow:
+  - step_id: "SFCS-000"
+    step_type: "gate"
+    description: "Program Gate: Block selection + SRD freeze"
+    prerequisites: []
+    inputs:
+      - "requirements/sfcs_srd.yaml"
+      - "db/parameters/sfcs_params.yaml"
+    outputs:
+      - "records/builds/<build_id>/manifest.json"
+      - "records/builds/<build_id>/traveler.yaml"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "SRD baseline frozen for this build_id"
+      - criterion_type: "manual_signoff"
+        description: "Parameter registry locked (hash recorded)"
+      - criterion_type: "manual_signoff"
+        description: "Block level declared (BLOCK_0..BLOCK_4)"
+    required_evidence:
+      - name: "manifest.json"
+        path: "manifest.json"
+      - name: "hashes.txt"
+        path: "hashes.txt"
+
+  - step_id: "SFCS-010"
+    step_type: "process"
+    description: "Tooling qualification + datum scheme verification"
+    prerequisites:
+      - "SFCS-000"
+    outputs:
+      - "records/builds/<build_id>/tooling_datum_report.pdf"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Tooling datum features within tolerance"
+      - criterion_type: "manual_signoff"
+        description: "Vacuum integrity passes leak threshold (parameterized)"
+
+  - step_id: "SFCS-020"
+    step_type: "process"
+    description: "AFP Layup Phase A (foundation plies)"
+    prerequisites:
+      - "SFCS-010"
+    outputs:
+      - "records/builds/<build_id>/afp_phase_a_log.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Tow placement within allowable deviation (parameterized)"
+      - criterion_type: "manual_signoff"
+        description: "No unapproved gaps/overlaps beyond threshold"
+
+  - step_id: "SFCS-030"
+    step_type: "process"
+    description: "Embed structural sensing pathways (BLOCK_1+)"
+    prerequisites:
+      - "SFCS-020"
+    when:
+      block_level_gte: "BLOCK_1"
+    outputs:
+      - "records/builds/<build_id>/optical_pre_cure_continuity.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Optical continuity passes"
+      - criterion_type: "manual_signoff"
+        description: "Routing bend radius >= min (parameterized)"
+
+  - step_id: "SFCS-040"
+    step_type: "process"
+    description: "Node/insert integration (interfaces + local reinforcement)"
+    prerequisites:
+      - "SFCS-020"
+    outputs:
+      - "records/builds/<build_id>/insert_install_log.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Insert position within tolerance envelope (parameterized)"
+      - criterion_type: "manual_signoff"
+        description: "Surface prep procedure executed + recorded"
+
+  - step_id: "SFCS-050"
+    step_type: "process"
+    description: "AFP Layup Phase B (capture inserts + close structure)"
+    prerequisites:
+      - "SFCS-040"
+    outputs:
+      - "records/builds/<build_id>/afp_phase_b_log.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Ply schedule matches traveler"
+
+  - step_id: "SFCS-060"
+    step_type: "process"
+    description: "Embed power distribution (BLOCK_2+)"
+    prerequisites:
+      - "SFCS-050"
+    when:
+      block_level_gte: "BLOCK_2"
+    outputs:
+      - "records/builds/<build_id>/electrical_pre_cure_tests.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Continuity passes"
+      - criterion_type: "manual_signoff"
+        description: "Insulation resistance meets threshold (parameterized)"
+
+  - step_id: "SFCS-070"
+    step_type: "process"
+    description: "Consolidation/cure (full process logging)"
+    prerequisites:
+      - "SFCS-050"
+    outputs:
+      - "records/builds/<build_id>/cure_log.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Cure profile within allowable band"
+      - criterion_type: "manual_signoff"
+        description: "Vacuum/pressure maintained above threshold"
+
+  - step_id: "SFCS-080"
+    step_type: "process"
+    description: "Post-cure machining + interface finishing"
+    prerequisites:
+      - "SFCS-070"
+    outputs:
+      - "records/builds/<build_id>/machining_log.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Critical datums within tolerance (parameterized)"
+
+  - step_id: "SFCS-090"
+    step_type: "gate"
+    description: "NDI gate (voids/delams) + metrology gate (as-built geometry)"
+    prerequisites:
+      - "SFCS-080"
+    outputs:
+      - "records/builds/<build_id>/ndi_report.pdf"
+      - "records/builds/<build_id>/metrology_report.pdf"
+      - "records/builds/<build_id>/as_built_mesh.obj"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "NDI indications below reject threshold (parameterized)"
+      - criterion_type: "manual_signoff"
+        description: "Geometry within tolerance envelope (parameterized)"
+
+  - step_id: "SFCS-100"
+    step_type: "process"
+    description: "Optical baseline capture (BLOCK_1+)"
+    prerequisites:
+      - "SFCS-090"
+    when:
+      block_level_gte: "BLOCK_1"
+    outputs:
+      - "records/builds/<build_id>/optical_baseline.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Baseline signature recorded and versioned"
+
+  - step_id: "SFCS-110"
+    step_type: "process"
+    description: "Electrical QA + isolation (BLOCK_2+)"
+    prerequisites:
+      - "SFCS-090"
+    when:
+      block_level_gte: "BLOCK_2"
+    outputs:
+      - "records/builds/<build_id>/electrical_post_cure_tests.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Insulation resistance meets threshold"
+
+  - step_id: "SFCS-120"
+    step_type: "process"
+    description: "Distributed electronics install (BLOCK_3+)"
+    prerequisites:
+      - "SFCS-090"
+    when:
+      block_level_gte: "BLOCK_3"
+    outputs:
+      - "records/builds/<build_id>/node_install_log.json"
+      - "records/builds/<build_id>/comms_timing_report.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Node self-test pass"
+      - criterion_type: "manual_signoff"
+        description: "Time sync meets skew bound (parameterized)"
+
+  - step_id: "SFCS-130"
+    step_type: "process"
+    description: "Energy module integration (BLOCK_4)"
+    prerequisites:
+      - "SFCS-090"
+    when:
+      block_level_gte: "BLOCK_4"
+    outputs:
+      - "records/builds/<build_id>/energy_module_install_log.json"
+      - "records/builds/<build_id>/battery_safety_checks.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "Mechanical containment passes"
+      - criterion_type: "manual_signoff"
+        description: "Electrical safety checks pass (parameterized)"
+
+  - step_id: "SFCS-140"
+    step_type: "gate"
+    description: "Final assembly (airframe-level) + acceptance package release"
+    prerequisites:
+      - "SFCS-090"
+    outputs:
+      - "records/builds/<build_id>/acceptance_data_package.zip"
+      - "records/builds/<build_id>/as_built_digital_twin.json"
+    acceptance_criteria:
+      - criterion_type: "manual_signoff"
+        description: "All required evidence present"
+      - criterion_type: "manual_signoff"
+        description: "All NCRs closed or dispositioned by MRB"
+      - criterion_type: "manual_signoff"
+        description: "As-built twin generated and stored"
+    required_evidence:
+      - name: "manifest.json"
+        path: "manifest.json"
+      - name: "traveler.yaml"
+        path: "traveler.yaml"
+
+instrumentation_minimum:
+  manufacturing:
+    - "AFP machine logs (placement, compaction, temperature)"
+    - "Cure logs (temp/pressure/vacuum vs time)"
+    - "Insert placement metrology"
+    - "NDI raw + report"
+    - "Laser scan / CMM reports"
+  embedded_systems:
+    - "Optical continuity + baseline traces (if used)"
+    - "Electrical continuity + insulation resistance (if used)"
+    - "Node self-tests + timing reports (if used)"
+
+risks:
+  - risk_id: "R-001"
+    description: "Thermal mismatch at metal-composite interfaces causing debonding/fatigue."
+    mitigation: "block staging, surface prep qualification, coupon testing, NDI acceptance limits"
+  - risk_id: "R-002"
+    description: "Optical fiber damage during layup/cure."
+    mitigation: "routing rules, pre/post cure continuity, protective channels, serviceable connectors"
+  - risk_id: "R-003"
+    description: "Electrical insulation degradation under flex/thermal cycling."
+    mitigation: "strain relief design, post-cure isolation tests, thermal soak QA, design for replaceability"
+  - risk_id: "R-004"
+    description: "Integration complexity (too many subsystems too early)."
+    mitigation: "BLOCK_0..BLOCK_4 gating, exit criteria discipline, no skipping gates"
+  - risk_id: "R-005"
+    description: "Inadequate as-built geometry control for modular assembly."
+    mitigation: "datum scheme, metrology gate, as-built digital twin update of interface models"

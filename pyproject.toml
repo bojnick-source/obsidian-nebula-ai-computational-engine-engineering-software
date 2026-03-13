@@ -36,7 +36,13 @@ testpaths = [
     "forge_agent/tests",
     "forge-assembly/tests",
     "forge-output/tests",
+    "forge-solver/tests",
+    "forge-manufacturing/tests",
 ]
-pythonpath = ["."]
+pythonpath = [
+    ".",
+    "forge-solver/src",
+    "forge-manufacturing/src",
+]
 addopts = "-v --tb=short"
 asyncio_default_fixture_loop_scope = "function"

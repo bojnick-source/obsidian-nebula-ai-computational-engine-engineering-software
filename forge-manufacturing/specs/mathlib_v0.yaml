@@ -1,0 +1,334 @@
+# Manufacturing Math Library — FORGE adaptation
+# Adapted from: https://github.com/bojnick-source/DARK_leaf_drone_4-1_V2 (manufacturing/mathlib_v0.yaml)
+#
+# Defines SI unit system, variable registry, and safety constraints for
+# manufacturing computation across allowed domains.
+# All expressions use float64, HALF_EVEN rounding, SHA-256 provenance hashing.
+
+meta:
+  name: "FORGE Manufacturing Math Library"
+  version: "v0"
+  source: "DARK_leaf_drone_4-1_V2/manufacturing/mathlib_v0.yaml"
+  profile: "STRICT"
+  float_precision: "float64"
+  rounding_mode: "HALF_EVEN"
+
+units:
+  system: "SI"
+  prefixes:
+    - {name: "nano", symbol: "n", factor: 1.0e-9}
+    - {name: "micro", symbol: "u", factor: 1.0e-6}
+    - {name: "milli", symbol: "m", factor: 1.0e-3}
+    - {name: "centi", symbol: "c", factor: 1.0e-2}
+    - {name: "kilo", symbol: "k", factor: 1.0e3}
+    - {name: "mega", symbol: "M", factor: 1.0e6}
+    - {name: "giga", symbol: "G", factor: 1.0e9}
+  base_units:
+    - {name: "metre", symbol: "m", quantity: "length"}
+    - {name: "kilogram", symbol: "kg", quantity: "mass"}
+    - {name: "second", symbol: "s", quantity: "time"}
+    - {name: "ampere", symbol: "A", quantity: "electric_current"}
+    - {name: "kelvin", symbol: "K", quantity: "thermodynamic_temperature"}
+    - {name: "mole", symbol: "mol", quantity: "amount_of_substance"}
+    - {name: "candela", symbol: "cd", quantity: "luminous_intensity"}
+  derived_units:
+    - {name: "newton", symbol: "N", expression: "kg*m/s^2", quantity: "force"}
+    - {name: "pascal", symbol: "Pa", expression: "N/m^2", quantity: "pressure"}
+    - {name: "joule", symbol: "J", expression: "N*m", quantity: "energy"}
+    - {name: "watt", symbol: "W", expression: "J/s", quantity: "power"}
+    - {name: "hertz", symbol: "Hz", expression: "1/s", quantity: "frequency"}
+    - {name: "radian", symbol: "rad", expression: "m/m", quantity: "angle"}
+    - {name: "steradian", symbol: "sr", expression: "m^2/m^2", quantity: "solid_angle"}
+    - {name: "tex", symbol: "tex", expression: "g/km", quantity: "linear_mass_density"}
+    - {name: "compliance", symbol: "m/N", expression: "m/N", quantity: "compliance"}
+
+conventions:
+  identifier_pattern: "^[a-z][a-z0-9_]{2,62}$"
+  allowed_domains:
+    - "risf"
+    - "additive"
+    - "subtractive"
+    - "metrology"
+    - "composites_3d_woven"
+    - "structures"
+  expression_language:
+    allowed_operators:
+      - "+"
+      - "-"
+      - "*"
+      - "/"
+      - "^"
+      - "("
+      - ")"
+    allowed_functions:
+      - "sqrt"
+      - "abs"
+      - "max"
+      - "min"
+      - "sin"
+      - "cos"
+      - "tan"
+      - "exp"
+      - "log"
+      - "log10"
+      - "isfinite"
+      - "ceil"
+      - "floor"
+    blacklisted_tokens:
+      - "eval"
+      - "exec"
+      - "import"
+      - "__"
+      - "open"
+      - "os"
+
+safety:
+  strict_mode: true
+  tripwires:
+    - "unit_enforcement"
+    - "equation_safety_validation"
+    - "numeric_sanity_checks"
+  notes:
+    - "No acceptance thresholds in this file (belongs in process specs / calibration artifacts)."
+    - "No hard-coded empirical coefficients without explicit calibration requirements."
+
+# ── Variable Registry ─────────────────────────────────────────────────────────
+# Each variable: id, kind (input|output|parameter|coefficient|constant),
+#                unit, domains, constraints
+variable_registry:
+  # Geometry
+  - id: "tool_diameter"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "risf"
+      - "subtractive"
+    constraints:
+      - "tool_diameter > 0"
+      - "isfinite(tool_diameter)"
+  - id: "tool_stepover"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "risf"
+      - "subtractive"
+    constraints:
+      - "tool_stepover >= 0"
+      - "isfinite(tool_stepover)"
+  - id: "blank_thickness"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "risf"
+    constraints:
+      - "blank_thickness > 0"
+  - id: "forming_depth"
+    kind: "output"
+    unit: "m"
+    domains:
+      - "risf"
+    constraints:
+      - "forming_depth >= 0"
+  - id: "wall_angle_deg"
+    kind: "input"
+    unit: "deg"
+    domains:
+      - "risf"
+    constraints:
+      - "wall_angle_deg >= 0"
+      - "wall_angle_deg < 90"
+
+  # Forces
+  - id: "forming_force"
+    kind: "output"
+    unit: "N"
+    domains:
+      - "risf"
+    constraints:
+      - "forming_force >= 0"
+      - "isfinite(forming_force)"
+  - id: "axial_force"
+    kind: "output"
+    unit: "N"
+    domains:
+      - "risf"
+      - "subtractive"
+    constraints:
+      - "isfinite(axial_force)"
+  - id: "radial_force"
+    kind: "output"
+    unit: "N"
+    domains:
+      - "risf"
+      - "subtractive"
+    constraints:
+      - "isfinite(radial_force)"
+
+  # Material
+  - id: "yield_strength"
+    kind: "parameter"
+    unit: "Pa"
+    domains:
+      - "risf"
+      - "additive"
+      - "subtractive"
+      - "structures"
+    constraints:
+      - "yield_strength > 0"
+  - id: "ultimate_tensile_strength"
+    kind: "parameter"
+    unit: "Pa"
+    domains:
+      - "risf"
+      - "additive"
+      - "subtractive"
+      - "structures"
+    constraints:
+      - "ultimate_tensile_strength >= yield_strength"
+  - id: "elastic_modulus"
+    kind: "parameter"
+    unit: "Pa"
+    domains:
+      - "risf"
+      - "additive"
+      - "structures"
+    constraints:
+      - "elastic_modulus > 0"
+  - id: "poisson_ratio"
+    kind: "parameter"
+    unit: "dimensionless"
+    domains:
+      - "risf"
+      - "additive"
+      - "structures"
+    constraints:
+      - "poisson_ratio > -1"
+      - "poisson_ratio < 0.5"
+  - id: "density"
+    kind: "parameter"
+    unit: "kg/m^3"
+    domains:
+      - "risf"
+      - "additive"
+      - "subtractive"
+      - "structures"
+    constraints:
+      - "density > 0"
+
+  # Additive manufacturing
+  - id: "layer_thickness"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "additive"
+    constraints:
+      - "layer_thickness > 0"
+      - "isfinite(layer_thickness)"
+  - id: "hatch_spacing"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "additive"
+    constraints:
+      - "hatch_spacing > 0"
+  - id: "scan_speed"
+    kind: "input"
+    unit: "m/s"
+    domains:
+      - "additive"
+    constraints:
+      - "scan_speed > 0"
+  - id: "laser_power"
+    kind: "input"
+    unit: "W"
+    domains:
+      - "additive"
+    constraints:
+      - "laser_power > 0"
+  - id: "volumetric_energy_density"
+    kind: "output"
+    unit: "J/m^3"
+    domains:
+      - "additive"
+    constraints:
+      - "volumetric_energy_density > 0"
+    expression: "laser_power / (scan_speed * hatch_spacing * layer_thickness)"
+  - id: "relative_density"
+    kind: "output"
+    unit: "dimensionless"
+    domains:
+      - "additive"
+    constraints:
+      - "relative_density > 0"
+      - "relative_density <= 1"
+
+  # Metrology
+  - id: "measured_dimension"
+    kind: "output"
+    unit: "m"
+    domains:
+      - "metrology"
+    constraints:
+      - "isfinite(measured_dimension)"
+  - id: "nominal_dimension"
+    kind: "input"
+    unit: "m"
+    domains:
+      - "metrology"
+    constraints:
+      - "isfinite(nominal_dimension)"
+  - id: "dimensional_deviation"
+    kind: "output"
+    unit: "m"
+    domains:
+      - "metrology"
+    expression: "measured_dimension - nominal_dimension"
+  - id: "surface_roughness_ra"
+    kind: "output"
+    unit: "m"
+    domains:
+      - "metrology"
+      - "subtractive"
+    constraints:
+      - "surface_roughness_ra >= 0"
+
+  # Composites
+  - id: "ply_thickness"
+    kind: "parameter"
+    unit: "m"
+    domains:
+      - "composites_3d_woven"
+    constraints:
+      - "ply_thickness > 0"
+  - id: "fibre_volume_fraction"
+    kind: "parameter"
+    unit: "dimensionless"
+    domains:
+      - "composites_3d_woven"
+    constraints:
+      - "fibre_volume_fraction > 0"
+      - "fibre_volume_fraction < 1"
+  - id: "laminate_thickness"
+    kind: "output"
+    unit: "m"
+    domains:
+      - "composites_3d_woven"
+    constraints:
+      - "laminate_thickness > 0"
+
+  # Structures
+  - id: "applied_stress"
+    kind: "input"
+    unit: "Pa"
+    domains:
+      - "structures"
+    constraints:
+      - "isfinite(applied_stress)"
+  - id: "safety_factor"
+    kind: "output"
+    unit: "dimensionless"
+    domains:
+      - "structures"
+    constraints:
+      - "safety_factor > 0"
+    expression: "yield_strength / abs(applied_stress)"

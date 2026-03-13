@@ -14,7 +14,13 @@ if str(_root) not in sys.path:
     sys.path.insert(0, str(_root))
 
 # Sub-package src/ directories
-for _src in ("forge-assembly/src", "forge-output/src", "forge-learning/src"):
+for _src in (
+    "forge-assembly/src",
+    "forge-output/src",
+    "forge-learning/src",
+    "forge-manufacturing/src",
+    "forge-solver/src",
+):
     _src_path = _root / _src
     if _src_path.exists() and str(_src_path) not in sys.path:
         sys.path.insert(0, str(_src_path))
