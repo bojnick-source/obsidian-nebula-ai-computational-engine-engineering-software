@@ -30,5 +30,8 @@ mesh-morph = "src.main:main"
 line-length = 100
 target-version = "py311"
 
+[tool.setuptools.package-data]
+"*" = ["**/*.cs", "**/*.csproj", "**/*.sln", "**/*.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
