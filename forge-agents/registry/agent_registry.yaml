@@ -67,6 +67,54 @@ agents:
     card: agent_cards/picogk_geometry.yaml
     status: v1
 
+  - id: shape_kernel_specialist
+    role: specialist
+    domain: shape_kernel
+    card: agent_cards/shape_kernel_specialist.yaml
+    status: v1
+
+  - id: shape_kernel_antagonist
+    role: antagonist
+    domain: shape_kernel_critique
+    card: agent_cards/shape_kernel_antagonist.yaml
+    status: v1
+
+  - id: lattice_infill_specialist
+    role: specialist
+    domain: lattice_infill
+    card: agent_cards/lattice_infill_specialist.yaml
+    status: v1
+
+  - id: lattice_infill_antagonist
+    role: antagonist
+    domain: lattice_infill_critique
+    card: agent_cards/lattice_infill_antagonist.yaml
+    status: v1
+
+  - id: quasicrystal_metamaterials_specialist
+    role: specialist
+    domain: quasicrystal
+    card: agent_cards/quasicrystal_metamaterials_specialist.yaml
+    status: v1
+
+  - id: quasicrystal_metamaterials_antagonist
+    role: antagonist
+    domain: quasicrystal_critique
+    card: agent_cards/quasicrystal_metamaterials_antagonist.yaml
+    status: v1
+
+  - id: rover_wheel_specialist
+    role: specialist
+    domain: rover_wheel
+    card: agent_cards/rover_wheel_specialist.yaml
+    status: v1
+
+  - id: rover_wheel_antagonist
+    role: antagonist
+    domain: rover_wheel_critique
+    card: agent_cards/rover_wheel_antagonist.yaml
+    status: v1
+
   - id: simulation_fea
     role: workflow
     domain: structural_fea

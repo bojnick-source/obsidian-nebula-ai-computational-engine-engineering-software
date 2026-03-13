@@ -158,8 +158,58 @@ Quick reference:
 
 ---
 
+## DfAM Rules for PicoGK-Generated Geometry
+
+When parts are designed in PicoGK/ShapeKernel and produced via LPBF (Laser Powder Bed Fusion):
+
+### Wall Thickness Requirements
+
+| Feature type | Minimum wall | Notes |
+|---|---|---|
+| Cooling fins / thin internal features | 0.4 mm | HelixHeatX: horizontal fins require rooftop shape to be printable |
+| Outer shells / structural walls | 0.9 mm+ | HelixHeatX shell walls |
+| Horizontal fins in void | Rooftop profile required | Overhang without support only with peaked cross-section |
+| Lattice beams (LatticeLibrary) | ≥ voxel_size_mm | Beam diameter must be ≥ 1 voxel; 2× voxel recommended |
+
+### Overhang and Support Policy
+
+```
+- No support structures needed for Boolean-subtracted internal channels (void is its own mould)
+- Overhang limit: 45° for LPBF without support
+- Horizontal fins inside a void cavity: use rooftop-peaked profile
+  (height distribution that ensures all surfaces are self-supporting at 45°)
+- Lattice beams in internal cavities: no additional support needed (each beam is self-supporting)
+```
+
+### PicoGK Voxel Resolution Impact on Manufacturability
+
+```
+Voxel size too coarse → thin features disappear silently:
+  - 0.4 mm fin at 0.5 mm voxel size: fin NOT visible — part exports without fins
+  - Always verify: min_feature_mm ≥ 2 × voxel_size_mm for safe representation
+  - Preferred: min_feature_mm ≥ 5 × voxel_size_mm for accurate surface mesh
+
+Development strategy:
+  1. Develop coarse features at 0.5–1.0 mm voxels (fast iteration)
+  2. Add fine features only after coarse features are validated
+  3. Final manufacturing export at 0.1–0.2 mm voxels
+  4. Run DfAM check after each resolution change — features may appear/disappear
+```
+
+### Inverse Design Post-Processing Checklist
+
+For parts designed with LEAP71 inverse design (fluid-void-first):
+1. Verify `Sh.voxSubtract(voxOuterVolume, voxInnerVolume)` produces no disconnected voxels
+2. Check that all internal channel walls are ≥ 0.4 mm after subtraction
+3. Verify no horizontal surfaces wider than 5 mm span without support (or peaked profile)
+4. Confirm inlet/outlet transition volumes produce printable geometry at their terminations
+
+---
+
 ## References
 
 - Domain-specific standards and handbooks for additive manufacturing
 - AIAA, ASME, IEEE, or relevant professional society publications
 - NIST or equivalent metrology standards for unit definitions
+- LEAP71 HelixHeatX (printable CEM example): https://github.com/leap71/LEAP71_HelixHeatX
+- LEAP71 LatticeLibrary (beam DfAM): https://github.com/leap71/LEAP71_LatticeLibrary

@@ -158,8 +158,49 @@ Quick reference:
 
 ---
 
+## LEAP71 LatticeLibrary Handoff Contract
+
+When topology optimization recommends lattice infill (e.g. volume fraction < 1.0 in a region),
+the output block MUST include a `lattice_infill_handoff` with the following fields so that
+`lattice_infill_specialist` can execute the prescription without guessing:
+
+```yaml
+lattice_infill_handoff:
+  cell_size_mm: 5.0              # unit cell size in all directions
+  lattice_type: "BodyCenteredLattice"  # BodyCenteredLattice | OctahedronLattice | RandomSplineLattice
+  beam_thickness_mm: 1.5         # nominal beam radius × 2
+  target_volume_fraction: 0.35   # 0.0–1.0; must match topo-opt output
+  beam_thickness_gradient: "BoundaryBeamThickness"  # Constant | CellBased | GlobalFunc | Boundary
+  nsub_sample: 5                 # required for non-constant beam thickness
+  conformal: false               # true = use ConformalCellArray on prescribed BaseShape
+  conformal_base_shape: null     # null | "BaseBox" | "BaseLens" | "BasePipeSegment"
+```
+
+**Rule:** `lattice_infill_specialist` will HARD FAIL if no handoff block is present.
+Do NOT produce a topology_optimization output without this block if lattice is recommended.
+
+## PicoGK Integration Notes
+
+Topology optimization in the LEAP71 stack feeds into the PicoGK voxel pipeline:
+
+1. `topology_optimization` runs (SIMP / Level-Set / external solver)
+2. Output: density field → regions prescribed as lattice infill (volume fraction < 1.0)
+3. Handoff block passed to `lattice_infill_specialist`
+4. `lattice_infill_specialist` calls `voxGetFinalLatticeGeometry()` with prescribed parameters
+5. Result passed to `picogk_geometry` for final Boolean composition and export
+
+Post-AM constraints for PicoGK-generated geometry:
+- Minimum wall thickness for LPBF: 0.4 mm (fins/thin features), 0.9 mm (shells)
+- Overhang limit for LPBF: 45° without support structures
+- Disconnected features after topo-opt → flag before passing to lattice_infill_specialist
+- Volume fraction target must account for post-processing (voxOverOffset increases effective density)
+
+---
+
 ## References
 
 - Domain-specific standards and handbooks for topology optimization
 - AIAA, ASME, IEEE, or relevant professional society publications
 - NIST or equivalent metrology standards for unit definitions
+- LEAP71 LatticeLibrary: https://github.com/leap71/LEAP71_LatticeLibrary
+- lattice_infill_specialist SKILL: `forge-agents/lattice_infill_specialist/SKILL.md`

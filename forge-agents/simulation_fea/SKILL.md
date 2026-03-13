@@ -158,8 +158,88 @@ Quick reference:
 
 ---
 
+## PicoGK OpenVDB Unified Geometry + Physics Workflow
+
+Source: https://github.com/leap71/PicoGK_SimulationExample
+
+### Core Principle
+
+The CEM (Computational Engineering Model) that generates the geometry already knows all physics
+parameters — flow speeds, fluid densities, viscosities — because this data drove the geometry.
+**Never re-engineer boundary conditions from scratch.** Extract them from the geometry model.
+
+### OpenVDB Multi-Field File (PicoGK v1.5+)
+
+A single `.vdb` file carries both geometry and physics fields, eliminating the traditional
+multi-file workflow and associated numerical inconsistencies:
+
+```
+voxFluidDomain    — Voxels: marks the flowable region (geometry-derived)
+voxSolidDomain    — Voxels: marks structural boundaries (geometry-derived)
+vecVelocityField  — VectorField: inlet velocity initial conditions
+sclDensityField   — ScalarField: fluid density (e.g. 1000 kg/m³ for water)
+sclViscosityField — ScalarField: kinematic viscosity (e.g. 0.00000897 m²/s for water)
+```
+
+### Boundary Condition Extraction
+
+`SurfaceNormalFieldExtractor` — identifies inlet/outlet patches from voxel surface normals:
+
+```csharp
+// Extract inlet patch: surface voxels with normals pointing in a specific direction
+// Assign velocity values at those locations
+// These are the physical boundary conditions — sourced from geometry, not from a separate file
+```
+
+### Workflow: picogk_geometry → simulation_fea
+
+```
+1. picogk_geometry produces:
+   - geometry.vdb (single file: voxFluidDomain + voxSolidDomain + initial physics fields)
+   - geometry.stl (for meshing if FEA solver requires mesh input)
+
+2. simulation_fea receives geometry_handoff block with:
+   - vdb_path: path to .vdb file
+   - voxel_size_mm: resolution used
+   - material_density_kg_m3: from geometry model parameters
+   - flow_velocity_m_s: from geometry model parameters (not re-entered)
+
+3. simulation_fea:
+   - Loads .vdb multi-field file
+   - Extracts BCs from surface normal field
+   - Passes to solver: OpenFOAM (via VDB→OF converter) / CalculiX / FEniCS
+
+4. simulation_fea outputs:
+   - Pressure drop (Pa)
+   - Velocity distribution (m/s)
+   - Stress field (Pa) for structural
+   - All results written to vault
+```
+
+### Supported Solvers
+
+| Solver | Input | Domain |
+|---|---|---|
+| OpenFOAM | VDB → OpenFOAM converter | CFD: pressure drop, velocity |
+| CalculiX | STL → mesh → CalculiX | Structural FEA: stress, displacement |
+| FEniCS | VDB or STL → mesh | Structural / thermal FEA |
+
+### Validation Before FEA
+
+The following checks from `picogk_geometry` MUST pass before any FEA run:
+- `is_connected()` returns true (no disconnected fragments)
+- Bounding box within envelope ± 2 mm
+- Mass within budget
+- Wall thickness ≥ voxel_size_mm at all critical features
+
+If any check fails: **do not run FEA** — results on disconnected geometry are silently wrong.
+
+---
+
 ## References
 
 - Domain-specific standards and handbooks for structural fea
 - AIAA, ASME, IEEE, or relevant professional society publications
 - NIST or equivalent metrology standards for unit definitions
+- PicoGK simulation example: https://github.com/leap71/PicoGK_SimulationExample
+- picogk_geometry SKILL: `forge-agents/picogk_geometry/SKILL.md`

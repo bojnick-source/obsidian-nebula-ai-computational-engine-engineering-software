@@ -158,8 +158,90 @@ Quick reference:
 
 ---
 
+## LEAP71 HelixHeatX CEM Pattern — Heat Exchanger Design
+
+When designing a heat exchanger in PicoGK/ShapeKernel, follow the LEAP 71 HelixHeatX pattern:
+https://github.com/leap71/LEAP71_HelixHeatX
+
+### Inverse Design Principle
+
+```
+1. Design fluid void volumes first (hot fluid void + cold fluid void)
+2. Add fin structures to internal voids (turning fins + straight fins)
+3. Build outer structural shell separately (ribs, flanges, IO threads)
+4. Derive final part:
+   Voxels voxResult = Sh.voxSubtract(voxOuterVolume, voxInnerVolume);
+```
+
+Never construct the walls directly — derive them as the complement of the fluid voids.
+
+### HelixHeatX Class Structure (Reference Implementation)
+
+| Function | What it computes |
+|---|---|
+| `HelixHeatX()` | Boundary conditions: IO positions, inner/outer bounding boxes |
+| `voxGetTurningFins()` | Fins along helical corner sections (enhanced mixing at bends) |
+| `voxGetStraightFins()` | Fins along straight sections with twist (longitudinal mixing) |
+| `GetHelicalVoid()` | Two helical disk voids — hot and cold fluid paths |
+| `fGetInnerRadius(float fPhi, float fLengthRatio)` | Inner radius distribution function |
+| `fGetOuterRadius(float fPhi, float fLengthRatio)` | Outer radius (supershape formula for rectangular fit) |
+| `GetInlet()`, `GetOutlet()` | Transition volumes connecting voids to IO ports |
+| `GetFlange()` | Bottom mounting flange |
+| `voxGetIOThreads()` | Inlet/outlet threaded connections |
+| `voxGetOuterStructure()` | Outer structural ribs |
+| `voxConstruct()` | Top-level assembly — all sub-components combined, voids subtracted |
+
+### Fin Design for Printability (LPBF)
+
+```
+Horizontal fins (inside void):
+  - Must use rooftop-like height distribution across width
+  - Peaked cross-section ensures all surfaces at ≥ 45° → self-supporting, no support needed
+  - Minimum wall thickness: 0.4 mm
+  - Resolved at voxel size ≤ 0.4 mm only
+
+Turning fins (at helical corners):
+  - Follow the void curvature — placed inside corner sections
+  - Enhance flow re-attachment at bends
+
+Straight fins (along straight sections):
+  - Incorporate twist for improved fluid mixing
+  - Alternate with turning fins
+```
+
+### Voxel Size Selection for Heat Exchanger Development
+
+```
+Phase 1 (outer shell):       0.5–1.0 mm — fast iteration on ribs, flanges, outer shape
+Phase 2 (fin development):   0.3–0.5 mm — fins become visible at 0.5 mm
+Phase 3 (detail):            0.2–0.3 mm — accurate fin surface representation
+Phase 4 (manufacturing):     0.1–0.15 mm — full resolution for LPBF print file
+
+Rule: export for manufacturing only at voxel size ≤ minimum fin wall thickness
+      (HelixHeatX: 0.4 mm fins → export at ≤ 0.4 mm voxel size)
+```
+
+### OpenVDB Geometry + Physics Coupling (PicoGK v1.5+)
+
+For CFD simulation after geometry generation:
+
+```
+voxFluidDomain    — Voxels field for flowable regions (hot/cold void)
+voxSolidDomain    — Voxels field for solid walls and fins
+vecVelocityField  — VectorField: inlet velocity from heat exchanger operating conditions
+sclDensityField   — ScalarField: fluid density (water = 1000 kg/m³)
+sclViscosityField — ScalarField: kinematic viscosity (water = 0.00000897 m²/s)
+```
+
+**Principle:** Boundary conditions come from the CEM that generated the geometry — never
+re-engineer them. The parametric model that defined inlet positions also defines flow speeds.
+
+---
+
 ## References
 
 - Domain-specific standards and handbooks for heat transfer
 - AIAA, ASME, IEEE, or relevant professional society publications
 - NIST or equivalent metrology standards for unit definitions
+- LEAP71 HelixHeatX CEM: https://github.com/leap71/LEAP71_HelixHeatX
+- PicoGK simulation example (OpenVDB physics): https://github.com/leap71/PicoGK_SimulationExample

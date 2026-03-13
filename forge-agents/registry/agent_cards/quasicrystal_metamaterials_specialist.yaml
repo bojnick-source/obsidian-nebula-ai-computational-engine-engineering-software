@@ -1,0 +1,23 @@
+id: quasicrystal_metamaterials_specialist
+name: Quasicrystal Metamaterials Specialist
+version: "1.0.0"
+role: specialist
+domain: quasicrystal
+status: v1
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/quasicrystal_metamaterials_specialist/v1.0.0.md
+skill_ref: forge-agents/quasicrystal_metamaterials_specialist/SKILL.md
+
+antagonist_pair: quasicrystal_metamaterials_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence
