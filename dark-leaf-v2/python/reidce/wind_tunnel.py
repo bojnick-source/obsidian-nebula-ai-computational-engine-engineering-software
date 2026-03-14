@@ -380,7 +380,7 @@ def run_wind_tunnel(
     n_panels: int = 64,
 ) -> WindTunnelResult:
     """Run a complete wind-tunnel sweep over AoA and velocity."""
-    from dark_leaf_v2.python.reidce.aerospace import isa_atmosphere
+    from reidce.aerospace import isa_atmosphere
 
     if velocities_m_s is None:
         velocities_m_s = [10.0, 20.0, 30.0, 40.0]

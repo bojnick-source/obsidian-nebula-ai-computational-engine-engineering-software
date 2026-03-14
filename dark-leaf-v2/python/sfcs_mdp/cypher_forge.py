@@ -36,9 +36,12 @@ DARPA CyPhER Forge programme overview (James Valpiani).
 
 from __future__ import annotations
 
+import json
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
+
+from sfcs_mdp.darpa_cipher import cipher_metadata, compute_hmac
 
 # ---------------------------------------------------------------------------
 # Core technology 1 — Physics-informed surrogate
@@ -446,3 +449,89 @@ class CypherForgeSession:
                 "agentic_ai_planning_execution",
             ],
         }
+
+
+# ---------------------------------------------------------------------------
+# Digital-thread signing — DARPA LIFT integrity
+# ---------------------------------------------------------------------------
+
+
+def sign_session_result(
+    summary: Dict[str, Any],
+    build_id: str,
+    rev_tag: str,
+) -> Dict[str, Any]:
+    """Attach a DARPA LIFT HMAC-SHA-256 integrity tag to a session summary.
+
+    Returns a new dict containing the original summary under ``"payload"``
+    plus a ``"cipher"`` block with the tag and metadata.  The tag covers the
+    canonical JSON serialisation of *summary* so downstream verification is
+    deterministic.
+    """
+    payload_bytes = json.dumps(summary, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    tag = compute_hmac(payload_bytes, build_id, rev_tag)
+    return {
+        "payload": summary,
+        "cipher": {
+            **cipher_metadata(build_id, rev_tag),
+            "hmac_hex": tag,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Physics-informed surrogate factory — reidce BEMT backend
+# ---------------------------------------------------------------------------
+
+
+def make_bemt_predict_fn(
+    radius_m: float = 0.127,
+    n_blades: int = 2,
+    root_chord_m: float = 0.020,
+    tip_chord_m: float = 0.014,
+    root_twist_rad: float = 0.30,
+    tip_twist_rad: float = 0.06,
+    rho_kg_m3: float = 1.225,
+) -> Callable[[Sequence[float]], Dict[str, float]]:
+    """Return a physics-informed ``predict_fn`` backed by the reidce BEMT solver.
+
+    The returned callable maps ``[rpm]`` to a dict of rotor performance
+    metrics.  It is suitable for passing directly to ``CypherForgeSession``
+    as the ``predict_fn`` argument.
+
+    Parameters
+    ----------
+    radius_m:
+        Rotor tip radius (metres).
+    n_blades:
+        Number of blades.
+    root_chord_m / tip_chord_m:
+        Linear blade chord taper (metres).
+    root_twist_rad / tip_twist_rad:
+        Linear blade twist (radians).
+    rho_kg_m3:
+        Air density.
+    """
+    from reidce.bemt import BEMTCondition, RotorGeometry, solve_bemt
+
+    geom = RotorGeometry(
+        radius_m=radius_m,
+        n_blades=n_blades,
+        root_chord_m=root_chord_m,
+        tip_chord_m=tip_chord_m,
+        root_twist_rad=root_twist_rad,
+        tip_twist_rad=tip_twist_rad,
+    )
+
+    def _predict(inputs: Sequence[float]) -> Dict[str, float]:
+        rpm = max(float(inputs[0]), 1.0)
+        cond = BEMTCondition(rpm=rpm, rho_kg_m3=rho_kg_m3)
+        result = solve_bemt(geom, cond)
+        return {
+            "thrust_n": result.thrust_n,
+            "torque_nm": result.torque_nm,
+            "power_w": result.power_w,
+            "figure_of_merit": result.fm,
+        }
+
+    return _predict
