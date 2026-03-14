@@ -4,13 +4,15 @@ Digital-thread integrity, CyPhER Forge orchestration, and C++ engine bridge.
 
 Submodules
 ----------
-darpa_cipher    HMAC-SHA-256 build-artifact integrity (DARPA LIFT digital thread)
-cypher_forge    CyPhER Forge cipher loop: surrogate + UQ + Kalman + safety gates
+cypher_forge    CyPhER Forge: HMAC integrity + cipher loop + BEMT surrogate
 v2_engine       Python ↔ C++ v2_engine_cli bridge
 """
 from __future__ import annotations
 
 from sfcs_mdp.cypher_forge import (
+    DARPA_CIPHER_ALGORITHM,
+    DARPA_CIPHER_DOMAIN,
+    DARPA_CIPHER_VERSION,
     AssimilationResult,
     CipherLoopStep,
     CypherForgeSession,
@@ -20,17 +22,12 @@ from sfcs_mdp.cypher_forge import (
     UncertaintyEstimate,
     assimilate_observation,
     check_safety,
+    cipher_metadata,
+    compute_hmac,
     make_bemt_predict_fn,
     maximise_knowledge,
     quantify_uncertainty,
     sign_session_result,
-)
-from sfcs_mdp.darpa_cipher import (
-    DARPA_CIPHER_ALGORITHM,
-    DARPA_CIPHER_DOMAIN,
-    DARPA_CIPHER_VERSION,
-    cipher_metadata,
-    compute_hmac,
     verify_hmac,
 )
 from sfcs_mdp.v2_engine import (
@@ -39,7 +36,14 @@ from sfcs_mdp.v2_engine import (
 )
 
 __all__ = [
-    # cypher_forge
+    # integrity
+    "DARPA_CIPHER_ALGORITHM",
+    "DARPA_CIPHER_DOMAIN",
+    "DARPA_CIPHER_VERSION",
+    "cipher_metadata",
+    "compute_hmac",
+    "verify_hmac",
+    # cypher forge
     "AssimilationResult",
     "CipherLoopStep",
     "CypherForgeSession",
@@ -53,13 +57,6 @@ __all__ = [
     "maximise_knowledge",
     "quantify_uncertainty",
     "sign_session_result",
-    # darpa_cipher
-    "DARPA_CIPHER_ALGORITHM",
-    "DARPA_CIPHER_DOMAIN",
-    "DARPA_CIPHER_VERSION",
-    "cipher_metadata",
-    "compute_hmac",
-    "verify_hmac",
     # v2_engine
     "find_engine_cli",
     "run_engine",

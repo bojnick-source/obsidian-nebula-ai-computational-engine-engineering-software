@@ -2,7 +2,7 @@
 
 Covers:
 - reidce: aerospace, bemt, energy_maneuverability, fea, ratio, wind_tunnel
-- sfcs_mdp: darpa_cipher, cypher_forge (including BEMT surrogate + session signing)
+- sfcs_mdp: cypher_forge (integrity + cipher loop + BEMT surrogate + session signing)
 """
 from __future__ import annotations
 
@@ -240,12 +240,12 @@ def test_dryden_gust_length():
 
 
 # ---------------------------------------------------------------------------
-# sfcs_mdp.darpa_cipher
+# sfcs_mdp.cypher_forge — integrity (HMAC)
 # ---------------------------------------------------------------------------
 
 
 def test_compute_verify_hmac_roundtrip():
-    from sfcs_mdp.darpa_cipher import compute_hmac, verify_hmac
+    from sfcs_mdp.cypher_forge import compute_hmac, verify_hmac
 
     data = b"build-artifact-payload"
     tag = compute_hmac(data, "BUILD-001", "REV-A")
@@ -253,7 +253,7 @@ def test_compute_verify_hmac_roundtrip():
 
 
 def test_hmac_wrong_build_id_fails():
-    from sfcs_mdp.darpa_cipher import compute_hmac, verify_hmac
+    from sfcs_mdp.cypher_forge import compute_hmac, verify_hmac
 
     data = b"payload"
     tag = compute_hmac(data, "BUILD-001", "REV-A")
@@ -261,7 +261,7 @@ def test_hmac_wrong_build_id_fails():
 
 
 def test_cipher_metadata_fields():
-    from sfcs_mdp.darpa_cipher import cipher_metadata
+    from sfcs_mdp.cypher_forge import cipher_metadata
 
     meta = cipher_metadata("B-1", "R-1")
     assert meta["build_id"] == "B-1"
@@ -278,7 +278,7 @@ def test_sign_session_result_has_hmac():
     import json
 
     from sfcs_mdp.cypher_forge import sign_session_result
-    from sfcs_mdp.darpa_cipher import verify_hmac
+    from sfcs_mdp.cypher_forge import verify_hmac
 
     summary = {"programme": "TEST", "version": "1", "iterations": 3, "final_status": "converged"}
     signed = sign_session_result(summary, "BUILD-X", "REV-Y")
