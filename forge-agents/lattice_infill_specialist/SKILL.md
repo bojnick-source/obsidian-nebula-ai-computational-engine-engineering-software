@@ -173,10 +173,10 @@ Voxels voxLattice = voxGetFinalLatticeGeometry(
 // 4. Post-processing
 // Over-offset: initial positive offset closes sharp beam corners;
 // final zero offset keeps size (or slightly negative to restore size)
-voxLattice = Sh.voxOverOffset(voxLattice, 3f, 0f);
+voxLattice = voxLattice.voxOverOffset(3f, 0f);
 
 // Intersect with bounding voxels to trim lattice to shape
-voxLattice = Sh.voxIntersect(voxLattice, voxBounding);
+voxLattice = voxLattice.voxBoolIntersect(voxBounding);
 ```
 
 **Internal implementation of voxGetFinalLatticeGeometry:**
@@ -222,7 +222,7 @@ IImplicit sdfRandom = new ImplicitRandomizedSchwarzPrimitive(
     fUnitSize, fWallThickness, oDeformField);
 
 // Apply TPMS infill to bounding voxels
-Voxels voxFilled = Sh.voxIntersectImplicit(voxBounding, sdfGyroid);
+Voxels voxFilled = voxBounding.voxIntersectImplicit(sdfGyroid);
 ```
 
 **Logic split — extracting separate regions from a TPMS field:**

@@ -173,36 +173,57 @@ Voxels voxSphere = oSphere.voxConstruct();
 // Simplified structural rib example
 BaseCylinder oRib   = new BaseCylinder(new LocalFrame(vecRibPos), fRibRadius, fRibLength);
 Voxels voxRib       = oRib.voxConstruct();
-voxOuterVolume      = Sh.voxAdd(voxOuterVolume, voxRib);
+voxOuterVolume      = voxOuterVolume.voxBoolAdd(voxRib);
 
 // Subtract fluid voids at the end (inverse design)
-Voxels voxResult    = Sh.voxSubtract(voxOuterVolume, voxInnerVolume);
+Voxels voxResult    = voxOuterVolume.voxBoolSubtract(voxInnerVolume);
 ```
 
 ---
 
-## Boolean Operations (via Sh static class)
+## Boolean Operations (instance methods on Voxels — v1.7+ API)
 
 ```csharp
-// Union
-Voxels voxResult = Sh.voxAdd(voxA, voxB);
+// Union — three equivalent forms
+Voxels voxResult = voxA.voxBoolAdd(voxB);
+Voxels voxResult = voxA + voxB;
+Voxels voxResult = Voxels.voxCombineAll(aVoxelList);  // list variant
 
-// Subtract B from A
-Voxels voxResult = Sh.voxSubtract(voxA, voxB);
+// Subtract B from A — two forms
+Voxels voxResult = voxA.voxBoolSubtract(voxB);
+Voxels voxResult = voxA - voxB;
 
-// Intersection
-Voxels voxResult = Sh.voxIntersect(voxA, voxB);
+// Intersection — two forms
+Voxels voxResult = voxA.voxBoolIntersect(voxB);
+Voxels voxResult = voxA & voxB;
 
 // Offset (positive = grow, negative = shrink)
-Voxels voxResult = Sh.voxOffset(voxSource, fOffsetMM);
+Voxels voxResult = voxSource.voxOffset(fOffsetMM);
 
 // Smoothen edges
-Sh.voxSmoothen(ref voxSource, fStrength);
+Voxels voxResult = voxSource.voxSmoothen(fStrengthMM);
 
 // Over-offset: first grow to close small gaps, then shrink back
-// Useful to merge adjacent beams into closed-cell tissue
-Voxels voxResult = Sh.voxOverOffset(voxLattice, fInitialOffset, fFinalOffset);
+Voxels voxResult = voxLattice.voxOverOffset(fInitialOffset, fFinalOffset);
+
+// Double offset (v1.7): two independent passes in one call
+Voxels voxResult = voxSource.voxDoubleOffset(fDist1MM, fDist2MM);
+
+// Fillet (v1.7): radius-based rounding of concave edges
+Voxels voxResult = voxSource.voxFillet(fRoundingMM);
+
+// Shell extraction (v1.7): hollow a solid to a wall of given thickness
+Voxels voxShell = voxSolid.voxShell(fNegOffsetMM, fPosOffsetMM);
+
+// Intersect with SDF infill
+Voxels voxFilled = voxBounding.voxIntersectImplicit(sdfGyroid);
 ```
+
+> **Deprecation note:** `Sh.voxAdd`, `Sh.voxSubtract`, `Sh.voxIntersect`, `Sh.voxOffset`,
+> `Sh.voxSmoothen`, `Sh.voxOverOffset`, `Sh.voxIntersectImplicit`, `Sh.voxUnion(list)`,
+> `Sh.voxShell`, `Sh.oGetBoundingBox`, `Sh.vecGetClosestSurfacePoint`,
+> `Sh.vecGetProjectedSurfacePoint` are all `[Obsolete]` in ShapeKernel v1.7.
+> Use the instance methods above.
 
 ---
 

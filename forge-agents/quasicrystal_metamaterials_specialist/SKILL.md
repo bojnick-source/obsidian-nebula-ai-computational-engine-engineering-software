@@ -163,8 +163,8 @@ After generating the quasi-crystal tile structure, convert to voxelfield for Pic
 Voxels voxCrystalWireframe = /* WireframeFromCrystalTask output */;
 
 // Now voxCrystalWireframe can be used with standard PicoGK operations:
-Voxels voxResult = Sh.voxAdd(voxCrystalWireframe, voxOtherGeometry);
-Voxels voxResult = Sh.voxIntersect(voxCrystalWireframe, voxBoundingPanel);
+Voxels voxResult = voxCrystalWireframe.voxBoolAdd(voxOtherGeometry);
+Voxels voxResult = voxCrystalWireframe.voxBoolIntersect(voxBoundingPanel);
 ```
 
 ---

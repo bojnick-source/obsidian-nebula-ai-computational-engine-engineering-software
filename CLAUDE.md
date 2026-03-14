@@ -92,10 +92,10 @@ dotnet build
 dotnet run
 ```
 
-Add PicoGK package to a .NET project:
+Add PicoGK package to a .NET project (.NET 9+ required):
 
 ```sh
-dotnet add package PicoGK --prerelease
+dotnet add package PicoGK
 ```
 
 ### LEAP 71 FORGE Agents (knowledge layer)
@@ -126,7 +126,7 @@ LEAP71-related agent directories. Contains:
 2. **Inverse design**: Design fluid void volumes first; derive walls by subtraction
 3. **Nomenclature mandatory**: `fRadius` not `radius`; `vecPt` not `pt`; `voxResult` not `result`
 4. **No speculative lattice**: LatticeLibrary only after `topology_optimization` handoff prescribes it
-5. **Boolean naming**: Use `Sh.voxSubtract()` — not `voxBoolSubtract()`
+5. **Boolean naming**: Use instance methods `vox.voxBoolSubtract()`, `vox.voxBoolAdd()`, `vox.voxBoolIntersect()` — the old `Sh.voxSubtract()` / `Sh.voxAdd()` / `Sh.voxIntersect()` statics are `[Obsolete]` as of ShapeKernel v1.7
 6. **Quasi-crystal generation limit**: ≤ 3 inflation iterations (120^N face growth)
 
 ---

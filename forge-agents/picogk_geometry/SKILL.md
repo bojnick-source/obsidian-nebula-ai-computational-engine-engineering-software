@@ -20,13 +20,14 @@ C# library, operating on the three core geometry data types: `Voxels`, `Lattice`
 | Capability | Status | Notes |
 |---|---|---|
 | Voxelfield construction via Lattice | Active (MVP) | AddSphere / AddBeam → new Voxels(oLattice) |
-| Boolean operations on Voxels | Active (MVP) | Sh.voxAdd, Sh.voxSubtract, Sh.voxIntersect |
-| Implicit SDF rendering | Active (MVP) | IImplicit → Voxels via BBox3 or voxBounding |
+| Boolean operations on Voxels | Active (MVP) | instance methods: voxBoolAdd / voxBoolSubtract / voxBoolIntersect (or +/-/& operators) |
+| Implicit SDF rendering | Active (MVP) | IImplicit → Voxels via BBox3; IBoundedImplicit skips BBox3 argument |
 | TPMS infill patterns | Active (Level 2) | Gyroid, Lidinoid, Schwarz Primitive, Schwarz Diamond |
 | Lattice infill via LatticeLibrary | Active (Level 2) | ICellArray + ILatticeType + IBeamThickness |
-| Offset and smoothing operations | Active (Level 2) | voxOffset, voxSmoothen, voxOverOffset |
-| OpenVDB multi-field export | Active (Level 2) | geometry + physics fields in single .vdb (PicoGK v1.5+) |
-| STL/OBJ mesh export | Active (Level 2) | Mesh.mshFromVoxels() → .stl / .obj |
+| Offset and smoothing operations | Active (Level 2) | instance: voxOffset / voxSmoothen / voxOverOffset / voxFillet / voxDoubleOffset |
+| VDB export | Active (Level 2) | vox.SaveToVdbFile() + Voxels.voxFromVdbFile() for round-trip (PicoGK v1.7+) |
+| STL export | Active (Level 2) | new Mesh(oVoxels) → oMesh.SaveToStlFile() or Sh.ExportVoxelsToSTLFile() |
+| CLI slice export | Active (Level 2) | Sh.ExportVoxelsToCLIFile() — new in v1.7 |
 | Custom SDF class creation | Planned (V1) | Implement IImplicit.fSignedDistance() |
 | Multi-physics field coupling | Planned (V2) | VectorField + ScalarField alongside geometry |
 
@@ -96,31 +97,64 @@ Voxels describe a digital material distribution within a regular 3D grid. Think 
 of black/white images: white = matter, black = void. Voxelfields are created by rendering other
 geometry types (Lattice, IImplicit, STL input) into them.
 
-**Key Voxel operations (via the `Sh` static helper class):**
+**Key Voxel operations (instance methods on `Voxels` — v1.7+ preferred API):**
 
 ```csharp
-// Boolean add (union)
-Voxels voxResult = Sh.voxAdd(voxA, voxB);
+// Boolean add (union) — three equivalent forms
+Voxels voxResult = voxA.voxBoolAdd(voxB);
+Voxels voxResult = voxA + voxB;                   // operator overload
+Voxels voxResult = Voxels.voxCombine(voxA, voxB); // static helper
 
-// Boolean subtract
-Voxels voxResult = Sh.voxSubtract(voxShell, voxFluidVoid);
+// Combine entire list
+Voxels voxResult = Voxels.voxCombineAll(aVoxelList);
 
-// Boolean intersect
-Voxels voxResult = Sh.voxIntersect(voxLattice, voxBounding);
+// Boolean subtract — two forms
+Voxels voxResult = voxShell.voxBoolSubtract(voxFluidVoid);
+Voxels voxResult = voxShell - voxFluidVoid;        // operator overload
+
+// Boolean intersect — two forms
+Voxels voxResult = voxLattice.voxBoolIntersect(voxBounding);
+Voxels voxResult = voxLattice & voxBounding;       // operator overload
 
 // Offset (grow = positive, shrink = negative)
-Voxels voxResult = Sh.voxOffset(voxSource, fOffsetMM);
+Voxels voxResult = voxSource.voxOffset(fOffsetMM);
 
 // Smoothen corner details
-Sh.voxSmoothen(ref voxSource, fStrength);
+Voxels voxResult = voxSource.voxSmoothen(fStrengthMM);
 
 // Over-offset: close small loops, transition beam lattice to closed-cell tissue
 // fInitialOffset > 0 removes sharp details; fFinalOffset shrinks back
-Voxels voxResult = Sh.voxOverOffset(voxLattice, fInitialOffset, fFinalOffset);
+Voxels voxResult = voxLattice.voxOverOffset(fInitialOffset, fFinalOffset);
+
+// Double offset: two-pass morphology (grow then shrink or vice versa)
+Voxels voxResult = voxSource.voxDoubleOffset(fDist1MM, fDist2MM);
+
+// Fillet: radius-based rounding of concave edges
+Voxels voxResult = voxSource.voxFillet(fRoundingMM);
+
+// Shell extraction: hollow out a solid to a shell of given wall thickness
+Voxels voxResult = voxSolid.voxShell(fNegOffsetMM, fPosOffsetMM);
+Voxels voxResult = voxSolid.voxShell(fOffsetMM);  // symmetric shell
 
 // Intersect voxels with implicit SDF infill pattern
-Voxels voxResult = Sh.voxIntersectImplicit(voxBounding, sdfPattern);
+Voxels voxResult = voxBounding.voxIntersectImplicit(sdfPattern);
+
+// Static sphere factory — shorthand for single-sphere Voxels
+Voxels voxResult = Voxels.voxSphere(vecCenter, fRadius);
+
+// Bounding box and properties
+BBox3 oBBox     = voxSource.oCalculateBoundingBox();
+voxSource.CalculateProperties(out float fVolumeMM3, out float fSurfaceAreaMM2);
+
+// Surface queries
+Vector3 vecNearest = voxSource.vecClosestPointOnSurface(vecPt);
+Vector3 vecHit     = voxSource.vecRayCastToSurface(vecOrigin, vecDir);
+Vector3 vecNormal  = voxSource.vecSurfaceNormal(vecSurfacePt);
 ```
+
+> **Note:** The `Sh.voxAdd / Sh.voxSubtract / Sh.voxIntersect / Sh.voxOffset / Sh.voxSmoothen /
+> Sh.voxOverOffset / Sh.voxIntersectImplicit` static helpers are marked `[Obsolete]` in ShapeKernel
+> as of v1.7 and will be removed in a future release. Use the instance methods above.
 
 ### Lattice
 
@@ -182,10 +216,39 @@ BBox3 oBBox = new BBox3(
 Voxels voxSphere = new Voxels(sdfSphere, oBBox);
 
 // Option 2: intersect bounding voxelfield with implicit infill
-Voxels voxGyroidSphere = Sh.voxIntersectImplicit(voxSphere, sdfGyroid);
+Voxels voxGyroidSphere = voxSphere.voxIntersectImplicit(sdfGyroid);
 ```
 
-**Custom SDF:**
+**`IBoundedImplicit` — self-bounding implicits (v1.7+):**
+
+Implement `IBoundedImplicit` instead of `IImplicit` to embed the bounding box inside the class.
+The `Voxels(in IBoundedImplicit)` constructor then needs no explicit `BBox3` argument:
+
+```csharp
+public class ImplicitBoundedSphere : IBoundedImplicit
+{
+    readonly Vector3 m_vecCentre;
+    readonly float   m_fRadius;
+
+    public ImplicitBoundedSphere(Vector3 vecCentre, float fRadius)
+    {
+        m_vecCentre = vecCentre;
+        m_fRadius   = fRadius;
+    }
+
+    public BBox3 oBoundingBox()
+        => new BBox3(m_vecCentre - new Vector3(m_fRadius),
+                     m_vecCentre + new Vector3(m_fRadius));
+
+    public float fSignedDistance(in Vector3 vecPt)
+        => (vecPt - m_vecCentre).Length() - m_fRadius;
+}
+
+// No BBox3 needed at call site
+Voxels voxSphere = new Voxels(new ImplicitBoundedSphere(Vector3.Zero, 20f));
+```
+
+**Custom SDF (`IImplicit`):**
 
 ```csharp
 public class ImplicitSphere : IImplicit
@@ -254,16 +317,34 @@ can be tested independently at different resolutions. Iterate at 0.5–1 mm; fin
 
 ---
 
-## STL and OpenVDB Export
+## Export
 
 ```csharp
-// Export to STL mesh (for FEA meshing and manufacturing)
-Mesh oMesh = Mesh.mshFromVoxels(oVoxels);
+// STL — two equivalent forms (v1.7+)
+Mesh oMesh = new Mesh(oVoxels);                          // preferred constructor
 oMesh.SaveToStlFile(Path.Combine(Library.strLogFolder, "output.stl"));
 
-// Export to OpenVDB — single file holds geometry + physics fields (PicoGK v1.5+)
-oVoxels.SaveToOpenVdbFile(Path.Combine(Library.strLogFolder, "output.vdb"));
+// ShapeKernel helpers (wraps the above; handles exceptions + logs)
+Sh.ExportVoxelsToSTLFile(oVoxels, Sh.strGetExportPath(Sh.EExport.STL, "output"));
+Sh.ExportMeshToSTLFile(oMesh,     Sh.strGetExportPath(Sh.EExport.STL, "output"));
+
+// VDB — geometry + physics fields in one file
+oVoxels.SaveToVdbFile(Path.Combine(Library.strLogFolder, "output.vdb"));
+Sh.ExportVoxelsToVDBFile(oVoxels, Sh.strGetExportPath(Sh.EExport.VDB, "output"));
+
+// VDB round-trip: load back from file
+Voxels voxLoaded = Voxels.voxFromVdbFile("output.vdb");
+
+// CLI slice export — new in v1.7 (layer manufacturing / 3D print slicers)
+Sh.ExportVoxelsToCLIFile(oVoxels, Sh.strGetExportPath(Sh.EExport.CLI, "output"));
+
+// STL load
+Mesh oLoadedMesh = Mesh.mshFromStlFile("input.stl");
 ```
+
+> **API change (v1.7):** `Mesh.mshFromVoxels(oVoxels)` is replaced by `new Mesh(oVoxels)`.
+> `oVoxels.SaveToOpenVdbFile()` is replaced by `oVoxels.SaveToVdbFile()`.
+
 
 **Multi-field VDB workflow (geometry + simulation physics in one file):**
 
@@ -294,7 +375,9 @@ Voxels voxInnerVolume = /* union of: helical void + fins + inlet + outlet transi
 Voxels voxOuterVolume = /* outer ribs + flange + IO threads + support webs */;
 
 // 3. Derive final part — subtract voids from shell
-Voxels voxResult = Sh.voxSubtract(voxOuterVolume, voxInnerVolume);
+Voxels voxResult = voxOuterVolume.voxBoolSubtract(voxInnerVolume);
+// or equivalently:
+Voxels voxResult = voxOuterVolume - voxInnerVolume;
 ```
 
 HelixHeatX partial class structure (one function per file):
@@ -368,7 +451,7 @@ Raise **[PICOGK VALIDATION REQUIRED]** when:
 
 | Error | Recovery |
 |---|---|
-| `dotnet` / PicoGK import failure | `dotnet add package PicoGK --prerelease`; verify .NET 7+ |
+| `dotnet` / PicoGK import failure | `dotnet add package PicoGK`; verify .NET 9+ (v1.7.7.5 is stable, no `--prerelease` needed) |
 | Boolean subtract returns empty | Enlarge cutter geometry by 2 mm in each direction, re-run |
 | Disconnected voxels | Separate components, investigate cause — do not silently fix |
 | Mass over budget | Flag to user with options; never silently thin walls |
