@@ -61,6 +61,18 @@ agents:
     card: agent_cards/topology_optimization.yaml
     status: v1
 
+  - id: swan_topology_specialist
+    role: specialist
+    domain: swan_topology
+    card: agent_cards/swan_topology_specialist.yaml
+    status: planned
+
+  - id: swan_topology_antagonist
+    role: antagonist
+    domain: swan_topology_critique
+    card: agent_cards/swan_topology_antagonist.yaml
+    status: planned
+
   - id: picogk_geometry
     role: workflow
     domain: geometry_execution

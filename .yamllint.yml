@@ -6,6 +6,7 @@ ignore: |
   node_modules/
   .github/workflows/
   dark-leaf-v2/manufacturing/
+  dark-leaf-v2/cpp/v2/engine/build/
 
 rules:
   line-length:

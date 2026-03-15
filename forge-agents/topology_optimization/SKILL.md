@@ -197,10 +197,51 @@ Post-AM constraints for PicoGK-generated geometry:
 
 ---
 
+## Swan Solver Integration
+
+Swan is the **preferred solver** for this agent (see `topology_optimization.yaml`, solver hierarchy).
+
+### Local Installation
+
+```
+swan-topology/              ← Swan MATLAB source root (14 MB, main branch 2026-03-15)
+swan-topology/src/          ← addpath(genpath(...)) target
+swan-topology/Test/TopOptTests/Input/  ← canonical problem definitions
+```
+
+Set `SWAN_PATH=<repo_root>/swan-topology` before invoking MATLAB.
+
+### Delegate Agents
+
+| Agent | Role |
+|---|---|
+| `swan_topology_specialist` | Drives Swan runs, configures parameters, parses output |
+| `swan_topology_antagonist` | Audits output before vault write (C1–C8 checklist) |
+
+The `topology_optimization` workflow agent orchestrates these two agents; it does NOT
+call Swan directly. All Swan API knowledge lives in `swan_topology_specialist` SKILL.md.
+
+### Swan Solver Hierarchy (from agent card)
+
+```
+Preferred: Swan — Level-Set + SIMP-ALL + AM constraints + anisotropy (MATLAB)
+Fallback 1: FreeTO — density SIMP/SEMDOT, Octave-compatible, MIT license
+Fallback 2: ToPy — Python, 2D/simple 3D
+Fallback 3: OpenMDAO — Python, gradient-based
+Fallback 4: scipy_simp — Python, 2D only, last resort
+```
+
+---
+
 ## References
 
+- Swan source (local): `swan-topology/`
+- Swan upstream: https://github.com/SwanLab/Swan
+- SIMP-ALL: Ferrer et al. (2019), IJNME, DOI 10.1002/nme.6140
 - Domain-specific standards and handbooks for topology optimization
 - AIAA, ASME, IEEE, or relevant professional society publications
 - NIST or equivalent metrology standards for unit definitions
 - LEAP71 LatticeLibrary: https://github.com/leap71/LEAP71_LatticeLibrary
-- lattice_infill_specialist SKILL: `forge-agents/lattice_infill_specialist/SKILL.md`
+- `swan_topology_specialist` SKILL: `forge-agents/swan_topology_specialist/SKILL.md`
+- `swan_topology_antagonist` SKILL: `forge-agents/swan_topology_antagonist/SKILL.md`
+- `lattice_infill_specialist` SKILL: `forge-agents/lattice_infill_specialist/SKILL.md`
