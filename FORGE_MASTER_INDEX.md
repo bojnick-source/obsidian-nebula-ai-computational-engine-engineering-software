@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | Catalog Version | v8+ (execution addendum integrated) |
-| Agent Count | 263 (run `python tools/validate_registry.py` for current count) |
+| Agent Count | 273 (run `python tools/validate_registry.py` for current count) |
 | Active Milestone | v0.1 MVP — structural analysis path (Aladdin-3B motor mount bracket) |
 | Planning Phase | Lane A — baseline freeze candidate |
 | Build Phase | Not started |

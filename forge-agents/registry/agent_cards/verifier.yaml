@@ -1,5 +1,5 @@
-id: structural_verifier
-name: Structural Verifier
+id: verifier
+name: Verifier
 version: "1.0.0"
 role: verifier
 domain: cross_domain

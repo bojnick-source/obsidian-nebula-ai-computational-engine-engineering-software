@@ -177,6 +177,12 @@ agents:
   # VERIFIER AGENTS
   # ══════════════════════════════════════════════════════════════════════════
 
+  - id: verifier
+    role: verifier
+    domain: cross_domain
+    card: agent_cards/verifier.yaml
+    status: mvp
+
   - id: structural_verifier
     role: verifier
     domain: structural_verification

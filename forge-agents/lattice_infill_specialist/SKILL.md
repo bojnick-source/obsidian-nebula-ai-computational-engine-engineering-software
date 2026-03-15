@@ -323,6 +323,14 @@ Pre-seeded known failure modes:
 
 ---
 
+## Learned Strategies
+
+See `learned/strategies.jsonl` for run-by-run accumulated strategies.
+
+Current learned strategies: 0 (Level 1 — Novice)
+
+---
+
 ## Level Progression
 
 | Level | Name | Composite Score | Capability Unlocks |
