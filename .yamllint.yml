@@ -5,6 +5,7 @@ ignore: |
   briefcase/node_modules/
   node_modules/
   .github/workflows/
+  dark-leaf-v2/manufacturing/
 
 rules:
   line-length:

@@ -21,8 +21,7 @@ Source commit: `main` branch as of 2026-03-14.
 
 | Module | What it does |
 |---|---|
-| `darpa_cipher.py` | DARPA LIFT digital-thread HMAC-SHA-256 integrity — deterministic key derivation, constant-time verify |
-| `cypher_forge.py` | DARPA CyPhER Forge cipher loop — surrogate + UQ (Monte Carlo) + Kalman assimilation + knowledge maximisation + probabilistic safety gates |
+| `cypher_forge.py` | DARPA CyPhER Forge — HMAC-SHA-256 digital-thread integrity (deterministic key derivation, constant-time verify) + cipher loop (surrogate + UQ Monte Carlo + Kalman assimilation + knowledge maximisation + probabilistic safety gates) |
 | `v2_engine.py` | Python ↔ C++ `v2_engine_cli` bridge (subprocess JSON) |
 
 ### C++ solvers — `cpp/v2/engine/src/`
