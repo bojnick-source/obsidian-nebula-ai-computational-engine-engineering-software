@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "forge-output"
+version = "0.1.0"
+description = "FORGE output layer: event schema, report assembly, vault writer"
+requires-python = ">=3.11"
+
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "python-frontmatter>=1.1",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+monitoring = [
+    "duckdb>=0.10",
+    "structlog>=24.0",
+    "pyzmq>=25.0",
+]
+tui = [
+    "textual>=0.60",
+    "rich>=13.0",
+]
+viz = [
+    "matplotlib>=3.8",
+]
+dev = [
+    "pytest>=7.4",
+    "forge-output[monitoring,tui,viz]",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
