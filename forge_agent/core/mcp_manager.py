@@ -1,15 +1,15 @@
 """
 MCPManager — connect, health-monitor, and call MCP servers.
 
-Each server gets its own CircuitBreaker. Calls are routed through
-retry_api_call → circuit breaker → HTTP/stdio transport.
+Dispatch order (CLI-first):
+  1. CliDispatcher — direct Python/subprocess call, no JSON-RPC overhead.
+     Registered handlers: filesystem, vault, gmsh, calculix, freecad, MATLAB.
+  2. MCP fallback — used when no CLI handler exists or CLI raises CliToolError.
 
-Server config comes from forge_agent/config/servers.yaml:
-  servers:
-    filesystem:
-      command: [npx, -y, @modelcontextprotocol/server-filesystem, /vault]
-      timeout_ms: 5000
-      health_check_interval_s: 30
+Each MCP server gets its own CircuitBreaker. Calls are routed through
+retry_api_call → circuit breaker → stdio JSON-RPC transport.
+
+Server config: forge_agent/config/servers.yaml
 """
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ from typing import Any
 import yaml
 
 from forge_agent.core.retry import CircuitBreaker, retry_api_call
+from forge_agent.core.cli_dispatcher import CliDispatcher
 
 
 @dataclass
@@ -190,7 +191,10 @@ class MCPServer:
 
 
 class MCPManager:
-    """Manages all MCP servers; provides unified tool routing."""
+    """Manages all MCP servers; provides unified tool routing.
+
+    Dispatch order: CLI first (CliDispatcher), MCP second.
+    """
 
     def __init__(self, config_path: str | Path | None = None) -> None:
         self._servers: dict[str, MCPServer] = {}
@@ -199,6 +203,7 @@ class MCPManager:
             Path(__file__).parent.parent / "config" / "servers.yaml"
         )
         self._health_task: asyncio.Task | None = None
+        self._cli = CliDispatcher()
 
     async def start(self) -> None:
         configs = self._load_config()
@@ -228,9 +233,18 @@ class MCPManager:
         return tools
 
     async def call_tool(self, tool_name: str, arguments: dict) -> Any:
+        # ── 1. CLI path (primary) ──────────────────────────────────────────────
+        result, handled = await self._cli.call(tool_name, arguments)
+        if handled:
+            return result
+
+        # ── 2. MCP fallback ────────────────────────────────────────────────────
         server_name = self._tool_to_server.get(tool_name)
         if server_name is None:
-            raise MCPConnectionError(f"No MCP server registered for tool {tool_name!r}")
+            raise MCPConnectionError(
+                f"No CLI handler or MCP server registered for tool {tool_name!r}. "
+                f"CLI tools: {self._cli.registered_tools()}"
+            )
         srv = self._servers[server_name]
         if not srv.healthy:
             raise MCPConnectionError(f"MCP server {server_name!r} is unhealthy")
