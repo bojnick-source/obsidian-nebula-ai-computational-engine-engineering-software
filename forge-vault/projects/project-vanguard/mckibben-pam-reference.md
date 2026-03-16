@@ -1,11 +1,3 @@
----
-title: "McKibben PAM Reference"
-project: void-vanguard
-domain: synthmuscle
-tags: [pam, mckibben, chou-hannaford, actuator, force-model]
-created: 2026-03-16
----
-
 # McKibben PAM Reference
 
 ## Chou–Hannaford Force Model

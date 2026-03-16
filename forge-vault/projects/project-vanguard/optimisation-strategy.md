@@ -1,11 +1,3 @@
----
-title: "Void Vanguard Optimisation Strategy"
-project: void-vanguard
-domain: cmaes_optimization
-tags: [cmaes, cvar, monte-carlo, optimisation, pam-control]
-created: 2026-03-16
----
-
 # Void Vanguard Optimisation Strategy
 
 ## Algorithm: Diagonal CMA-ES

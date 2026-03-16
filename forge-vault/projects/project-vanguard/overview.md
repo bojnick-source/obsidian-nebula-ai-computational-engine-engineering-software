@@ -1,12 +1,3 @@
----
-title: "Void Vanguard — Project Overview"
-project: void-vanguard
-source_repo: bojnick-source/DARPA-lift
-status: active
-tags: [vanguard, pam, mujoco, cmaes, safety, typescript]
-created: 2026-03-16
----
-
 # Void Vanguard — Project Overview
 
 > **Note:** The source repository is named `DARPA-lift` for operational reasons.

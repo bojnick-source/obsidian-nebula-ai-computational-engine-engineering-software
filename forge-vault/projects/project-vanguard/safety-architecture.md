@@ -1,11 +1,3 @@
----
-title: "Void Vanguard Safety Architecture"
-project: void-vanguard
-domain: actuator_safety
-tags: [safety, qp-filter, cbf, state-machine, thermal, iec61508]
-created: 2026-03-16
----
-
 # Void Vanguard Safety Architecture
 
 ## Safety State Machine
