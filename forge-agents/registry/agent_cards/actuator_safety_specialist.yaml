@@ -1,0 +1,23 @@
+id: actuator_safety_specialist
+name: Actuator Safety Specialist
+version: "1.0.0"
+role: specialist
+domain: actuator_safety
+status: mvp
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/actuator_safety_specialist/v1.0.0.md
+skill_ref: forge-agents/actuator_safety_specialist/SKILL.md
+
+antagonist_pair: actuator_safety_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence

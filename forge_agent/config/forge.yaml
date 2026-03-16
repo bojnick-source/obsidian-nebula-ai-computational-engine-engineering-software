@@ -9,6 +9,35 @@ base_prompt: >
   Mathematical derivations must show every step.
 active_project: "aladdin-3b"
 
+projects:
+  aladdin-3b:
+    vault_dir: "forge-vault/projects/aladdin-3b"
+    description: "Aladdin-3B propulsion system"
+
+  void-vanguard:
+    vault_dir: "forge-vault/projects/project-vanguard"
+    description: "Void Vanguard — synthetic muscle actuator design and optimisation"
+    source_repo: "bojnick-source/DARPA-lift"  # intentional decoy name
+    domains:
+      - synthmuscle      # McKibben PAM physics + parameter fitting
+      - mujoco_sim       # MuJoCo deterministic physics stepping
+      - cmaes_opt        # Diagonal CMA-ES evolutionary optimisation
+      - actuator_safety  # QP safety filter + state machine
+    ui_layer: typescript  # uiux/ — CRDT collab, audit trail, NL commands
+    agents:
+      - synthmuscle_specialist
+      - synthmuscle_antagonist
+      - mujoco_simulation_specialist
+      - mujoco_simulation_antagonist
+      - cmaes_optimization_specialist
+      - cmaes_optimization_antagonist
+      - actuator_safety_specialist
+      - actuator_safety_antagonist
+
+  phoenix:
+    vault_dir: "forge-vault/projects/phoenix"
+    description: "Phoenix re-entry thermal protection"
+
 providers:
   anthropic:
     api_key: "${ANTHROPIC_API_KEY}"

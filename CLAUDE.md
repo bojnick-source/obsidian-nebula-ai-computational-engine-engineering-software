@@ -76,6 +76,7 @@ FORGE is intentionally polyglot. **Do not add code in a language not in this tab
 | **Python** | MCP server wrappers, tool integration, Obsidian vault interface, maintenance automation, glue, fast iteration | Ecosystem (foamlib, PyCCX, FEniCSx API, FastMCP), rapid prototyping, acceptable latency for tool dispatch |
 | **MATLAB / Octave** | FreeTO, Swan, topology optimization, established math/engineering toolboxes | Existing validated code, MATLAB Engine API bridges to C++/Python, Octave fallback for unlicensed environments |
 | **GPU stacks (CUDA/Python/C++)** | PhysX 5.6, Warp differentiable physics, Newton robotics, Isaac Sim, PhysicsNeMo | Physics simulation at scale requires GPU. Warp = Python→CUDA JIT. PhysX = native C++/CUDA. |
+| **TypeScript / React** | Void Vanguard collaborative design UI: CRDT real-time sync (Yjs/Automerge), audit trail, NL command layer, XR workspace, presence | No other stack handles CRDT-based collaborative editing + audit replay + WebSocket transport with acceptable DX. Python/C++ are wrong tools for browser UI. ADR: `docs/governance/decisions.md#adr-001` |
 | **YAML / JSON** | Configuration, blackboard schema, forge.yaml, agent contracts, test fixtures | Human-readable, version-controllable, parseable by any language in the stack |
 
 ### Anti-Patterns (banned)
@@ -86,6 +87,7 @@ FORGE is intentionally polyglot. **Do not add code in a language not in this tab
 | C++ for MCP tool wrappers | Massive ecosystem cost; tools already have Python bindings |
 | MATLAB outside topology optimization / validated toolboxes | License dependency, not embeddable in real-time path |
 | GPU stacks for anything not requiring massively parallel physics | CUDA adds build complexity; only justified by simulation-at-scale |
+| TypeScript outside Void Vanguard UI layer | No other project justifies a browser stack. Backend logic stays in Python/C++. |
 | Adding a language without an entry in this table | Every language must have a defensible purpose. No preference-driven additions. |
 
 ### Latency Contracts by Language
@@ -98,6 +100,8 @@ FORGE is intentionally polyglot. **Do not add code in a language not in this tab
 | Vault read / write | Python | < 1 s (async queued) |
 | FEA solve dispatch | MATLAB / Python | < 60 s (solver-bound) |
 | GPU physics step | CUDA | < 10 ms / step |
+| CRDT sync round-trip | TypeScript | < 200 ms (WebSocket) |
+| NL command parse → intent | TypeScript | < 100 ms (client-side) |
 
 ### Decision Authority
 

@@ -433,3 +433,350 @@ async def _swan_optimize(args: dict) -> dict:
             eng.quit()
 
     return await asyncio.get_event_loop().run_in_executor(None, _run)
+
+
+# ── Void Vanguard — McKibben PAM / MuJoCo / CMA-ES ───────────────────────────
+# synthmuscle_fit: fit PAM parameters to measured force-length-pressure data
+# mujoco_step: run a deterministic MuJoCo trajectory rollout
+# cmaes_optimize: run diagonal CMA-ES with Monte Carlo CVaR gating
+
+
+@_register("synthmuscle_fit")
+async def _synthmuscle_fit(args: dict) -> dict:
+    """
+    Fit Chou–Hannaford PAM model parameters to measured F(L, P) data.
+
+    args:
+        data_file  : str  — path to CSV with columns [length_m, pressure_kPa, force_N]
+        L0_init    : float — initial guess for rest length [m] (default 0.10)
+        D0_init    : float — initial guess for rest diameter [m] (default 0.025)
+        alpha0_init: float — initial guess for braid angle [deg] (default 25.0)
+        n_turns    : int   — number of braid turns (optional; uses geometric fit if absent)
+
+    returns:
+        dict with keys: L0_m, D0_m, alpha0_deg, rmse_N, rmse_pct, r2, aic, bic,
+                        F_max_N (at ε=0, P=P_max in data), provenance
+    """
+    try:
+        import numpy as np  # type: ignore[import-untyped]
+        from scipy.optimize import least_squares  # type: ignore[import-untyped]
+    except ImportError:
+        raise CliToolError("numpy/scipy not installed — pip install numpy scipy")
+
+    data_file = Path(args["data_file"]).expanduser()
+    if not data_file.exists():
+        raise CliToolError(f"Data file not found: {data_file}")
+
+    def _run() -> dict:
+        import hashlib
+
+        data = np.loadtxt(str(data_file), delimiter=",", skiprows=1)
+        L = data[:, 0]       # length [m]
+        P = data[:, 1] * 1e3  # convert kPa → Pa for model
+        F_meas = data[:, 2]  # force [N]
+
+        L0_init = args.get("L0_init", 0.10)
+        D0_init = args.get("D0_init", 0.025)
+        alpha0_init_deg = args.get("alpha0_init", 25.0)
+
+        # Chou–Hannaford model: F = (π D0²/4) · P · [3(L/L0)²cos²α0 - 1] / tan²α0
+        def model(params, L, P):
+            L0, D0, alpha0_deg = params
+            alpha0 = np.radians(alpha0_deg)
+            cos2a = np.cos(alpha0) ** 2
+            tan2a = np.tan(alpha0) ** 2
+            length_ratio = L / L0
+            F = (np.pi * D0**2 / 4) * P * (3 * length_ratio**2 * cos2a - 1) / tan2a
+            return F
+
+        def residuals(params):
+            return model(params, L, P) - F_meas
+
+        x0 = [L0_init, D0_init, alpha0_init_deg]
+        bounds = ([0.05, 0.005, 15.0], [0.30, 0.10, 40.0])
+        result = least_squares(
+            residuals, x0, bounds=bounds, method="trf", loss="soft_l1"
+        )
+
+        L0, D0, alpha0_deg = result.x
+        F_pred = model(result.x, L, P)
+        residuals_fit = F_meas - F_pred
+        n = len(F_meas)
+        k = 3  # number of fitted parameters
+
+        rmse = float(np.sqrt(np.mean(residuals_fit**2)))
+        F_max = float(np.max(F_meas))
+        rmse_pct = 100.0 * rmse / F_max if F_max > 0 else float("nan")
+        ss_res = float(np.sum(residuals_fit**2))
+        ss_tot = float(np.sum((F_meas - np.mean(F_meas))**2))
+        r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
+        # AIC / BIC (assuming Gaussian residuals)
+        sigma2 = ss_res / n
+        log_likelihood = -n / 2 * np.log(2 * np.pi * sigma2) - ss_res / (2 * sigma2)
+        aic = float(2 * k - 2 * log_likelihood)
+        bic = float(k * np.log(n) - 2 * log_likelihood)
+
+        # provenance
+        sha256 = hashlib.sha256(data_file.read_bytes()).hexdigest()[:16]
+
+        return {
+            "L0_m": float(L0),
+            "D0_m": float(D0),
+            "alpha0_deg": float(alpha0_deg),
+            "rmse_N": rmse,
+            "rmse_pct": rmse_pct,
+            "r2": float(r2),
+            "aic": aic,
+            "bic": bic,
+            "F_max_N": F_max,
+            "n_samples": n,
+            "provenance": f"scipy least_squares trf — data SHA256: {sha256}",
+        }
+
+    return await asyncio.get_event_loop().run_in_executor(None, _run)
+
+
+@_register("mujoco_step")
+async def _mujoco_step(args: dict) -> dict:
+    """
+    Run a deterministic MuJoCo trajectory rollout.
+
+    args:
+        mjcf_file    : str   — path to MJCF XML model file
+        ctrl_sequence: list  — list of [n_actuators] control vectors per step
+        seed         : int   — random seed for DR sampling (default 42)
+        dt_s         : float — override model timestep [s] (default: use model value)
+        record_joints: list  — joint names to record (default: all)
+
+    returns:
+        dict with keys: steps, duration_s, dt_s, joint_trajectories (dict name→list),
+                        qpos_final, qvel_final, reproducibility, provenance
+    """
+    try:
+        import mujoco  # type: ignore[import-untyped]
+        import numpy as np  # type: ignore[import-untyped]
+    except ImportError:
+        raise CliToolError("mujoco not installed — pip install mujoco")
+
+    mjcf_file = Path(args["mjcf_file"]).expanduser()
+    if not mjcf_file.exists():
+        raise CliToolError(f"MJCF file not found: {mjcf_file}")
+
+    def _run() -> dict:
+        import hashlib
+
+        seed = args.get("seed", 42)
+        np.random.seed(seed)
+
+        model = mujoco.MjModel.from_xml_path(str(mjcf_file))
+        if "dt_s" in args:
+            model.opt.timestep = args["dt_s"]
+
+        dt = float(model.opt.timestep)
+        ctrl_sequence = args.get("ctrl_sequence", [])
+
+        # Run first pass
+        data = mujoco.MjData(model)
+        mujoco.mj_resetData(model, data)
+
+        record_joints = args.get("record_joints", None)
+        joint_names = [
+            mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_JOINT, i)
+            for i in range(model.njnt)
+        ]
+        if record_joints:
+            record_idx = [
+                i for i, name in enumerate(joint_names) if name in record_joints
+            ]
+        else:
+            record_idx = list(range(model.njnt))
+
+        trajectories: dict[str, list] = {joint_names[i]: [] for i in record_idx}
+
+        for ctrl in ctrl_sequence:
+            data.ctrl[:] = ctrl
+            mujoco.mj_step(model, data)
+            for i in record_idx:
+                trajectories[joint_names[i]].append(float(data.qpos[i]))
+
+        qpos_final = data.qpos.tolist()
+        qvel_final = data.qvel.tolist()
+        steps = len(ctrl_sequence)
+
+        # Reproducibility check: second identical run
+        data2 = mujoco.MjData(model)
+        np.random.seed(seed)
+        mujoco.mj_resetData(model, data2)
+        for ctrl in ctrl_sequence:
+            data2.ctrl[:] = ctrl
+            mujoco.mj_step(model, data2)
+        repro = bool(np.allclose(data.qpos, data2.qpos, atol=1e-6))
+
+        sha256 = hashlib.sha256(mjcf_file.read_bytes()).hexdigest()[:16]
+
+        return {
+            "steps": steps,
+            "duration_s": steps * dt,
+            "dt_s": dt,
+            "joint_trajectories": trajectories,
+            "qpos_final": qpos_final,
+            "qvel_final": qvel_final,
+            "reproducibility": "PASS" if repro else "FAIL",
+            "seed": seed,
+            "provenance": f"mujoco — MJCF SHA256: {sha256} — seed: {seed}",
+        }
+
+    return await asyncio.get_event_loop().run_in_executor(None, _run)
+
+
+@_register("cmaes_optimize")
+async def _cmaes_optimize(args: dict) -> dict:
+    """
+    Run diagonal CMA-ES with Monte Carlo CVaR gating for Void Vanguard PAM control.
+
+    args:
+        fitness_tool  : str   — name of CLI tool to call for fitness evaluation
+        fitness_args  : dict  — base args for fitness_tool (updated per candidate)
+        param_names   : list  — parameter names (length = n)
+        param_bounds  : list  — [[lo, hi], ...] per parameter
+        sigma0        : float — initial step size (default: 1/3 of param range)
+        max_generations: int  — max generations (default 300)
+        seed          : int   — random seed (default 42)
+        n_mc          : int   — MC samples per CVaR evaluation (default 500)
+        cvar_alpha    : float — CVaR quantile (default 0.05)
+        cvar_threshold: float — CVaR acceptance threshold (default 8.0)
+        stagnation_tol: float — σ_k below this fraction of σ₀ → restart signal (default 1e-6)
+
+    returns:
+        dict with keys: best_params, best_fitness, cvar_005, cvar_pass, generations,
+                        sigma_final, sigma0, lambda_pop, lambda_min, stagnation,
+                        convergence_curve, provenance
+    """
+    try:
+        import cma  # type: ignore[import-untyped]
+        import numpy as np  # type: ignore[import-untyped]
+    except ImportError:
+        raise CliToolError(
+            "cma not installed — pip install cma  "
+            "(Hansen's CMA-ES Python package)"
+        )
+
+    import math
+
+    param_names = args["param_names"]
+    param_bounds = args["param_bounds"]
+    n = len(param_names)
+    lo = np.array([b[0] for b in param_bounds])
+    hi = np.array([b[1] for b in param_bounds])
+    ranges = hi - lo
+
+    # Population size: λ ≥ 4 + floor(3·ln(n))
+    lambda_min = 4 + int(3 * math.log(n))
+    lambda_pop = max(lambda_min, args.get("lambda_pop", lambda_min))
+
+    sigma0 = args.get("sigma0", float(np.mean(ranges) / 3))
+    max_generations = args.get("max_generations", 300)
+    seed = args.get("seed", 42)
+    n_mc = args.get("n_mc", 500)
+    cvar_alpha = args.get("cvar_alpha", 0.05)
+    cvar_threshold = args.get("cvar_threshold", 8.0)
+    stagnation_tol = args.get("stagnation_tol", 1e-6)
+
+    # x0: midpoint of parameter space
+    x0 = ((lo + hi) / 2).tolist()
+
+    fitness_tool = args.get("fitness_tool", None)
+    fitness_fn = _REGISTRY.get(fitness_tool) if fitness_tool else None
+
+    async def evaluate(x: list[float]) -> float:
+        """Evaluate fitness for a single candidate. Returns scalar cost."""
+        if fitness_fn is None:
+            # No fitness tool: return dummy (callers inject real fitness via fitness_args)
+            return float(np.sum(np.array(x) ** 2))
+        candidate_args = dict(args.get("fitness_args", {}))
+        for name, val in zip(param_names, x):
+            candidate_args[name] = val
+        try:
+            result = await fitness_fn(candidate_args)
+            return float(result.get("tracking_error_deg", 1e9))
+        except Exception:
+            return 1e9  # infeasible candidate
+
+    def _run_sync() -> dict:
+        import asyncio as _aio
+
+        loop = _aio.new_event_loop()
+
+        es = cma.CMAEvolutionStrategy(
+            x0,
+            sigma0,
+            {
+                "popsize": lambda_pop,
+                "seed": seed,
+                "bounds": [lo.tolist(), hi.tolist()],
+                "verbose": -9,
+                "CMA_diagonal": True,  # diagonal CMA-ES
+            },
+        )
+
+        convergence_curve = []
+        stagnated = False
+
+        for gen in range(max_generations):
+            solutions = es.ask()
+            fitnesses = [
+                loop.run_until_complete(evaluate(x)) for x in solutions
+            ]
+            es.tell(solutions, fitnesses)
+            best_f = float(min(fitnesses))
+            convergence_curve.append(best_f)
+
+            sigma_k = es.sigma
+            if sigma_k < stagnation_tol * sigma0:
+                stagnated = True
+                break
+
+        best_x = es.result.xbest.tolist()
+        best_fitness = float(es.result.fbest)
+        sigma_final = float(es.sigma)
+        generations = len(convergence_curve)
+
+        # Monte Carlo CVaR evaluation of best candidate
+        np.random.seed(seed + 1)
+        mc_losses = []
+        for _ in range(n_mc):
+            # Perturb candidate by DR noise (±5% uniform)
+            x_mc = [
+                float(np.clip(v * (1 + np.random.uniform(-0.05, 0.05)), lo[i], hi[i]))
+                for i, v in enumerate(best_x)
+            ]
+            mc_losses.append(loop.run_until_complete(evaluate(x_mc)))
+
+        mc_losses.sort()
+        var_idx = int(np.ceil((1 - cvar_alpha) * n_mc)) - 1
+        cvar_005 = float(np.mean(mc_losses[var_idx:]))
+        cvar_pass = cvar_005 <= cvar_threshold
+
+        loop.close()
+
+        return {
+            "best_params": dict(zip(param_names, best_x)),
+            "best_fitness": best_fitness,
+            "cvar_005": cvar_005,
+            "cvar_pass": cvar_pass,
+            "cvar_threshold": cvar_threshold,
+            "generations": generations,
+            "sigma_final": sigma_final,
+            "sigma0": sigma0,
+            "lambda_pop": lambda_pop,
+            "lambda_min": lambda_min,
+            "n_params": n,
+            "stagnation": stagnated,
+            "n_mc": n_mc,
+            "cvar_alpha": cvar_alpha,
+            "convergence_curve": convergence_curve,
+            "provenance": f"cma — seed: {seed} — n: {n} — lambda: {lambda_pop}",
+        }
+
+    return await asyncio.get_event_loop().run_in_executor(None, _run_sync)

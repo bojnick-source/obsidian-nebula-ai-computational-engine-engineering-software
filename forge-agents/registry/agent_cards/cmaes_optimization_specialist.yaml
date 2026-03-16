@@ -1,0 +1,23 @@
+id: cmaes_optimization_specialist
+name: Cmaes Optimization Specialist
+version: "1.0.0"
+role: specialist
+domain: cmaes_opt
+status: mvp
+
+capabilities: []  # populated as SKILL.md evolves
+
+tools_allowed: []  # see SKILL.md for current list
+
+output_contract_ref: docs/contracts/agent-output-contract.md
+prompt_ref: forge-agents/prompts/cmaes_optimization_specialist/v1.0.0.md
+skill_ref: forge-agents/cmaes_optimization_specialist/SKILL.md
+
+antagonist_pair: cmaes_optimization_antagonist
+
+mandatory_output_fields:
+  - findings
+  - assumptions
+  - what_would_falsify
+  - provenance
+  - confidence
