@@ -75,6 +75,7 @@ FORGE is **not** a large language model, a CAD tool, or a data warehouse. It is 
 
 ## Related Docs
 
+- [Polyglot Architecture Doctrine](polyglot-doctrine.md)
 - [Core Loop](core-loop.md)
 - [Agent Topology](agent-topology.md)
 - [Memory Neural Model](memory-neural-model.md)

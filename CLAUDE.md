@@ -63,6 +63,21 @@ python tools/scaffold_agent.py --batch tools/agent_manifest.yaml
 All PRs run: yamllint → ruff → pytest. All three must pass (no `|| true`).
 Registry validation is a separate tool, not yet in CI — run manually before PRs.
 
+## Polyglot Architecture
+
+FORGE is intentionally polyglot. **Do not add code in a language that isn't in this table:**
+
+| Language | Role |
+|---|---|
+| **C++** | Core runtime, orchestration, blackboard, model router, A2A/gRPC, main loop |
+| **Python** | MCP wrappers, tool integration, vault interface, glue, fast iteration |
+| **MATLAB / Octave** | FreeTO, Swan, topology optimization, established validated toolboxes |
+| **GPU (CUDA/Python/C++)** | PhysX 5.6, Warp, Newton robotics, Isaac Sim, PhysicsNeMo |
+| **YAML / JSON** | Config, schemas, contracts, test fixtures |
+
+Full doctrine (anti-patterns, latency contracts, decision authority):
+`docs/architecture/polyglot-doctrine.md`
+
 ## Obsidian Vault
 
 `forge-vault/` is a fully configured Obsidian vault (≥ v1.12.4). Open it directly
