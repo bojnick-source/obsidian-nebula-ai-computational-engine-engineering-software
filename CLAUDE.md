@@ -63,20 +63,49 @@ python tools/scaffold_agent.py --batch tools/agent_manifest.yaml
 All PRs run: yamllint → ruff → pytest. All three must pass (no `|| true`).
 Registry validation is a separate tool, not yet in CI — run manually before PRs.
 
-## Polyglot Architecture
+## Polyglot Architecture Doctrine
 
-FORGE is intentionally polyglot. **Do not add code in a language that isn't in this table:**
+> **Right tool for the right job. Choices justified by purpose, not preference.**
+> AI agents help plan language allocation.
 
-| Language | Role |
+FORGE is intentionally polyglot. **Do not add code in a language not in this table.**
+
+| Language / Stack | Purpose | Justification |
+|---|---|---|
+| **C++** | Core runtime, orchestration, blackboard, model router, agent lifecycle, A2A/gRPC, main loop | Deterministic performance, memory control, latency targets (<100 ms router, <50 ms blackboard) |
+| **Python** | MCP server wrappers, tool integration, Obsidian vault interface, maintenance automation, glue, fast iteration | Ecosystem (foamlib, PyCCX, FEniCSx API, FastMCP), rapid prototyping, acceptable latency for tool dispatch |
+| **MATLAB / Octave** | FreeTO, Swan, topology optimization, established math/engineering toolboxes | Existing validated code, MATLAB Engine API bridges to C++/Python, Octave fallback for unlicensed environments |
+| **GPU stacks (CUDA/Python/C++)** | PhysX 5.6, Warp differentiable physics, Newton robotics, Isaac Sim, PhysicsNeMo | Physics simulation at scale requires GPU. Warp = Python→CUDA JIT. PhysX = native C++/CUDA. |
+| **YAML / JSON** | Configuration, blackboard schema, forge.yaml, agent contracts, test fixtures | Human-readable, version-controllable, parseable by any language in the stack |
+
+### Anti-Patterns (banned)
+
+| Anti-pattern | Why banned |
 |---|---|
-| **C++** | Core runtime, orchestration, blackboard, model router, A2A/gRPC, main loop |
-| **Python** | MCP wrappers, tool integration, vault interface, glue, fast iteration |
-| **MATLAB / Octave** | FreeTO, Swan, topology optimization, established validated toolboxes |
-| **GPU (CUDA/Python/C++)** | PhysX 5.6, Warp, Newton robotics, Isaac Sim, PhysicsNeMo |
-| **YAML / JSON** | Config, schemas, contracts, test fixtures |
+| Python for core runtime loop or blackboard | GIL + unpredictable GC prevent sub-50 ms latency guarantees |
+| C++ for MCP tool wrappers | Massive ecosystem cost; tools already have Python bindings |
+| MATLAB outside topology optimization / validated toolboxes | License dependency, not embeddable in real-time path |
+| GPU stacks for anything not requiring massively parallel physics | CUDA adds build complexity; only justified by simulation-at-scale |
+| Adding a language without an entry in this table | Every language must have a defensible purpose. No preference-driven additions. |
 
-Full doctrine (anti-patterns, latency contracts, decision authority):
-`docs/architecture/polyglot-doctrine.md`
+### Latency Contracts by Language
+
+| Path | Language | Target |
+|---|---|---|
+| Blackboard read / write | C++ | < 50 ms |
+| Model router decision | C++ | < 100 ms |
+| MCP tool dispatch | Python | < 500 ms |
+| Vault read / write | Python | < 1 s (async queued) |
+| FEA solve dispatch | MATLAB / Python | < 60 s (solver-bound) |
+| GPU physics step | CUDA | < 10 ms / step |
+
+### Decision Authority
+
+- Changing a language assignment requires an ADR in `docs/governance/decisions.md`.
+- Adding a new language requires an ADR **and** proof no existing language serves the purpose.
+- AI agents must flag any code that violates this table before committing.
+
+Full spec: `docs/architecture/polyglot-doctrine.md`
 
 ## Obsidian Vault
 
