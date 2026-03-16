@@ -31,6 +31,7 @@ from forge_agent.core.retry import RetryConfig, retry_api_call
 from forge_agent.core.shutdown import GracefulShutdown
 from forge_agent.core.skill_router import SkillRouter
 from forge_agent.core.token_budget import BudgetExhausted, TokenBudget
+from forge_agent.memory.agent_journal import AgentJournal, JournalEntry
 
 
 # ------------------------------------------------------------------ config
@@ -104,6 +105,7 @@ class UnifiedAgent:
         router_cfg: dict,
         run_id: str | None = None,
         log_dir: str | Path = "/tmp/forge_agent_logs",
+        vault_manager=None,
     ) -> None:
         self.config = config
         self.router_cfg = router_cfg
@@ -132,6 +134,11 @@ class UnifiedAgent:
         )
         self.container = ContainerState()
         self.shutdown = GracefulShutdown(drain_timeout_s=10.0)
+        self.journal = AgentJournal(
+            vault_manager=vault_manager,
+            agent_id="unified_agent",
+            trace_id=self.run_id,
+        )
 
         self._client = None
         self._messages: list[dict] = []
@@ -155,6 +162,14 @@ class UnifiedAgent:
     async def solve(self, problem: str, role: str = "orchestrator") -> str:
         """Run the agent loop for a problem; return final answer text."""
         self.loop_guard.reset()
+        _solve_entry = JournalEntry(
+            what=f"solve: {problem[:80]}",
+            why="new problem submitted to agent loop",
+            how=f"role={role}; token_budget={self.token_budget.total_budget}",
+            outcome="pending",
+        )
+        self.journal.record(_solve_entry)
+        _solve_op_id = _solve_entry.id
 
         # Phase 0: Intelligence pre-tasks (Gemini/Perplexity/OpenAI math)
         pre_tasks = self.intelligence_router.plan(problem)
@@ -301,6 +316,17 @@ class UnifiedAgent:
                         iteration=iteration,
                         error=error,
                     )
+                    self.journal.record(JournalEntry(
+                        what=f"tool_call: {tool_name}",
+                        why="model requested this tool during solve loop",
+                        how=str(tool_args)[:200],
+                        triggered_by=_solve_op_id,
+                        state_before={"iteration": iteration},
+                        state_after={"result_preview": str(result)[:200]},
+                        outcome="failure" if error else "success",
+                        duration_ms=round(tool_latency, 2),
+                        error=error,
+                    ))
                     tool_results.append({
                         "type": "tool_result",
                         "tool_use_id": block.id,
@@ -309,6 +335,20 @@ class UnifiedAgent:
 
                 self._messages.append({"role": "user", "content": tool_results})
 
+        self.journal.record(JournalEntry(
+            what="solve_complete",
+            why="agent loop exited",
+            how="end_turn or shutdown or budget_exhausted",
+            triggered_by=_solve_op_id,
+            state_after={
+                "tool_calls": self.logger.total_tool_calls,
+                "model_calls": self.logger.total_model_calls,
+                "tokens_in": self.logger.total_input_tokens,
+                "tokens_out": self.logger.total_output_tokens,
+            },
+            outcome="success" if answer else "partial",
+            notes=f"answer_len={len(answer)} chars",
+        ))
         return answer or "[No answer generated]"
 
 
