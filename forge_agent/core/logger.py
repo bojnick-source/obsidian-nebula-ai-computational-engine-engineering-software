@@ -1,6 +1,9 @@
 """
 AgentLogger — structured JSONL logging for every tool call, model call,
 token count, and latency measurement inside the FORGE agent loop.
+
+Optionally forwards all events to a SwanlabTracker for live dashboard
+visualisation. Pass tracker=SwanlabTracker.create(...) to enable.
 """
 
 from __future__ import annotations
@@ -10,7 +13,10 @@ import time
 from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from forge_agent.core.swanlab_tracker import SwanlabTracker
 
 
 # ------------------------------------------------------------------ records
@@ -73,11 +79,17 @@ class BudgetRecord:
 class AgentLogger:
     """Writes structured JSONL to a log file; also keeps in-memory summary stats."""
 
-    def __init__(self, log_path: str | Path, run_id: str = "") -> None:
+    def __init__(
+        self,
+        log_path: str | Path,
+        run_id: str = "",
+        tracker: "SwanlabTracker | None" = None,
+    ) -> None:
         self.log_path = Path(log_path)
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         self.run_id = run_id
         self._fh = self.log_path.open("a", encoding="utf-8")
+        self._tracker = tracker
 
         # summary stats
         self.total_input_tokens: int = 0
@@ -108,6 +120,13 @@ class AgentLogger:
         )
         self._write(rec)
         self.total_tool_calls += 1
+        if self._tracker is not None:
+            self._tracker.log_tool_call(
+                iteration=iteration,
+                tool_name=tool_name,
+                latency_ms=latency_ms,
+                error=error,
+            )
 
     def log_model_call(
         self,
@@ -138,6 +157,17 @@ class AgentLogger:
         self.total_input_tokens += input_tokens
         self.total_output_tokens += output_tokens
         self.total_model_calls += 1
+        if self._tracker is not None:
+            self._tracker.log_model_call(
+                iteration=iteration,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                latency_ms=latency_ms,
+                agent_role=agent_role,
+                model=model,
+                provider=provider,
+                error=error,
+            )
 
     def log_phase(self, phase: str, status: str, details: dict | None = None) -> None:
         rec = PhaseRecord(
@@ -147,6 +177,8 @@ class AgentLogger:
             details=details or {},
         )
         self._write(rec)
+        if self._tracker is not None:
+            self._tracker.log_phase(phase=phase, status=status)
 
     def log_budget(self, iteration: int, estimated_tokens: int, budget: int, action: str) -> None:
         rec = BudgetRecord(
@@ -157,6 +189,13 @@ class AgentLogger:
             action=action,
         )
         self._write(rec)
+        if self._tracker is not None:
+            self._tracker.log_budget(
+                iteration=iteration,
+                estimated_tokens=estimated_tokens,
+                budget=budget,
+                action=action,
+            )
 
     @contextmanager
     def time_tool_call(self, tool_name: str, tool_args: dict, iteration: int = 0):

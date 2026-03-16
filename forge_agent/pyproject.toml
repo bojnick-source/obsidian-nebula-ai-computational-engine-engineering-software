@@ -20,8 +20,9 @@ dependencies = [
 [project.optional-dependencies]
 openai = ["openai>=1.50"]
 mcp = ["fastmcp>=0.4"]
+tracking = ["swanlab>=0.3"]
 all = [
-    "forge-agent[openai,mcp]",
+    "forge-agent[openai,mcp,tracking]",
 ]
 dev = [
     "pytest>=7.4",
