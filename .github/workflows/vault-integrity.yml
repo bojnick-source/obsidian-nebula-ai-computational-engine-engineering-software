@@ -18,22 +18,22 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install tools
-        run: pip install pyyaml jsonschema
+        run: pip install pyyaml
       - name: Validate frontmatter
-        run: |
-          echo "Vault frontmatter validation placeholder"
-          echo "Schema: forge-memory/schemas/vault_frontmatter.schema.yaml"
-          echo "Vault: forge-vault/"
+        run: python tools/validate_vault_frontmatter.py
 
   stale-index-check:
     name: Check stale note index
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install tools
+        run: pip install pyyaml
       - name: Check stale index
-        run: |
-          echo "Stale index check placeholder"
-          echo "Index: forge-vault/indexes/stale-index.md"
+        run: python tools/check_stale_vault_index.py
 
   backup-snapshot:
     name: Create vault snapshot
