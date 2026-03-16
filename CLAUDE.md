@@ -30,7 +30,7 @@ ruff check . --ignore E501    # Python lint
 ## Registry
 
 ```sh
-python tools/validate_registry.py          # validate all 235 agents (exit 0 = PASS)
+python tools/validate_registry.py          # validate all 274 agents (exit 0 = PASS)
 python tools/validate_registry.py --report # JSON report
 ```
 
@@ -151,6 +151,23 @@ This section documents mistakes previously caught by Copilot PR reviews. Read be
 
 ### P2 / CI Issues (previously caught)
 
+**10. Missing pyproject.toml for pip-installed sub-packages**
+- Symptom: `pip install -e forge-output/` (or any sub-package) fails in CI with
+  "Could not find a version that satisfies the requirement" or "not a valid editable install".
+  Tests pass locally because `conftest.py` dynamically adds `forge-*/src` to `sys.path`,
+  masking the missing build config.
+- Rule: Every sub-package that is `pip install -e`'d in CI must have a `pyproject.toml`
+  (or `setup.py`). Run `pip install -e <pkg>/` locally before committing a new package.
+
+**11. Wrong setuptools build backend (`setuptools.backends.legacy:build`)**
+- Symptom: `BackendUnavailable: Cannot import 'setuptools.backends.legacy'` in CI.
+  The module `setuptools.backends` was introduced in setuptools **69.0.0**. Declaring
+  `requires = ["setuptools>=68"]` allows setuptools 68.x to be installed in pip's
+  isolated build environment — which has no `backends` module. Both the primary install
+  and the `--no-build-isolation` fallback fail, aborting the CI job.
+- Rule: Always use `build-backend = "setuptools.build_meta"` (available since setuptools 40+).
+  Never use `setuptools.backends.legacy:build`. If upgrading the minimum, set `>=69`.
+
 **4. Silent CI failures**
 - Symptom: `yamllint ... || true` and `ruff ... || true` let lint failures pass CI silently.
 - Rule: Never use `|| true` on lint/test commands in CI. Failures must block merges.
@@ -183,3 +200,7 @@ This section documents mistakes previously caught by Copilot PR reviews. Read be
 - Validate YAML indentation: list items = 2-space indent (`  - item`), not 4-space.
 - Run `yamllint .` and `ruff check . --ignore E501` before every commit.
 - Run `pytest --tb=short -q` and confirm 0 errors during collection.
+- When creating a new `forge-*` sub-package: always create `pyproject.toml` with
+  `build-backend = "setuptools.build_meta"` and verify `pip install -e <pkg>/` succeeds
+  locally before pushing. Conftest.py sys.path injection masks missing pyproject.toml locally
+  but CI will fail on the install step.
