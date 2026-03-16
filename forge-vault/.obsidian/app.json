@@ -1,0 +1,16 @@
+{
+  "legacyEditor": false,
+  "livePreview": true,
+  "defaultViewMode": "source",
+  "foldIndent": true,
+  "showLineNumber": true,
+  "strictLineBreaks": false,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "inbox",
+  "promptDelete": true,
+  "trashOption": "local",
+  "attachmentFolderPath": ".attachments",
+  "alwaysUpdateLinks": true,
+  "newLinkFormat": "relative",
+  "useMarkdownLinks": false
+}

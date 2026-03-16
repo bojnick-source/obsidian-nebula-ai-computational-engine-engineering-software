@@ -1,0 +1,15 @@
+# Obsidian cache and workspace state — do not commit
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/plugins/dataview/.index-version
+.obsidian/plugins/dataview/data.json
+.obsidian/plugins/templater-obsidian/data.json
+.obsidian/plugins/obsidian-git/data.json
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Backup staging area (actual backups committed selectively)
+backups/snapshots/*.zip

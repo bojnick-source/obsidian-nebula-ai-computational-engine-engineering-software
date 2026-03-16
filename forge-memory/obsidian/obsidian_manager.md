@@ -19,9 +19,21 @@ The Obsidian Manager (implemented in the Librarian agent + any supporting C++ va
 
 ---
 
+## Pre-Ingestion Layer
+
+External research material enters the vault via **NotebookLM** before the Librarian agent
+processes it. See [NotebookLM Integration Spec](notebooklm.md) for the full workflow.
+
+```
+External source → NotebookLM (notebooks/) → inbox/ → Librarian → vault
+```
+
+---
+
 ## Operation Contracts
 
 Each operation is specified in its own file:
+- [NotebookLM Pre-Ingestion](notebooklm.md)
 - [Intake](intake.md)
 - [Retrieval / Routing](routing.md)
 - [Gap Detection](gap_detection.md)

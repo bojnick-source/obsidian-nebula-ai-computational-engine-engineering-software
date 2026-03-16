@@ -1,0 +1,11 @@
+{
+  "id": "dataview",
+  "name": "Dataview",
+  "version": "0.5.67",
+  "minAppVersion": "0.15.0",
+  "description": "Complex data views for the FORGE vault: query by tag, status, confidence, domain.",
+  "author": "Michael Brenan",
+  "authorUrl": "https://github.com/blacksmithgu",
+  "fundingUrl": "https://github.com/sponsors/blacksmithgu",
+  "isDesktopOnly": false
+}

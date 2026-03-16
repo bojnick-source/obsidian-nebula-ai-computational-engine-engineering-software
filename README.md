@@ -13,13 +13,13 @@
 | **forge-agents** | Agent cards, prompts, registries (274 specialists, antagonists, verifiers, librarians) |
 | **forge-assembly** | CAD assembly Python module: disassembly DAG, fasteners, maintenance, mass properties |
 | **forge-learning** | Learning infrastructure: constitution, debate, discovery, evaluators, memory workflows |
-| **forge-memory** | Obsidian neural memory (≥ v1.12): schemas, routing, synthesis, contradiction handling |
+| **forge-memory** | Obsidian neural memory (≥ v1.12): schemas, routing, synthesis, contradiction handling. NotebookLM pre-ingestion spec in `obsidian/notebooklm.md` |
 | **forge-output** | Report generation, TUI, vault writer, DuckDB monitoring |
 | **forge-tools** | MCP wrappers for solvers (CalculiX, GMSH, FreeTO, OpenFOAM, etc.) |
 | **forge-verification** | Structural/adversarial/provenance/contradiction verifiers |
 | **forge-tests** | Fixtures, goldens, red-team packs, integration scenarios |
 | **forge-ops** | CI/CD, telemetry, security, cost tracking, incident response |
-| **forge-vault** | Obsidian knowledge vault ≥ v1.12 (engineering findings, derivations, ILC links) |
+| **forge-vault** | Obsidian knowledge vault ≥ v1.12 (open in Obsidian; NotebookLM inbox + verified engineering notes) |
 | **briefcase** | Node.js presentation layer: FORGE auto-ingest, LLM classification, Collections |
 | **mesh-morph-lhs** | Parametric mesh morphing optimization engine (LHS sampling, geometry, simulation) |
 | **external-ecosystem** | CAD/CFD/sim import bridges and validation gates |

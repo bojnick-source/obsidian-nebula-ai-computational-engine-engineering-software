@@ -63,6 +63,33 @@ python tools/scaffold_agent.py --batch tools/agent_manifest.yaml
 All PRs run: yamllint → ruff → pytest. All three must pass (no `|| true`).
 Registry validation is a separate tool, not yet in CI — run manually before PRs.
 
+## Obsidian Vault
+
+`forge-vault/` is a fully configured Obsidian vault (≥ v1.12.4). Open it directly
+in Obsidian. Required community plugins: **Dataview**, **Templater**, **obsidian-git**.
+
+```
+forge-vault/
+  .obsidian/          ← Obsidian config (committed)
+  HOME.md             ← vault home note / quick nav
+  inbox/              ← NotebookLM exports awaiting Librarian processing
+  notebooks/          ← Source PDFs uploaded to NotebookLM
+  engineering/        ← Verified engineering findings
+  mathematics/        ← Formulations and solver notes
+  ilc/                ← Inter-domain link candidates
+  projects/           ← Per-project knowledge (Aladdin-3B, Vanguard, Phoenix)
+  indexes/            ← Auto-maintained indexes (gaps, contradictions, stale)
+```
+
+## NotebookLM
+
+External research (PDFs, papers) is pre-processed in **Google NotebookLM** before
+entering the vault. The workflow: upload to NotebookLM → export summary markdown to
+`forge-vault/inbox/` → Librarian agent validates → verified note lands in
+`engineering/` or `mathematics/`.
+
+Full spec: `forge-memory/obsidian/notebooklm.md`
+
 ---
 
 ## LEAP 71 Integration
