@@ -599,7 +599,10 @@ class MultiAgentOrchestrator:
 
     def _integrate_specialist_result(self, assign_id: str, result: str) -> None:
         """Parse specialist output and write structured fields to blackboard."""
-        raise NotImplementedError("Implement with blackboard.add_entry()")
+        raise NotImplementedError(
+            f"Implement with blackboard.add_entry(assign_id={assign_id!r}, "
+            f"result=<parsed from {len(result)} chars>)"
+        )
 
     def _integrate_synthesis(self, synthesis: str) -> None:
         """Integrate Math Synthesizer output into blackboard."""

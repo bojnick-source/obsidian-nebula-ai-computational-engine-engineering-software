@@ -199,6 +199,7 @@ class SwanlabTracker:
             "budget/estimated_tokens": estimated_tokens,
             "budget/remaining":        max(0, budget - estimated_tokens),
             "budget/utilisation_pct":  round(utilisation, 2),
+            "budget/action_exhausted": 1 if action == "exhausted" else 0,
         }
         self._log(metrics, step=iteration)
 
