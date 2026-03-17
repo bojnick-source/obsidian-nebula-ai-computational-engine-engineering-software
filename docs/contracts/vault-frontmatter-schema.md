@@ -18,6 +18,7 @@ domain: string          # mechanical_engineering | materials | electrical_engine
 created_at: string      # ISO8601
 updated_at: string      # ISO8601
 trace_id: string        # task trace ID that created this note
+task_id: string         # first-class task identifier (matches blackboard task_id)
 agent_id: string        # agent that created this note
 agent_version: string   # semver
 confidence: float       # 0.0–1.0
@@ -75,3 +76,4 @@ review_flagged: boolean
 | Version | Changes |
 |---|---|
 | v1 | Initial frozen schema |
+| v1.1 | Added required `task_id` field — first-class task identifier, aligns with blackboard contract |

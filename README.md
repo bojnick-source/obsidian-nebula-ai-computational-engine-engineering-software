@@ -62,7 +62,15 @@
 
 ## CI
 
-All PRs run: `yamllint` → `ruff check` → `pytest`. All three must pass.
+All PRs run five gates — all must pass:
+
+| Gate | Command | Notes |
+|---|---|---|
+| YAML lint | `yamllint .` | Excludes `.github/workflows/` |
+| Python lint | `ruff check . --ignore E501` | |
+| Python tests | `pytest --tb=short -q` | |
+| CMake configure | `cmake -S . -B build -DFORGE_BUILD_TESTS=ON` | C++ scaffold check |
+| Registry validation | `python tools/validate_registry.py` | Run manually before PRs |
 
 ```
 pip install pytest pytest-asyncio pyyaml ruff yamllint numpy python-frontmatter
