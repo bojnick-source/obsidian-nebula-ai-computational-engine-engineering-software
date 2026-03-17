@@ -258,6 +258,7 @@ class UnifiedAgent:
             usage = getattr(response, "usage", None)
             in_tok = getattr(usage, "input_tokens", 0)
             out_tok = getattr(usage, "output_tokens", 0)
+            self.token_budget.consume(in_tok + out_tok)
             self.logger.log_model_call(
                 agent_role=role, model=model, provider=provider,
                 input_tokens=in_tok, output_tokens=out_tok,

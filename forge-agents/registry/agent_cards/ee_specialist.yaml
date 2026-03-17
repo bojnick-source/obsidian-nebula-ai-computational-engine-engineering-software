@@ -1,8 +1,8 @@
 id: ee_specialist
-name: Ee Specialist
+name: EE Specialist
 version: "1.0.0"
 role: specialist
-domain: electrical engineering
+domain: electrical_engineering
 status: v1
 
 output_contract_ref: docs/contracts/agent-output-contract.md

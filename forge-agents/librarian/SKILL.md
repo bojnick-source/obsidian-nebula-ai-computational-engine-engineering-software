@@ -64,12 +64,22 @@ See `learned/strategies.jsonl`. Current: 0 entries.
 
 ## Output Contract (FROZEN v1)
 
+> Canonical base schema: `docs/contracts/agent-output-contract.md` (`output_type: memory_op`).
+> The fields below are Librarian domain extensions on top of the base contract fields.
+> Base mandatory fields: `operation`, `note_ids_affected`, `amnesia_check_result`.
+> Domain extensions are non-canonical and must not be validated by the base contract gate.
+
 ```yaml
-operation: "intake|retrieval|gap_detection"
-notes_written: []
-notes_retrieved: []
-gaps_identified: []
-amnesia_flags: []
+# --- Canonical base fields (docs/contracts/agent-output-contract.md §memory_op) ---
+operation: "intake|retrieve|strengthen|gap_create|contradiction_flag|synthesis_propose"
+note_ids_affected: []     # Combined list of all note IDs touched (read or written)
+amnesia_check_result: "pass|fail|not_run"
+
+# --- Librarian domain extensions (non-canonical, Librarian-internal) ---
+notes_written: []         # Subset of note_ids_affected: IDs created or updated
+notes_retrieved: []       # Subset of note_ids_affected: IDs read
+gaps_identified: []       # Gap details with description and affected domain
+amnesia_flags: []         # Note IDs with pathway_strength < 0.3 (triggers amnesia check)
 provenance: "vault_read|vault_write"
 confidence: 1.0
 assumptions:

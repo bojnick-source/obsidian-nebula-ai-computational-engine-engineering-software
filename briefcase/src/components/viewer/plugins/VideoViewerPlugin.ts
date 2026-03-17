@@ -1,7 +1,10 @@
 import type { ViewerPlugin } from "../../../types/viewer";
 import type { AssetRecord } from "../../../types/asset";
 
-let activeVideo: HTMLVideoElement | null = null;
+// Track all active video elements so dispose() can clean up every instance,
+// not just the last one rendered. Using a Set prevents concurrent-preview bugs
+// where a second renderPreview() would overwrite a module-level single reference.
+const activeVideos = new Set<HTMLVideoElement>();
 
 export const VideoViewerPlugin: ViewerPlugin = {
   id: "video-viewer",
@@ -30,7 +33,7 @@ export const VideoViewerPlugin: ViewerPlugin = {
     video.controls = true;
     video.style.maxWidth = "100%";
     video.style.maxHeight = "100%";
-    activeVideo = video;
+    activeVideos.add(video);
     container.appendChild(video);
   },
 
@@ -53,10 +56,10 @@ export const VideoViewerPlugin: ViewerPlugin = {
   },
 
   dispose(): void {
-    if (activeVideo) {
-      activeVideo.pause();
-      activeVideo.src = "";
-      activeVideo = null;
+    for (const video of activeVideos) {
+      video.pause();
+      video.src = "";
     }
+    activeVideos.clear();
   },
 };

@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import type { ViewerPlugin } from "../../../types/viewer";
 import type { AssetRecord } from "../../../types/asset";
 
@@ -47,7 +48,7 @@ export const DocxViewerPlugin: ViewerPlugin = {
       const buf = await resp.arrayBuffer();
       const result = await mammoth.convertToHtml({ arrayBuffer: buf });
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = result.value;
+      wrapper.innerHTML = DOMPurify.sanitize(result.value);
       wrapper.style.maxWidth = "740px";
       wrapper.style.margin = "0 auto";
       scrollArea.appendChild(wrapper);
@@ -57,7 +58,7 @@ export const DocxViewerPlugin: ViewerPlugin = {
       const text = await resp.text();
       const html = await marked(text);
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = html;
+      wrapper.innerHTML = DOMPurify.sanitize(html as string);
       wrapper.style.maxWidth = "740px";
       wrapper.style.margin = "0 auto";
       scrollArea.appendChild(wrapper);

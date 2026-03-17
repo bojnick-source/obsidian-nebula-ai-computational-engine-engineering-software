@@ -40,7 +40,16 @@
   "plugins": {
     "dialog": {},
     "fs": {
-      "all": true
+      "all": false,
+      "readFile": true,
+      "writeFile": true,
+      "readDir": true,
+      "createDir": true,
+      "removeDir": false,
+      "removeFile": false,
+      "renameFile": false,
+      "copyFile": false,
+      "scope": ["$APPDATA/**", "$APPCONFIG/**", "$APPLOCALDATA/**", "$TEMP/**"]
     }
   }
 }

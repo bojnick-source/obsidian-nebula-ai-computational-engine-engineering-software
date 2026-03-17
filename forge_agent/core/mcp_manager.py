@@ -267,9 +267,17 @@ class MCPManager:
         servers_data = data.get("servers", {})
         configs = []
         for name, spec in servers_data.items():
+            # servers.yaml stores command as a string and args as a list.
+            # ServerConfig.command must be a full argv list for create_subprocess_exec.
+            raw_cmd = spec.get("command", "")
+            raw_args = spec.get("args", [])
+            if isinstance(raw_cmd, str):
+                cmd_list = [raw_cmd] + list(raw_args)
+            else:
+                cmd_list = list(raw_cmd) + list(raw_args)
             configs.append(ServerConfig(
                 name=name,
-                command=spec.get("command", []),
+                command=cmd_list,
                 timeout_ms=spec.get("timeout_ms", 5000),
                 health_check_interval_s=spec.get("health_check_interval_s", 30.0),
                 env=spec.get("env", {}),

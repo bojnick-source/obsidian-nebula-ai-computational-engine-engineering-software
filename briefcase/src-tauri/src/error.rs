@@ -29,6 +29,9 @@ pub enum BriefcaseError {
     #[error("Object store error: {message}")]
     ObjectStore { message: String },
 
+    #[error("Internal lock poisoned: {context}")]
+    LockPoisoned { context: String },
+
     #[error("FORGE listener error: {message}")]
     ForgeListener { message: String },
 

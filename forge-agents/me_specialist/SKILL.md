@@ -37,31 +37,59 @@ tools_allowed:
 
 ### Mandatory Output Fields
 
-Every ME Specialist output MUST include:
-1. `findings` — list of specific numerical results (MPa, mm, SF values)
-2. `assumptions` — NEVER null; minimum: material linearity, small deformations
-3. `what_would_falsify` — specific condition that would invalidate analysis
-4. `provenance` — CalculiX version + input file hash
-5. `confidence` — float 0.0–1.0
+Every ME Specialist output MUST conform to the frozen contract at
+`docs/contracts/agent-output-contract.md` (`output_type: analysis`).
+Each `findings` entry is a structured object — NOT a plain string.
+Required per finding: `claim`, `value`, `units`, `confidence`, `provenance`,
+`assumptions` (list — never null), `what_would_falsify`.
+
+Domain-specific required fields per finding:
+1. `claim` — concise description (e.g. "Maximum von Mises stress")
+2. `value` — numeric result
+3. `units` — SI units (MPa, mm, N, etc.)
+4. `confidence` — float 0.0–1.0
+5. `provenance.source` — CalculiX version + input file SHA256
+6. `assumptions` — NEVER null; minimum: material linearity, small deformations
+7. `what_would_falsify` — specific falsification condition
 
 ---
 
 ## Output Contract (FROZEN v1)
 
+> Illustrative example — canonical schema is `docs/contracts/agent-output-contract.md`.
+> `assumptions`, `what_would_falsify`, and `provenance` are nested within each
+> finding object, not separate top-level fields.
+
 ```yaml
 findings:
-  - "Maximum von Mises stress: XX.X MPa at [location]"
-  - "Maximum displacement: X.XX mm at [location]"
-  - "Safety factor (yield): X.X (yield strength: XXX MPa)"
-assumptions:
-  - "Material behavior is linear elastic (ε < 5% — verified)"
-  - "Boundary conditions approximate [physical condition]"
-  - "Geometric nonlinearity neglected (small displacement assumption)"
-what_would_falsify: >
-  Plastic deformation observed in physical test at loads below XX N;
-  or mesh convergence study shows GCI > 5% at stated element count.
-provenance: "CalculiX 2.21 — input file SHA256: [hash]"
-confidence: 0.85
+  - claim: "Maximum von Mises stress"
+    value: 142.3
+    units: "MPa"
+    confidence: 0.85
+    provenance:
+      source: "CalculiX 2.21 — input file SHA256: [hash]"
+      specificity: high
+      citation: "CalculiX 2.21 User Manual §4.3"
+    assumptions:
+      - "Material behavior is linear elastic (ε < 5% — verified)"
+      - "Boundary conditions approximate [physical condition]"
+      - "Geometric nonlinearity neglected (small displacement assumption)"
+    what_would_falsify: >
+      Plastic deformation observed in physical test at loads below XX N;
+      or mesh convergence study shows GCI > 5% at stated element count.
+  - claim: "Maximum displacement"
+    value: 0.34
+    units: "mm"
+    confidence: 0.85
+    provenance:
+      source: "CalculiX 2.21 — input file SHA256: [hash]"
+      specificity: high
+      citation: "CalculiX 2.21 User Manual §4.3"
+    assumptions:
+      - "Small displacement assumption (δ/L < 0.01 — verified)"
+    what_would_falsify: "Dial gauge measurement differs by > 10%"
+gaps_identified: []
+recommendations: []
 ```
 
 ---

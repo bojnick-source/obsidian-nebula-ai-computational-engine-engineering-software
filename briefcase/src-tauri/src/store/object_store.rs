@@ -47,6 +47,7 @@ impl ObjectStore {
 
     /// Get the filesystem path for a stored object by its content hash.
     pub fn retrieve_path(&self, hash: &str) -> Result<PathBuf, BriefcaseError> {
+        Self::validate_hash(hash)?;
         let path = self.object_path(hash);
         if path.exists() {
             Ok(path)
@@ -59,12 +60,24 @@ impl ObjectStore {
 
     /// Verify integrity by re-hashing the stored file and comparing to its address.
     pub fn verify(&self, hash: &str) -> Result<bool, BriefcaseError> {
+        Self::validate_hash(hash)?;
         let path = self.object_path(hash);
         if !path.exists() {
             return Ok(false);
         }
         let actual = Self::hash_file(&path)?;
         Ok(actual == hash)
+    }
+
+    /// Reject hashes that contain non-hex characters or are not 64 chars (SHA-256).
+    /// Prevents path traversal via user-controlled hash parameters.
+    fn validate_hash(hash: &str) -> Result<(), BriefcaseError> {
+        if hash.len() != 64 || !hash.chars().all(|c| c.is_ascii_hexdigit()) {
+            return Err(BriefcaseError::ObjectStore {
+                message: format!("invalid hash: expected 64 hex chars, got {:?}", hash),
+            });
+        }
+        Ok(())
     }
 
     /// Compute the sharded storage path for a hash.
