@@ -1,5 +1,5 @@
 id: cnc_antagonist
-name: Cnc Antagonist
+name: CNC Antagonist
 version: "1.0.0"
 role: antagonist
 domain: CNC Machining
@@ -16,12 +16,10 @@ skill_ref: forge-agents/cnc_antagonist/SKILL.md
 antagonist_pair: cnc_specialist
 
 mandatory_output_fields:
-  - findings
-  - assumptions
-  - what_would_falsify
-  - provenance
-  - confidence
   - verdict
   - rigour_score
   - objections
+  - assumption_audit
+  - regime_violations
+  - benchmark_comparison
   - summary_critique

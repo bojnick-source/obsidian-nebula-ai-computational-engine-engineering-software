@@ -57,6 +57,7 @@ class VaultWriter:
         trace_id: str,
         agent_id: str,
         quality_score: float = 0.0,
+        task_id: str = "",
     ) -> Path:
         """Serialize and write a vault note; add to Supermemory if configured."""
         note_id = self._slug(title)
@@ -72,6 +73,7 @@ class VaultWriter:
             "created": datetime.utcnow().isoformat() + "Z",
             "modified": datetime.utcnow().isoformat() + "Z",
             "trace_id": trace_id,
+            "task_id": task_id,
             "run_id": run_id,
             "agent_id": agent_id,
             "pathway_strength": 1.0,

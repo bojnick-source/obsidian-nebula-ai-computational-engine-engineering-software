@@ -176,10 +176,12 @@ class AgentJournal:
         trace_id: str,
         agent_version: str = "1.0.0",
         vault_subdir: str = "engineering/agent-thinking",
+        task_id: str = "",
     ) -> None:
         self._vault = vault_manager
         self.agent_id = agent_id
         self.trace_id = trace_id
+        self.task_id = task_id
         self.agent_version = agent_version
         self.vault_subdir = vault_subdir
         self._seq: int = 0                   # monotonic per-trace counter
@@ -277,7 +279,7 @@ class AgentJournal:
 
         # Keep vault index in sync
         rel_path = str(file_path.relative_to(vault_path))
-        self._vault.upsert_note(rel_path, markdown, _frontmatter(entry))
+        self._vault.upsert_note(rel_path, markdown, _frontmatter(entry, self.task_id))
 
         return file_path
 
@@ -390,7 +392,7 @@ def _render_note(entry: JournalEntry) -> str:
 """
 
 
-def _frontmatter(entry: JournalEntry) -> dict:
+def _frontmatter(entry: JournalEntry, task_id: str = "") -> dict:
     return {
         "id": entry.id,
         "type": "agent-thinking",
@@ -398,6 +400,7 @@ def _frontmatter(entry: JournalEntry) -> dict:
         "created_at": entry.when,
         "updated_at": entry.when,
         "trace_id": entry.trace_id,
+        "task_id": task_id,
         "agent_id": entry.agent_id,
         "agent_version": entry.agent_version,
         "confidence": 1.0,

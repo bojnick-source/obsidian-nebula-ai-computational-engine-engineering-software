@@ -1,5 +1,5 @@
 id: cnc_specialist
-name: Cnc Specialist
+name: CNC Specialist
 version: "1.0.0"
 role: specialist
 domain: CNC Machining
@@ -16,8 +16,8 @@ skill_ref: forge-agents/cnc_specialist/SKILL.md
 antagonist_pair: cnc_antagonist
 
 mandatory_output_fields:
-  - findings
-  - assumptions
-  - what_would_falsify
-  - provenance
-  - confidence
+  - cnc_finding
+  - cnc_finding.feeds_speeds
+  - cnc_finding.assumptions
+  - cnc_finding.what_would_falsify
+  - cnc_finding.revision_triggers
