@@ -3,9 +3,9 @@
 > Canonical version. This file is the integration of v6 + v7 gap-closure + v8 execution addendum.
 > See sibling files for historical versions.
 
-This document is the same as `FORGE_CATALOG.md` at the repo root. It is duplicated here to keep `docs/planning/catalog/` as the canonical historical archive location.
+This document is the same as `FORGE_MASTER_INDEX.md` at the repo root. It is duplicated here to keep `docs/planning/catalog/` as the canonical historical archive location.
 
-See [FORGE_CATALOG.md](../../../FORGE_CATALOG.md) for the full content.
+See [FORGE_MASTER_INDEX.md](../../../FORGE_MASTER_INDEX.md) for the full content.
 
 ---
 

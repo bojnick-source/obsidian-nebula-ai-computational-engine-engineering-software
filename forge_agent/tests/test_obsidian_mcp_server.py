@@ -341,9 +341,8 @@ async def test_add_frontmatter_delegates_args(app, mock_vault):
 
 
 def test_create_server_logs_index_size(tmp_path, caplog):
-    """create_server should log how many notes are indexed."""
+    """create_server should log that the vault manager was created."""
     mock_vault = MagicMock()
-    mock_vault._index = {"note_a": object(), "note_b": object()}  # 2 notes
 
     with patch(
         "forge_agent.memory.obsidian_mcp_server.ObsidianVaultManager",
@@ -353,8 +352,8 @@ def test_create_server_logs_index_size(tmp_path, caplog):
         with caplog.at_level(logging.INFO, logger="forge_agent.memory.obsidian_mcp_server"):
             create_server(str(tmp_path))
 
-    assert any("2" in msg for msg in caplog.messages), (
-        f"Expected index count '2' in log, got: {caplog.messages}"
+    assert any("Vault manager created" in msg for msg in caplog.messages), (
+        f"Expected vault creation log, got: {caplog.messages}"
     )
 
 

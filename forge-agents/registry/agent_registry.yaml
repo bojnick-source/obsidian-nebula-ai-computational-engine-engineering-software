@@ -412,13 +412,13 @@ agents:
   - id: optimization_mathematician
     role: mathematician
     domain: optimization
-    card: mathematicians/optimization.yaml
+    card: agent_cards/optimization_mathematician.yaml
     status: v1
 
   - id: pde_mathematician
     role: mathematician
     domain: pde
-    card: mathematicians/pde.yaml
+    card: agent_cards/pde_mathematician.yaml
     status: v1
 
   # ══════════════════════════════════════════════════════════════════════════

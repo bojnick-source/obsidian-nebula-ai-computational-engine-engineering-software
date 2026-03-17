@@ -17,6 +17,8 @@
 | `ERR_PROVIDER_*` | LLM provider errors |
 | `ERR_VERIFY_*` | Verification stack errors |
 | `ERR_SYSTEM_*` | Internal system errors |
+| `ERR_TOOL_ASSEMBLY_*` | Assembly / DFA tool errors |
+| `ERR_CONSTITUTION_*` | Engineering constitution rule violations |
 | `WARN_*` | Warnings (non-fatal; logged but don't halt pipeline) |
 
 ---
@@ -63,6 +65,35 @@
 | `ERR_TOOL_OUTPUT_INVALID` | Tool output failed schema validation |
 | `ERR_TOOL_SANDBOX_VIOLATION` | Tool exceeded sandbox resource limits |
 | `WARN_TOOL_DEGRADED` | Tool running in stub/degraded mode |
+
+---
+
+## Tool Assembly Errors
+
+Emitted by `assembly_specialist` / `dfa_dfm_specialist` agents (see `docs/architecture/assembly-dfa.md`).
+
+| Code | Description |
+|---|---|
+| `ERR_TOOL_ASSEMBLY_INTERFERENCE` | Mesh intersection volume > 0 — parts overlap |
+| `ERR_TOOL_ASSEMBLY_TOOL_BLOCKED` | No assembly tool reaches the fastener from any approach angle |
+| `ERR_TOOL_ASSEMBLY_CYCLE` | Assembly DAG contains a directed cycle — sequence unsolvable |
+| `ERR_TOOL_ASSEMBLY_UNPLACED` | One or more components have no valid placement in assembly order |
+| `ERR_TOOL_ASSEMBLY_MASS_OVERRUN` | Assembly mass exceeds declared budget |
+| `WARN_TOOL_ASSEMBLY_CLEARANCE` | Clearance between components below minimum (< 0.5 mm) |
+| `WARN_TOOL_ASSEMBLY_BLIND` | Fastener inaccessible for in-service inspection |
+| `WARN_TOOL_ASSEMBLY_SERVICEABILITY` | Serviceability score below threshold — maintenance time penalised |
+
+---
+
+## Constitution / Engineering Contract Errors
+
+Emitted when outputs violate the Engineering Constitution tier rules (see `docs/architecture/v3/engineering-constitution.md`).
+
+| Code | Description |
+|---|---|
+| `ERR_CONSTITUTION_TIER1` | Tier 1 constitution rule violated — output must be rejected |
+| `ERR_CONSTITUTION_TIER2` | Tier 2 constitution rule violated — major revision required |
+| `WARN_CONSTITUTION_TIER3` | Tier 3 constitution advisory — minor revision recommended |
 
 ---
 
@@ -116,3 +147,4 @@
 | Version | Changes |
 |---|---|
 | v1 | Initial frozen catalog |
+| v1.1 | Added Tool Assembly error codes (ERR_TOOL_ASSEMBLY_*, WARN_TOOL_ASSEMBLY_*) and Constitution error codes (ERR_CONSTITUTION_*) |

@@ -52,7 +52,7 @@ def create_server(vault_path: str) -> FastMCP:
     )
 
     vault = ObsidianVaultManager(vault_path)
-    logger.info("Vault loaded: %s (%d notes indexed)", vault_path, len(vault._index))
+    logger.info("Vault manager created: %s (index built on first use)", vault_path)
 
     # ── READ TOOLS ────────────────────────────────────────────────────────────
 
