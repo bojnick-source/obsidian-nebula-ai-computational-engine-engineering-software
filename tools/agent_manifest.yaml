@@ -127,6 +127,20 @@ agents:
     pair: additive_manufacturing_specialist
     status: planned
 
+  - id: cnc_specialist
+    role: specialist
+    domain: "CNC Machining — Toolpath Algorithms, G-code, Process Planning"
+    domain_short: "CNC Machining"
+    pair: cnc_antagonist
+    status: planned
+
+  - id: cnc_antagonist
+    role: antagonist
+    domain: "CNC Machining Critique"
+    domain_short: "CNC Machining"
+    pair: cnc_specialist
+    status: planned
+
   - id: dfa_dfm_specialist
     role: specialist
     domain: "DFA/DFM — Design for Assembly, Design for Manufacture, Tolerance Stack-up"

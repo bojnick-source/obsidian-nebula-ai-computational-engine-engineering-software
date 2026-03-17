@@ -694,6 +694,18 @@ agents:
     card: agent_cards/additive_manufacturing_antagonist.yaml
     status: planned
 
+  - id: cnc_specialist
+    role: specialist
+    domain: cnc_machining
+    card: agent_cards/cnc_specialist.yaml
+    status: planned
+
+  - id: cnc_antagonist
+    role: antagonist
+    domain: cnc_machining_critique
+    card: agent_cards/cnc_antagonist.yaml
+    status: planned
+
   - id: dfa_dfm_specialist
     role: specialist
     domain: dfa_dfm
