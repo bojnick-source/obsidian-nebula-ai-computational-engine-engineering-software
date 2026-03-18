@@ -47,12 +47,13 @@ class TaskRequest:
 @dataclass
 class TaskResult:
     trace_id: str
-    status: str                          # "complete" | "degraded" | "failed"
+    status: str                          # "complete" | "degraded" | "failed" | "disputed"
     result_summary: str
     confidence: float
     artifact_refs: list = field(default_factory=list)
     unresolved_gaps: list = field(default_factory=list)
     what_would_falsify: list = field(default_factory=list)
+    debate_verdict: str | None = field(default=None)  # "consensus" | "maintained_disagreement" | None
 
 
 # ---------------------------------------------------------------------------
@@ -256,6 +257,10 @@ class PipelineRunner:
         When provided, ``_run_phase_specialist()`` calls through the router for
         automatic Anthropic→OpenAI failover. Takes precedence over
         ``anthropic_client`` when set.
+    debate_orchestrator:
+        Optional ``DebateOrchestrator`` instance. When provided, Phase 5b runs
+        antagonist critique after the specialist phase. A ``fatal`` verdict
+        sets ``TaskResult.status = "disputed"``.
     """
 
     def __init__(
@@ -265,13 +270,15 @@ class PipelineRunner:
         vault_manager: Any = None,
         anthropic_client: Any = None,
         intelligence_router: Any = None,
+        debate_orchestrator: Any = None,
     ) -> None:
-        # All five parameters are stored and used — never silently dropped (P2 rule).
+        # All six parameters are stored and used — never silently dropped (P2 rule).
         self._config = config
         self._tool_executor: Any = tool_executor if tool_executor is not None else DefaultToolExecutor()
         self._vault_manager: Any = vault_manager if vault_manager is not None else NullVaultManager()
         self._anthropic_client: Any = anthropic_client  # None → use stub
         self._intelligence_router: Any = intelligence_router  # None → use anthropic_client path
+        self._debate_orchestrator: Any = debate_orchestrator  # None → skip debate (Phase 5b)
 
         self._log_stdout: bool = config.get("log_output") == "stdout"
         self._jsonl_events: list[dict] = []
@@ -305,6 +312,19 @@ class PipelineRunner:
         # Phase 5
         specialist_output = self._run_phase_specialist(blackboard, memory_notes)
 
+        # Phase 5b — debate (optional; only runs when debate_orchestrator is configured)
+        debate_verdict: str | None = None
+        if self._debate_orchestrator is not None:
+            debate_result = self._debate_orchestrator.run_debate(
+                specialist_output, blackboard
+            )
+            debate_verdict = debate_result.verdict
+            blackboard["debate.verdict"] = debate_verdict
+            blackboard["debate.rounds"] = debate_result.rounds
+            blackboard["debate.fatal_critique"] = any(
+                c.get("severity") == "fatal" for c in debate_result.critiques
+            )
+
         # Phase 6
         tool_results = self._run_phase_tool_execution(blackboard)
         if any(v.get("status") == "degraded" for v in tool_results.values()):
@@ -329,6 +349,7 @@ class PipelineRunner:
             verification_passed=verification_passed,
             unresolved_gaps=unresolved_gaps,
             artifact_refs=artifact_refs,
+            debate_verdict=debate_verdict,
         )
         return result
 
@@ -610,6 +631,7 @@ class PipelineRunner:
         verification_passed: bool,
         unresolved_gaps: list,
         artifact_refs: list,
+        debate_verdict: str | None = None,
     ) -> TaskResult:
         t0 = time.monotonic()
         phase = "output"
@@ -625,6 +647,13 @@ class PipelineRunner:
                 status = "degraded"
             else:
                 status = "complete"
+
+            # Override status when debate produced a fatal maintained_disagreement
+            if (
+                debate_verdict == "maintained_disagreement"
+                and blackboard.get("debate.fatal_critique")
+            ):
+                status = "disputed"
 
             result_summary = specialist_output.get(
                 "numerical_answer",
@@ -662,6 +691,7 @@ class PipelineRunner:
             artifact_refs=artifact_refs,
             unresolved_gaps=unresolved_gaps,
             what_would_falsify=what_would_falsify,
+            debate_verdict=debate_verdict,
         )
 
     # ------------------------------------------------------------------
