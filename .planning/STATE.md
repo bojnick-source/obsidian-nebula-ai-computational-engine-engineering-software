@@ -59,3 +59,16 @@ Self-verification: PASS — no cycles, polyglot compliant, P1/P11 guards applied
 Two issues fixed: degraded-vs-error status contract, red-team fixture gate-field scoping.
 
 Ready for: /gsd:execute-phase 3
+
+## Phase 3 — Completed 2026-03-18
+
+Plans:
+- 3-001  LiveToolExecutor (forge_agent/core/live_tool_executor.py)           commit 790fb14
+- 3-002  Degraded-mode acceptance tests (test_v01_acceptance_live.py)        commit feccd29
+- 3-003  Log completeness audit + fixture parametrization                    commit 838d540
+- 3-004  v0.1 milestone close (ROADMAP, CHANGELOG, REQUIREMENTS, STATE)
+
+Gates: ruff PASS · yamllint PASS · pytest 389/389 PASS
+v0.1 milestone declared: FORGE v0.1 complete.
+
+Next: /gsd:plan-phase 4

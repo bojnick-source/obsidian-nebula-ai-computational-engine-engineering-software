@@ -93,13 +93,20 @@ Each fixture must follow the YAML schema defined in FIXTURE_INDEX.md.
 
 ---
 
-## Phase 3 — v0.1 Acceptance Gate (Planned)
+## Phase 3 — v0.1 Acceptance Gate (COMPLETE)
 
-**Entry gate:** Phase 2 complete; all R2-0x tests pass.
-**Exit gate:** v0.1 acceptance test runs against live GMSH + CalculiX (not mocked);
-all 10 ACs pass; v0.1 milestone declared complete.
+**Status:** Verified 2026-03-18. All Phase 3 ACs pass. v0.1 milestone declared.
+**Entry gate:** Phase 2 complete; all R2-0x tests pass. (DONE)
+**Exit gate:** v0.1 acceptance test runs with LiveToolExecutor (real code paths,
+degraded mode); all 10 ACs pass; v0.1 milestone declared complete. (DONE)
 
-Scope: Live solver integration, degraded-mode path, log completeness audit.
+**Delivered:**
+- `forge_agent/core/live_tool_executor.py` — LiveToolExecutor with full MCP
+  Wrapper Envelope v1 output; returns `error_envelope()` on absent tools
+- `forge_agent/tests/test_live_tool_executor.py` — 15 unit tests for LiveToolExecutor
+- `forge_agent/tests/test_v01_acceptance_live.py` — 8 degraded-mode AC tests
+- `forge_agent/tests/test_log_completeness.py` — JSONL event schema audit
+- `forge_agent/tests/test_fixture_schemas.py` — parametrized fixture regression tests
 
 ---
 
