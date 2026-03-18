@@ -1,0 +1,12 @@
+description: "Gap detection — blackboard missing FEA results"
+tags: [memory, gap-detection, librarian]
+milestone: "Lane C (Memory Core)"
+input:
+  blackboard:
+    "task.description": "Analyze motor mount bracket"
+    "task.component": "motor_mount_bracket"
+    "specialist.result": "Beam theory analysis complete"
+    # tool_results.calculix intentionally absent
+expected:
+  gaps:
+    - "no FEA results"

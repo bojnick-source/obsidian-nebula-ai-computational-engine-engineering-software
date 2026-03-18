@@ -1,0 +1,22 @@
+description: "Vault write + immediate read-back (memory intake roundtrip)"
+tags: [memory, intake, vault, amnesia-check]
+milestone: "Lane C (Memory Core)"
+input:
+  note:
+    type: finding
+    domain: mechanical_engineering
+    component: motor_mount_bracket
+    project: aladdin-3b
+    trace_id: "test-trace-0001"
+    confidence: 0.85
+    content: "Motor mount bracket passes structural check. Max von Mises: 110 MPa."
+    provenance:
+      source: "ASM Handbook Vol 2"
+      citation: "ASM Handbook 2000"
+expected:
+  write: success
+  amnesia_check: true
+  retrieve_by:
+    domain: mechanical_engineering
+    component: motor_mount_bracket
+  retrieve_result: found

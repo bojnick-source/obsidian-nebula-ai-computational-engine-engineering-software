@@ -1,0 +1,11 @@
+description: "Golden expected verdicts for unit_errors.yaml red-team inputs"
+tags: [verifier, units, red-team, golden]
+milestone: "Lane F (Verification)"
+input:
+  fixture_ref: fixtures/verifier_red_team/unit_errors.yaml
+expected:
+  overall_verdict: disputed
+  verdicts:
+    - gate: UnitGate
+      passed: false
+      error_code: ERR_UNIT_INCONSISTENT
