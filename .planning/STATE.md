@@ -39,4 +39,23 @@ Gaps:
 - Fixture YAML files in phase_1_2, phase_1_3, golden/ have no parameterized
   pytest yet — they are data files only (follow-on work for Phase 3)
 
-Next: /gsd:plan-phase 3
+## Phase 3 — Planned 2026-03-18
+
+Plans:
+- 3-001  LiveToolExecutor — real code-path tool execution with full MCP envelope
+- 3-002  Degraded-mode acceptance tests — full pipeline with LiveToolExecutor
+- 3-003  Log completeness audit + fixture parametrization (gap closure)
+- 3-004  v0.1 milestone close — ROADMAP, CHANGELOG, REQUIREMENTS updates
+
+Research: (skipped — sufficient context from Phase 2 code + solver availability check)
+
+Dependency waves:
+  Wave 1: 3-001
+  Wave 2: 3-002 (depends on 3-001)
+  Wave 3: 3-003 (depends on 3-001, 3-002)
+  Wave 4: 3-004 (depends on 3-001, 3-002, 3-003)
+
+Self-verification: PASS — no cycles, polyglot compliant, P1/P11 guards applied.
+Two issues fixed: degraded-vs-error status contract, red-team fixture gate-field scoping.
+
+Ready for: /gsd:execute-phase 3
