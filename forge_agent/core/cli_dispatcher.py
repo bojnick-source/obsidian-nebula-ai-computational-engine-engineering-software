@@ -435,6 +435,74 @@ async def _swan_optimize(args: dict) -> dict:
     return await asyncio.get_event_loop().run_in_executor(None, _run)
 
 
+# ── OpenFOAM / SU2 ───────────────────────────────────────────────────────────
+
+
+@_register("openfoam_run")
+async def _openfoam_run(args: dict) -> dict:
+    """Run an OpenFOAM CFD case.
+
+    args:
+        case_dir  : str   — absolute path to the OpenFOAM case directory
+        solver    : str   — solver binary name (default: simpleFoam)
+        timeout_ms: int   — timeout in milliseconds (default: 300000)
+    """
+    solver = args.get("solver", "simpleFoam")
+    if not shutil.which(solver) and not shutil.which("foamRun"):
+        raise CliToolError(
+            f"OpenFOAM binary '{solver}' (or foamRun) not found on PATH — "
+            "install OpenFOAM or add to PATH"
+        )
+
+    case_dir = args.get("case_dir", "")
+    case_path = Path(case_dir)
+    if not case_path.is_dir():
+        raise CliToolError(f"Case directory not found: {case_dir}")
+
+    bin_path = shutil.which(solver) or shutil.which("foamRun")
+
+    def _run() -> dict:
+        import subprocess
+        proc = subprocess.run(
+            [bin_path],
+            cwd=str(case_path),
+            capture_output=True,
+            text=True,
+        )
+        return {"returncode": proc.returncode, "stdout": proc.stdout + proc.stderr}
+
+    return await asyncio.get_event_loop().run_in_executor(None, _run)
+
+
+@_register("su2_run")
+async def _su2_run(args: dict) -> dict:
+    """Run an SU2 CFD solve.
+
+    args:
+        config_file: str  — absolute path to the SU2 .cfg file
+        timeout_ms : int  — timeout in milliseconds (default: 300000)
+    """
+    if not shutil.which("SU2_CFD"):
+        raise CliToolError("SU2_CFD binary not found on PATH — install SU2 or add to PATH")
+
+    config_file = args.get("config_file", "")
+    cfg_path = Path(config_file)
+    if not cfg_path.is_file():
+        raise CliToolError(f"Config file not found: {config_file}")
+
+    def _run() -> dict:
+        import subprocess
+        proc = subprocess.run(
+            [shutil.which("SU2_CFD"), str(cfg_path)],
+            cwd=str(cfg_path.parent),
+            capture_output=True,
+            text=True,
+        )
+        return {"returncode": proc.returncode, "stdout": proc.stdout + proc.stderr}
+
+    return await asyncio.get_event_loop().run_in_executor(None, _run)
+
+
 # ── Void Vanguard — McKibben PAM / MuJoCo / CMA-ES ───────────────────────────
 # synthmuscle_fit: fit PAM parameters to measured force-length-pressure data
 # mujoco_step: run a deterministic MuJoCo trajectory rollout

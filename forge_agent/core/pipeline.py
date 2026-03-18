@@ -165,6 +165,54 @@ class DefaultToolExecutor:
             "status": "ok",
         }
 
+    def run_openfoam(
+        self,
+        trace_id: str,
+        task_id: str,
+        invocation_id: str,
+        **kwargs: Any,
+    ) -> dict:
+        if shutil.which("foamRun") is None and shutil.which("simpleFoam") is None:
+            return {
+                "tool": "openfoam",
+                "trace_id": trace_id,
+                "task_id": task_id,
+                "invocation_id": invocation_id,
+                "status": "degraded",
+                "reason": "OpenFOAM binary (foamRun/simpleFoam) not found on PATH",
+            }
+        return {
+            "tool": "openfoam",
+            "trace_id": trace_id,
+            "task_id": task_id,
+            "invocation_id": invocation_id,
+            "status": "ok",
+        }
+
+    def run_su2(
+        self,
+        trace_id: str,
+        task_id: str,
+        invocation_id: str,
+        **kwargs: Any,
+    ) -> dict:
+        if shutil.which("SU2_CFD") is None:
+            return {
+                "tool": "su2",
+                "trace_id": trace_id,
+                "task_id": task_id,
+                "invocation_id": invocation_id,
+                "status": "degraded",
+                "reason": "SU2_CFD binary not found on PATH",
+            }
+        return {
+            "tool": "su2",
+            "trace_id": trace_id,
+            "task_id": task_id,
+            "invocation_id": invocation_id,
+            "status": "ok",
+        }
+
 
 # ---------------------------------------------------------------------------
 # Pipeline runner
@@ -195,14 +243,19 @@ class PipelineRunner:
           - ``provider``: model provider name (default ``"anthropic"``).
           - ``vault_path``: path used when constructing the default vault note path.
     tool_executor:
-        Object with ``run_gmsh()`` / ``run_calculix()`` methods.
-        If *None*, a ``DefaultToolExecutor`` is used.
+        Object with ``run_gmsh()`` / ``run_calculix()`` / ``run_openfoam()`` / ``run_su2()``
+        methods. If *None*, a ``DefaultToolExecutor`` is used.
     vault_manager:
         Object with ``upsert_note()`` / ``amnesia_check()`` / ``search_notes()``.
         If *None*, a ``NullVaultManager`` (no-op) is used.
     anthropic_client:
         Anthropic SDK client (``anthropic.Anthropic``).
         If *None*, the pipeline uses ``_stub_specialist()`` so tests work offline.
+    intelligence_router:
+        Optional ``FailoverRouter`` instance (from ``intelligence_router.py``).
+        When provided, ``_run_phase_specialist()`` calls through the router for
+        automatic Anthropic→OpenAI failover. Takes precedence over
+        ``anthropic_client`` when set.
     """
 
     def __init__(
@@ -211,12 +264,14 @@ class PipelineRunner:
         tool_executor: Any = None,
         vault_manager: Any = None,
         anthropic_client: Any = None,
+        intelligence_router: Any = None,
     ) -> None:
-        # All four parameters are stored and used — never silently dropped (P2 rule).
+        # All five parameters are stored and used — never silently dropped (P2 rule).
         self._config = config
         self._tool_executor: Any = tool_executor if tool_executor is not None else DefaultToolExecutor()
         self._vault_manager: Any = vault_manager if vault_manager is not None else NullVaultManager()
         self._anthropic_client: Any = anthropic_client  # None → use stub
+        self._intelligence_router: Any = intelligence_router  # None → use anthropic_client path
 
         self._log_stdout: bool = config.get("log_output") == "stdout"
         self._jsonl_events: list[dict] = []
@@ -369,15 +424,27 @@ class PipelineRunner:
         self._emit_phase_start(phase, trace_id)
         output: dict = {}
         try:
-            if self._anthropic_client is not None:
-                # Real API call — anthropic_client is used here (P2 rule satisfied)
-                context = blackboard.get("intake.description", "")
-                if memory_notes:
-                    snippets = "\n\n".join(
-                        str(n) for n in memory_notes[:3]
-                    )
-                    context = f"{context}\n\nRelevant vault notes:\n{snippets}"
+            context = blackboard.get("intake.description", "")
+            if memory_notes:
+                snippets = "\n\n".join(str(n) for n in memory_notes[:3])
+                context = f"{context}\n\nRelevant vault notes:\n{snippets}"
 
+            if self._intelligence_router is not None:
+                # Failover router path — used when FailoverRouter is injected (P2 satisfied)
+                router_result = self._intelligence_router.route_call_sync(
+                    role="specialist",
+                    messages=[{"role": "user", "content": context}],
+                    model=blackboard.get("routing.model", "claude-opus-4-6"),
+                    max_tokens=2048,
+                    system=ME_SYSTEM_PROMPT,
+                )
+                raw_text = router_result["content"]
+                try:
+                    output = json.loads(raw_text)
+                except (json.JSONDecodeError, ValueError):
+                    output = {"raw": raw_text}
+            elif self._anthropic_client is not None:
+                # Direct Anthropic client path — anthropic_client used here (P2 satisfied)
                 msg = self._anthropic_client.messages.create(
                     model=blackboard.get("routing.model", "claude-opus-4-6"),
                     max_tokens=2048,

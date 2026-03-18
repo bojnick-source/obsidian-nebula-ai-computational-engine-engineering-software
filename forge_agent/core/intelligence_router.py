@@ -17,6 +17,7 @@ import asyncio
 import os
 import re
 from dataclasses import dataclass, field
+from typing import Any
 
 
 # ------------------------------------------------------------------ data types
@@ -252,3 +253,168 @@ class IntelligenceRouter:
             if key in text:
                 domains.extend(urls)
         return domains[:20]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FailoverRouter — Anthropic→OpenAI failover with CircuitBreaker
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class FailoverRouter:
+    """Route LLM calls with automatic failover using per-provider CircuitBreakers.
+
+    Primary provider: Anthropic (claude-opus-4-6 / claude-sonnet-4-6)
+    Secondary provider: OpenAI (o3 / gpt-4o)
+
+    Failover triggers when:
+      - Primary CircuitBreaker.allow_call() returns False (OPEN or HALF_OPEN + probe in flight)
+      - Primary call raises any exception
+
+    Parameters
+    ----------
+    config:
+        Router config dict (same structure as forge.yaml router section).
+        Used to resolve model IDs via ProviderClients.resolve_model().
+    providers:
+        ProviderClients singleton (or injectable mock for testing).
+    primary_cb:
+        CircuitBreaker instance for the primary (Anthropic) provider.
+        If None, a default CircuitBreaker() is created.
+    secondary_cb:
+        CircuitBreaker instance for the secondary (OpenAI) provider.
+        If None, a default CircuitBreaker() is created.
+    """
+
+    def __init__(
+        self,
+        config: dict,
+        providers: Any,
+        primary_cb: Any = None,
+        secondary_cb: Any = None,
+    ) -> None:
+        from forge_agent.core.retry import CircuitBreaker
+        self._config = config               # used in route_call via resolve_model
+        self._providers = providers         # used in route_call for API calls
+        self._primary_cb = primary_cb if primary_cb is not None else CircuitBreaker()
+        self._secondary_cb = secondary_cb if secondary_cb is not None else CircuitBreaker()
+
+    async def route_call(
+        self,
+        role: str,
+        messages: list,
+        **kwargs: Any,
+    ) -> dict:
+        """Attempt primary provider; failover to secondary on circuit open or error.
+
+        Parameters
+        ----------
+        role:
+            Agent role string passed to ProviderClients.resolve_model() for model selection.
+        messages:
+            List of message dicts in provider-agnostic format
+            [{"role": "user", "content": "..."}].
+        **kwargs:
+            Extra kwargs forwarded to provider SDK (max_tokens, temperature, system, etc.)
+
+        Returns
+        -------
+        dict with keys: provider, model, content (str), raw_response (provider object)
+
+        Raises
+        ------
+        RuntimeError(ERR_PROVIDER_UNAVAILABLE ...) if both providers fail.
+        """
+        # --- Try primary (Anthropic) ---
+        if self._primary_cb.allow_call():
+            try:
+                result = await self._call_anthropic(role, messages, **kwargs)
+                self._primary_cb.record_success()
+                return result
+            except Exception as primary_exc:
+                self._primary_cb.record_failure()
+                # Fall through to secondary
+                primary_err = str(primary_exc)
+        else:
+            primary_err = f"Primary circuit breaker {self._primary_cb.state} — skipped"
+
+        # --- Failover to secondary (OpenAI) ---
+        if self._secondary_cb.allow_call():
+            try:
+                result = await self._call_openai(role, messages, **kwargs)
+                self._secondary_cb.record_success()
+                return result
+            except Exception as secondary_exc:
+                self._secondary_cb.record_failure()
+                raise RuntimeError(
+                    f"ERR_PROVIDER_UNAVAILABLE: both providers failed. "
+                    f"Primary: {primary_err}. Secondary: {secondary_exc}"
+                ) from secondary_exc
+
+        raise RuntimeError(
+            f"ERR_PROVIDER_UNAVAILABLE: both circuit breakers open. "
+            f"Primary: {primary_err}"
+        )
+
+    def route_call_sync(
+        self,
+        role: str,
+        messages: list,
+        **kwargs: Any,
+    ) -> dict:
+        """Synchronous wrapper around route_call() for use in sync pipelines.
+
+        Must NOT be called from within a running event loop.
+        """
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if loop is not None:
+            raise RuntimeError(
+                "route_call_sync() called from within a running event loop. "
+                "Use 'await route_call()' instead."
+            )
+        return asyncio.run(self.route_call(role, messages, **kwargs))
+
+    async def _call_anthropic(self, role: str, messages: list, **kwargs: Any) -> dict:
+        model, _ = self._providers.resolve_model(self._config, role)
+        response = await self._providers.anthropic.messages.create(
+            model=model,
+            messages=messages,
+            **kwargs,
+        )
+        return {
+            "provider": "anthropic",
+            "model": model,
+            "content": response.content[0].text,
+            "raw_response": response,
+        }
+
+    async def _call_openai(self, role: str, messages: list, **kwargs: Any) -> dict:
+        # Strip Anthropic-specific kwargs not accepted by OpenAI
+        oai_kwargs = {k: v for k, v in kwargs.items() if k not in {"system"}}
+        # OpenAI uses system message as first message element
+        system = kwargs.get("system")
+        oai_messages = list(messages)
+        if system:
+            oai_messages = [{"role": "system", "content": system}] + oai_messages
+
+        # Resolve OpenAI model from config (fallback to gpt-4o)
+        model, _ = self._providers.resolve_model(
+            self._config, role + "_openai_fallback"
+        )
+        if not model or "claude" in model:
+            model = "gpt-4o"
+
+        response = await self._providers.openai.chat.completions.create(
+            model=model,
+            messages=oai_messages,
+            **oai_kwargs,
+        )
+        return {
+            "provider": "openai",
+            "model": model,
+            "content": response.choices[0].message.content,
+            "raw_response": response,
+        }

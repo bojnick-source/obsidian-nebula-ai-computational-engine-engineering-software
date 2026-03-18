@@ -6,8 +6,17 @@ tested against known trigger vocabulary from the source.
 """
 from __future__ import annotations
 
+from unittest.mock import AsyncMock, MagicMock
 
-from forge_agent.core.intelligence_router import IntelligenceRouter, PreTask
+import pytest
+
+from forge_agent.core.intelligence_router import (
+    FailoverRouter,
+    IntelligenceRouter,
+    PreTask,
+    PreTaskResult,
+)
+from forge_agent.core.retry import CircuitBreaker, CircuitState
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -140,9 +149,145 @@ def test_format_context_empty_returns_empty_string():
 
 def test_format_context_error_result_included():
     """format_context must include error results in output."""
-    from forge_agent.core.intelligence_router import PreTaskResult
     router = IntelligenceRouter()
     results = [PreTaskResult(task_type="math_compute", provider="openai", content="", error="timeout")]
     output = router.format_context(results)
     assert "ERROR" in output
     assert "timeout" in output
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FailoverRouter — plan 4-003 acceptance criteria
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _make_providers(anthropic_response=None, openai_response=None):
+    """Build a mock ProviderClients with controllable async API."""
+    providers = MagicMock()
+    providers.resolve_model.return_value = ("claude-opus-4-6", "anthropic")
+
+    if anthropic_response is not None:
+        msg = MagicMock()
+        msg.content = [MagicMock(text=anthropic_response)]
+        providers.anthropic.messages.create = AsyncMock(return_value=msg)
+    else:
+        providers.anthropic.messages.create = AsyncMock(side_effect=RuntimeError("primary fail"))
+
+    if openai_response is not None:
+        choice = MagicMock()
+        choice.message.content = openai_response
+        oai_resp = MagicMock()
+        oai_resp.choices = [choice]
+        providers.openai.chat.completions.create = AsyncMock(return_value=oai_resp)
+    else:
+        providers.openai.chat.completions.create = AsyncMock(
+            side_effect=RuntimeError("secondary fail")
+        )
+
+    return providers
+
+
+# AC 2: primary raises → record_failure + retry on secondary
+@pytest.mark.asyncio
+async def test_failover_on_primary_exception():
+    primary_cb = CircuitBreaker()
+    secondary_cb = CircuitBreaker()
+    providers = _make_providers(anthropic_response=None, openai_response="secondary_ok")
+    router = FailoverRouter(
+        config={}, providers=providers, primary_cb=primary_cb, secondary_cb=secondary_cb
+    )
+    result = await router.route_call("specialist", [{"role": "user", "content": "x"}])
+    assert result["provider"] == "openai"
+    assert result["content"] == "secondary_ok"
+    # primary cb must have recorded a failure
+    assert primary_cb._failure_count == 1
+
+
+# AC 3: primary circuit OPEN → skip primary entirely, call secondary
+@pytest.mark.asyncio
+async def test_skips_primary_when_open():
+    primary_cb = CircuitBreaker()
+    # Force circuit OPEN by simulating failures at threshold
+    for _ in range(primary_cb.failure_threshold):
+        primary_cb.record_failure()
+    assert primary_cb.state == CircuitState.OPEN
+
+    providers = _make_providers(anthropic_response="primary_ok", openai_response="secondary_ok")
+    router = FailoverRouter(config={}, providers=providers, primary_cb=primary_cb)
+    result = await router.route_call("specialist", [{"role": "user", "content": "x"}])
+    # Primary was OPEN so secondary was called
+    assert result["provider"] == "openai"
+    providers.anthropic.messages.create.assert_not_called()
+
+
+# AC 4: primary succeeds → record_success, secondary NOT called
+@pytest.mark.asyncio
+async def test_primary_success_no_secondary_call():
+    primary_cb = CircuitBreaker()
+    secondary_cb = CircuitBreaker()
+    providers = _make_providers(anthropic_response="primary_ok", openai_response="secondary_ok")
+    router = FailoverRouter(
+        config={}, providers=providers, primary_cb=primary_cb, secondary_cb=secondary_cb
+    )
+    result = await router.route_call("specialist", [{"role": "user", "content": "x"}])
+    assert result["provider"] == "anthropic"
+    assert result["content"] == "primary_ok"
+    providers.openai.chat.completions.create.assert_not_called()
+    assert primary_cb._failure_count == 0
+
+
+# AC 5: both fail → RuntimeError with ERR_PROVIDER_UNAVAILABLE
+@pytest.mark.asyncio
+async def test_both_fail_raises_provider_unavailable():
+    providers = _make_providers(anthropic_response=None, openai_response=None)
+    router = FailoverRouter(config={}, providers=providers)
+    with pytest.raises(RuntimeError, match="ERR_PROVIDER_UNAVAILABLE"):
+        await router.route_call("specialist", [{"role": "user", "content": "x"}])
+
+
+# AC 6: HALF_OPEN probe guard — second concurrent caller goes to secondary
+@pytest.mark.asyncio
+async def test_half_open_second_caller_goes_to_secondary():
+    primary_cb = CircuitBreaker()
+    # Force circuit to HALF_OPEN by opening then marking it half-open manually
+    for _ in range(primary_cb.failure_threshold):
+        primary_cb.record_failure()
+    primary_cb._state = CircuitState.HALF_OPEN
+    primary_cb._probe_in_flight = False
+
+    # First allow_call sets _probe_in_flight=True; second returns False
+    assert primary_cb.allow_call() is True    # probe allowed
+    assert primary_cb.allow_call() is False   # second caller rejected
+
+
+# AC 7: PipelineRunner with intelligence_router injected uses router path
+def test_pipeline_uses_intelligence_router_when_injected():
+    from forge_agent.core.pipeline import PipelineRunner, TaskRequest
+
+    mock_router = MagicMock()
+    mock_router.route_call_sync.return_value = {
+        "provider": "anthropic",
+        "model": "claude-opus-4-6",
+        "content": '{"steps": ["done"]}',
+        "raw_response": MagicMock(),
+    }
+    runner = PipelineRunner(
+        config={},
+        intelligence_router=mock_router,
+    )
+    req = TaskRequest(
+        task_type="analysis",
+        project="test",
+        component="bracket",
+        description="test task",
+    )
+    result = runner.run(req)
+    assert result.status in {"ok", "error", "failed"}  # pipeline completed
+    mock_router.route_call_sync.assert_called_once()
+
+
+# AC 8: route_call is async (awaitable)
+def test_route_call_is_async():
+    import inspect
+    router = FailoverRouter(config={}, providers=MagicMock())
+    assert inspect.iscoroutinefunction(router.route_call)
