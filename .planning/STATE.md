@@ -72,3 +72,23 @@ Gates: ruff PASS · yamllint PASS · pytest 389/389 PASS
 v0.1 milestone declared: FORGE v0.1 complete.
 
 Next: /gsd:plan-phase 4
+
+## Phase 4 — Planned 2026-03-18
+
+Plans:
+- 4-001  AntagonistAgent base class (forge_agent/agents/antagonist_base.py)
+- 4-002  Debate orchestrator + pipeline integration (forge_agent/core/debate_orchestrator.py)
+- 4-003  Provider failover intelligence router (forge_agent/core/intelligence_router.py)
+- 4-004  OpenFOAM + SU2 CLI wrappers (mcp_wrappers/openfoam_server.py, su2_server.py)
+- 4-005  ILC detector (forge_agent/core/ilc_detector.py)
+
+Research: codebase explored — antagonist registry (111 agents), DebateLifecycle (forge-learning),
+  CircuitBreaker (retry.py), ProviderClients (provider_clients.py), cli_dispatcher @_register pattern.
+
+Dependency waves:
+  Wave 1 (parallel): 4-001, 4-003, 4-004, 4-005
+  Wave 2:            4-002 (depends on 4-001)
+
+Self-verification: PASS — no cycles, Python-only, P1-P11 guards applied.
+
+Ready for: /gsd:execute-phase 4
