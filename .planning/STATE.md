@@ -106,3 +106,25 @@ Gaps: none
 Full suite: 432 passed, 0 failed
 
 Next: /gsd:plan-phase 5
+
+## Phase 5 — Planned 2026-03-18
+
+Plans:
+- 5-001  Synthmuscle specialist + antagonist Python agents (forge_agent/agents/vanguard/synthmuscle.py)
+- 5-002  MuJoCo simulation specialist + antagonist Python agents (mujoco_simulation.py)
+- 5-003  CMA-ES optimization specialist + antagonist Python agents (cmaes_optimization.py)
+- 5-004  Actuator safety specialist + antagonist Python agents (actuator_safety.py)
+- 5-005  VanguardPipelineRunner + pipeline specialist_prompt param (vanguard_pipeline.py)
+
+Research: .planning/5-research-vanguard.md — Vanguard CLI handlers analysed,
+  specialist/antagonist interface patterns confirmed, VanguardPipelineRunner design.
+
+Dependency waves:
+  Wave 1 (parallel): 5-001, 5-002, 5-003, 5-004
+  Wave 2:            5-005 (depends on 5-001, 5-002, 5-003, 5-004)
+
+Self-verification: PASS — no dependency cycles; Python-only (polyglot compliant);
+  P1-P11 guards applied; AntagonistAgent ABC interface verified; DebateOrchestrator
+  accepts specialist=None safely; PipelineRunner specialist_prompt is backward-compatible.
+
+Ready for: /gsd:execute-phase 5

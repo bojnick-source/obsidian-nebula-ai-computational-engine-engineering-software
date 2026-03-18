@@ -115,3 +115,31 @@ degraded mode); all 10 ACs pass; v0.1 milestone declared complete. (DONE)
 Entry gate: v0.1 acceptance gate passed and frozen.
 Scope: Antagonist system, A2A debate, provider failover, additional tool wrappers
 (FreeTO, OpenFOAM, SU2), ILC link detection, Vanguard pipeline.
+
+---
+
+## Phase 5 — Void Vanguard Python Agents + Pipeline Integration (Planned)
+
+Entry gate: Phase 4 complete (DONE).
+Scope: Python agent modules for all four Void Vanguard domains (synthmuscle,
+mujoco_sim, cmaes_opt, actuator_safety) plus VanguardPipelineRunner.
+
+### R5-01: Synthmuscle Specialist + Antagonist
+forge_agent/agents/vanguard/synthmuscle.py + synthmuscle_antagonist.py
+Heuristics: rmse_pct > 5% → fatal; r2 < 0.95 → warning; default → info.
+
+### R5-02: MuJoCo Simulation Specialist + Antagonist
+forge_agent/agents/vanguard/mujoco_simulation.py + mujoco_simulation_antagonist.py
+Heuristics: seed missing → fatal; steps < 100 → warning; default → info.
+
+### R5-03: CMA-ES Optimization Specialist + Antagonist
+forge_agent/agents/vanguard/cmaes_optimization.py + cmaes_optimization_antagonist.py
+Heuristics: cvar_pass=False → fatal; stagnation=True → warning; default → info.
+
+### R5-04: Actuator Safety Specialist + Antagonist
+forge_agent/agents/vanguard/actuator_safety.py + actuator_safety_antagonist.py
+Heuristics: safety_factor missing/< 2.0 → fatal; burst_pressure absent → warning; default → info.
+
+### R5-05: VanguardPipelineRunner
+forge_agent/core/vanguard_pipeline.py — domain-routed pipeline.
+forge_agent/core/pipeline.py — add specialist_prompt param (backward-compatible).
