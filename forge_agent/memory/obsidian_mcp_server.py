@@ -144,6 +144,23 @@ def create_server(vault_path: str) -> FastMCP:
         """
         return vault.get_tags(tag)
 
+    @app.tool()
+    def amnesia_check(path: str) -> bool:
+        """
+        Verify that a vault write persisted by reading back the written note.
+
+        Call immediately after upsert_note() to detect vault amnesia.
+        Returns True if retrievable, False if amnesia detected.
+        FORGE pipeline must HALT on False — vault is a hard dependency.
+
+        Args:
+            path: Vault-relative path of the note just written
+
+        Returns:
+            True if immediately retrievable, False if amnesia detected
+        """
+        return vault.amnesia_check(path)
+
     # ── WRITE TOOLS ───────────────────────────────────────────────────────────
 
     @app.tool()

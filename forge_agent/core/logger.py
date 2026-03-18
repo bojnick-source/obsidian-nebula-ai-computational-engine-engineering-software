@@ -27,12 +27,14 @@ class ToolCallRecord:
     event: str = "tool_call"
     ts: float = field(default_factory=time.time)
     run_id: str = ""
+    trace_id: str = ""
     iteration: int = 0
     tool_name: str = ""
     tool_args: dict = field(default_factory=dict)
     result_summary: str = ""      # first 200 chars of result
     latency_ms: float = 0.0
     error: str | None = None
+    error_code: str | None = None
 
 
 @dataclass
@@ -40,6 +42,7 @@ class ModelCallRecord:
     event: str = "model_call"
     ts: float = field(default_factory=time.time)
     run_id: str = ""
+    trace_id: str = ""
     iteration: int = 0
     agent_role: str = ""
     model: str = ""
@@ -57,9 +60,11 @@ class PhaseRecord:
     event: str = "phase"
     ts: float = field(default_factory=time.time)
     run_id: str = ""
+    trace_id: str = ""
     phase: str = ""
     status: str = ""          # started | completed | failed
     details: dict = field(default_factory=dict)
+    error_code: str | None = None
 
 
 @dataclass
@@ -67,6 +72,7 @@ class BudgetRecord:
     event: str = "budget"
     ts: float = field(default_factory=time.time)
     run_id: str = ""
+    trace_id: str = ""
     iteration: int = 0
     estimated_tokens: int = 0
     budget: int = 0
@@ -83,11 +89,13 @@ class AgentLogger:
         self,
         log_path: str | Path,
         run_id: str = "",
+        trace_id: str = "",
         tracker: "SwanlabTracker | None" = None,
     ) -> None:
         self.log_path = Path(log_path)
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
         self.run_id = run_id
+        self.trace_id = trace_id
         self._fh = self.log_path.open("a", encoding="utf-8")
         self._tracker = tracker
 
@@ -111,6 +119,7 @@ class AgentLogger:
         result_summary = _summarise(result)
         rec = ToolCallRecord(
             run_id=self.run_id,
+            trace_id=self.trace_id,
             iteration=iteration,
             tool_name=tool_name,
             tool_args=tool_args,
@@ -142,6 +151,7 @@ class AgentLogger:
     ) -> None:
         rec = ModelCallRecord(
             run_id=self.run_id,
+            trace_id=self.trace_id,
             iteration=iteration,
             agent_role=agent_role,
             model=model,
@@ -169,12 +179,14 @@ class AgentLogger:
                 error=error,
             )
 
-    def log_phase(self, phase: str, status: str, details: dict | None = None) -> None:
+    def log_phase(self, phase: str, status: str, details: dict | None = None, error_code: str | None = None) -> None:
         rec = PhaseRecord(
             run_id=self.run_id,
+            trace_id=self.trace_id,
             phase=phase,
             status=status,
             details=details or {},
+            error_code=error_code,
         )
         self._write(rec)
         if self._tracker is not None:
@@ -183,6 +195,7 @@ class AgentLogger:
     def log_budget(self, iteration: int, estimated_tokens: int, budget: int, action: str) -> None:
         rec = BudgetRecord(
             run_id=self.run_id,
+            trace_id=self.trace_id,
             iteration=iteration,
             estimated_tokens=estimated_tokens,
             budget=budget,

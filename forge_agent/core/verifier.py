@@ -20,6 +20,7 @@ mcp_manager.py, token_budget.py, etc. in core/.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
@@ -197,12 +198,217 @@ class VerifierAgent:
         return result
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Static verification gates (no LLM required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+@dataclass
+class GateResult:
+    gate: str
+    passed: bool
+    error_code: str | None = None
+    detail: str = ""
+
+
+class UnitGate:
+    """AC-05: Every finding must carry non-empty units; no mixed unit systems."""
+
+    # Mixed-unit pairs that indicate inconsistency within a single output
+    _SI_STRESS = frozenset({"pa", "kpa", "mpa", "gpa", "n/m2", "n/mm2"})
+    _IMPERIAL_STRESS = frozenset({"psi", "ksi"})
+
+    @classmethod
+    def check(cls, output: dict) -> GateResult:
+        findings = output.get("findings", [])
+        if not isinstance(findings, list):
+            findings = []
+
+        has_si = False
+        has_imperial = False
+
+        for i, finding in enumerate(findings):
+            if not isinstance(finding, dict):
+                continue
+            units_raw = str(finding.get("units", "")).strip()
+            if not units_raw:
+                return GateResult(
+                    gate="UnitGate",
+                    passed=False,
+                    error_code="ERR_UNIT_MISSING",
+                    detail=f"Finding[{i}] has no units",
+                )
+            units_lower = units_raw.lower()
+            if any(u in units_lower for u in cls._SI_STRESS):
+                has_si = True
+            if any(u in units_lower for u in cls._IMPERIAL_STRESS):
+                has_imperial = True
+
+        if has_si and has_imperial:
+            return GateResult(
+                gate="UnitGate",
+                passed=False,
+                error_code="ERR_UNIT_INCONSISTENT",
+                detail="Mixed SI and imperial stress units detected in findings",
+            )
+
+        return GateResult(gate="UnitGate", passed=True)
+
+
+class DimensionalGate:
+    """AC-05: Units must be dimensionally compatible with the declared quantity."""
+
+    # Heuristic: quantity keyword → accepted unit substrings
+    _QUANTITY_UNITS: dict[str, frozenset[str]] = {
+        "stress": frozenset({"pa", "kpa", "mpa", "gpa", "psi", "ksi", "n/m2", "n/mm2"}),
+        "force": frozenset({"n", "kn", "mn", "lbf", "kip"}),
+        "displacement": frozenset({"m", "mm", "cm", "km", "in", "ft"}),
+        "pressure": frozenset({"pa", "kpa", "mpa", "gpa", "bar", "atm", "psi"}),
+        "temperature": frozenset({"k", "°c", "°f", "degc", "degf"}),
+        "mass": frozenset({"kg", "g", "mg", "lb", "oz", "t"}),
+    }
+
+    @classmethod
+    def check(cls, output: dict) -> GateResult:
+        findings = output.get("findings", [])
+        if not isinstance(findings, list):
+            return GateResult(gate="DimensionalGate", passed=True)
+
+        for i, finding in enumerate(findings):
+            if not isinstance(finding, dict):
+                continue
+            quantity = str(finding.get("quantity", "")).lower().strip()
+            units = str(finding.get("units", "")).lower().strip()
+            if not quantity or not units:
+                continue
+
+            for keyword, accepted in cls._QUANTITY_UNITS.items():
+                if keyword in quantity:
+                    if not any(u in units for u in accepted):
+                        return GateResult(
+                            gate="DimensionalGate",
+                            passed=False,
+                            error_code="ERR_DIMENSIONAL_MISMATCH",
+                            detail=(
+                                f"Finding[{i}] quantity '{quantity}' "
+                                f"has incompatible units '{units}'"
+                            ),
+                        )
+                    break
+
+        return GateResult(gate="DimensionalGate", passed=True)
+
+
+class ProvenanceGate:
+    """AC-05: Every finding must cite a specific, traceable source."""
+
+    _GENERIC_SOURCES = frozenset({
+        "unknown", "textbook", "literature", "reference", "general",
+        "standard", "various", "multiple", "see above", "n/a", "na",
+        "none", "", "tbd",
+    })
+
+    # Patterns that suggest a real citation: DOI, ISBN, ASM, ASTM, ISO, MIL-SPEC
+    # Precompiled for efficiency — patterns are static across all calls.
+    _CITATION_PATTERNS: tuple[re.Pattern, ...] = tuple(re.compile(p) for p in (
+        r"10\.\d{4,}/",          # DOI
+        r"isbn",                  # ISBN
+        r"astm\s+[a-z]\d+",      # ASTM A1234
+        r"iso\s+\d+",            # ISO 9001
+        r"mil-",                  # MIL-SPEC
+        r"asm\s+handbook",       # ASM Handbook
+        r"matweb",               # MatWeb
+        r"\d{4}",                # at least a 4-digit year (rough publication marker)
+    ))
+
+    @classmethod
+    def check(cls, output: dict) -> GateResult:
+        findings = output.get("findings", [])
+        if not isinstance(findings, list):
+            return GateResult(gate="ProvenanceGate", passed=True)
+
+        for i, finding in enumerate(findings):
+            if not isinstance(finding, dict):
+                continue
+            prov = finding.get("provenance", {})
+            if not isinstance(prov, dict):
+                prov = {}
+
+            source = str(prov.get("source", "")).strip().lower()
+            if not source or source in cls._GENERIC_SOURCES:
+                return GateResult(
+                    gate="ProvenanceGate",
+                    passed=False,
+                    error_code="ERR_PROVENANCE_MISSING",
+                    detail=f"Finding[{i}] provenance.source is missing or too generic: '{source}'",
+                )
+
+            specificity = str(prov.get("specificity", "")).strip().lower()
+            if specificity == "low":
+                return GateResult(
+                    gate="ProvenanceGate",
+                    passed=False,
+                    error_code="ERR_PROVENANCE_UNSPECIFIC",
+                    detail=f"Finding[{i}] provenance.specificity is 'low'",
+                )
+
+            citation = str(prov.get("citation", "")).strip()
+            if citation:
+                citation_lower = citation.lower()
+                has_real_citation = any(
+                    pat.search(citation_lower)
+                    for pat in cls._CITATION_PATTERNS
+                )
+                if not has_real_citation:
+                    return GateResult(
+                        gate="ProvenanceGate",
+                        passed=False,
+                        error_code="ERR_PROVENANCE_UNSPECIFIC",
+                        detail=(
+                            f"Finding[{i}] citation lacks a traceable reference "
+                            f"(DOI, ASTM, ISO, ASM, year, etc.): '{citation[:80]}'"
+                        ),
+                    )
+
+        return GateResult(gate="ProvenanceGate", passed=True)
+
+
+def run_all_gates(output: dict) -> list[GateResult]:
+    """Run all four verification gates against an agent output dict.
+
+    Gates run in order: ContractGate → UnitGate → DimensionalGate → ProvenanceGate.
+    Call this before any vault write. Block the write if any gate returns passed=False.
+
+    Returns:
+        List of GateResult (one per gate). Check all — don't short-circuit on first fail
+        so callers get the full picture.
+    """
+    results: list[GateResult] = []
+
+    # Contract gate (existing static validator)
+    violations = AgentOutputContract.validate(output)
+    if violations:
+        results.append(GateResult(
+            gate="ContractGate",
+            passed=False,
+            error_code="ERR_CONTRACT_VIOLATION",
+            detail="; ".join(v.reason for v in violations),
+        ))
+    else:
+        results.append(GateResult(gate="ContractGate", passed=True))
+
+    results.append(UnitGate.check(output))
+    results.append(DimensionalGate.check(output))
+    results.append(ProvenanceGate.check(output))
+
+    return results
+
+
 # ------------------------------------------------------------------ helpers
 
 
 def _try_parse_json(text: str) -> dict | None:
     """Try to extract and parse JSON from text."""
-    import re
     # Try to find JSON block
     m = re.search(r"\{[\s\S]*\}", text)
     if m:

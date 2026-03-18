@@ -131,6 +131,7 @@ class UnifiedAgent:
         self.logger = AgentLogger(
             log_path=Path(log_dir) / f"{self.run_id}.jsonl",
             run_id=self.run_id,
+            trace_id=self.run_id,
         )
         self.container = ContainerState()
         self.shutdown = GracefulShutdown(drain_timeout_s=10.0)

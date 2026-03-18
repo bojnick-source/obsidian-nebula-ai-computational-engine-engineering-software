@@ -213,6 +213,16 @@ class ObsidianVaultManager:
             ]
         ]
 
+    def amnesia_check(self, path: str) -> bool:
+        """Return True if a note is immediately retrievable after write.
+
+        Call this right after upsert_note() to detect vault amnesia — a write
+        that succeeds at the filesystem level but fails to appear in the index.
+        The FORGE pipeline must HALT if this returns False.
+        """
+        self._ensure_indexed_sync()
+        return self.get_note(path) is not None
+
     def upsert_note(
         self,
         path: str,

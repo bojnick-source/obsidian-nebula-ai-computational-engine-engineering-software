@@ -75,7 +75,7 @@ def app(mock_vault, tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_all_seven_tools_registered(app):
+async def test_all_eight_tools_registered(app):
     tools = await app.list_tools()
     names = {t.name for t in tools}
     assert names == {
@@ -83,6 +83,7 @@ async def test_all_seven_tools_registered(app):
         "get_note",
         "get_backlinks",
         "get_tags",
+        "amnesia_check",
         "upsert_note",
         "append_to_note",
         "add_frontmatter",
