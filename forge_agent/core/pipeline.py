@@ -261,6 +261,10 @@ class PipelineRunner:
         Optional ``DebateOrchestrator`` instance. When provided, Phase 5b runs
         antagonist critique after the specialist phase. A ``fatal`` verdict
         sets ``TaskResult.status = "disputed"``.
+    specialist_prompt:
+        Optional system prompt string to use in ``_run_phase_specialist()``.
+        When *None* (the default), ``ME_SYSTEM_PROMPT`` is used, preserving
+        backward compatibility for all existing callers.
     """
 
     def __init__(
@@ -271,14 +275,18 @@ class PipelineRunner:
         anthropic_client: Any = None,
         intelligence_router: Any = None,
         debate_orchestrator: Any = None,
+        specialist_prompt: str | None = None,    # NEW: None → use ME_SYSTEM_PROMPT
     ) -> None:
-        # All six parameters are stored and used — never silently dropped (P2 rule).
+        # All seven parameters stored and used — never silently dropped (P2 rule).
         self._config = config
         self._tool_executor: Any = tool_executor if tool_executor is not None else DefaultToolExecutor()
         self._vault_manager: Any = vault_manager if vault_manager is not None else NullVaultManager()
         self._anthropic_client: Any = anthropic_client  # None → use stub
         self._intelligence_router: Any = intelligence_router  # None → use anthropic_client path
         self._debate_orchestrator: Any = debate_orchestrator  # None → skip debate (Phase 5b)
+        self._specialist_prompt: str = (
+            specialist_prompt if specialist_prompt is not None else ME_SYSTEM_PROMPT
+        )
 
         self._log_stdout: bool = config.get("log_output") == "stdout"
         self._jsonl_events: list[dict] = []
@@ -457,7 +465,7 @@ class PipelineRunner:
                     messages=[{"role": "user", "content": context}],
                     model=blackboard.get("routing.model", "claude-opus-4-6"),
                     max_tokens=2048,
-                    system=ME_SYSTEM_PROMPT,
+                    system=self._specialist_prompt,
                 )
                 raw_text = router_result["content"]
                 try:
@@ -470,7 +478,7 @@ class PipelineRunner:
                     model=blackboard.get("routing.model", "claude-opus-4-6"),
                     max_tokens=2048,
                     temperature=0.2,
-                    system=ME_SYSTEM_PROMPT,
+                    system=self._specialist_prompt,
                     messages=[{"role": "user", "content": context}],
                 )
                 raw_text = msg.content[0].text
