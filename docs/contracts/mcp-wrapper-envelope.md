@@ -13,7 +13,7 @@ tool_id: string (required)           # e.g., "calculix", "gmsh"
 wrapper_version: string (semver)     # e.g., "1.0.0"
 trace_id: string (uuid-v4, required)
 task_id: string (required)
-invocation_id: string (uuid-v4)      # unique per invocation (for retries)
+invocation_id: string (uuid-v4, required)  # unique per invocation; new ID generated for each retry attempt
 timestamp: string (ISO8601)
 timeout_ms: integer (required)
 input: object                        # tool-specific; defined per tool WRAPPER_SPEC.md

@@ -26,9 +26,8 @@ jobs:
         run: pip install yamllint
       - name: Lint YAML files
         run: |
-          find . -name "*.yaml" -o -name "*.yml" | \
-            grep -v ".github/workflows" | \
-            xargs yamllint
+          find . \( -name "*.yaml" -o -name "*.yml" \) -not -path "./.github/workflows/*" -print0 | \
+            xargs -0 -r yamllint
 
   build-cmake:
     name: CMake configure check

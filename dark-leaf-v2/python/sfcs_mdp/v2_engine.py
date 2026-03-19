@@ -34,11 +34,12 @@ def run_engine(
     artifact_root: Optional[str] = None,
     *,
     no_write: bool = False,
+    timeout_s: float = 120.0,
 ) -> dict[str, Any]:
     """Invoke the C++ engine and return its JSON output as a dict.
 
-    Raises ``RuntimeError`` when the engine exits with a non-zero code or
-    emits output that cannot be parsed as JSON.
+    Raises ``RuntimeError`` when the engine exits with a non-zero code,
+    exceeds ``timeout_s`` seconds, or emits output that cannot be parsed as JSON.
     """
     cmd = [engine_cli, "--canonical-input", canonical_input]
     if artifact_root:
@@ -47,7 +48,11 @@ def run_engine(
         cmd.append("--no-write")
 
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        proc = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=timeout_s)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"v2_engine_cli timed out after {timeout_s}s"
+        ) from exc
     except FileNotFoundError as exc:
         raise RuntimeError(f"v2_engine_cli not found: {engine_cli}") from exc
 

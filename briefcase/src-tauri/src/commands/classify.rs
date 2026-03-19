@@ -9,7 +9,7 @@ use crate::store::metadata_db;
 /// Classify an existing asset with the LLM and persist the enriched metadata.
 ///
 /// If `api_key` is provided it overrides the key stored in `AppState`.
-/// On classification failure the original asset is returned unchanged.
+/// On classification failure, returns a `BriefcaseError::LlmClassifier` error.
 #[tauri::command]
 pub async fn classify_asset(
     state: State<'_, AppState>,
@@ -38,8 +38,8 @@ pub async fn classify_asset(
     let db_arc = state.db.clone();
     let id2 = id.clone();
     let asset = tokio::task::spawn_blocking(move || {
-        let conn = db_arc.lock().map_err(|_| BriefcaseError::ObjectStore {
-            message: "db lock poisoned".to_string(),
+        let conn = db_arc.lock().map_err(|_| BriefcaseError::LockPoisoned {
+            context: "AppState.db mutex poisoned".to_string(),
         })?;
         metadata_db::get_asset(&conn, &id2)
     })

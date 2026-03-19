@@ -52,7 +52,9 @@ export const VideoViewerPlugin: ViewerPlugin = {
     ctx.lineTo(84, 48);
     ctx.closePath();
     ctx.fill();
-    return new Promise((resolve) => canvas.toBlob((b) => resolve(b!), "image/png"));
+    return new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("canvas.toBlob returned null"))), "image/png")
+    );
   },
 
   dispose(): void {

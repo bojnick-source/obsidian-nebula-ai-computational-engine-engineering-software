@@ -75,5 +75,4 @@ review_flagged: boolean
 
 | Version | Changes |
 |---|---|
-| v1 | Initial frozen schema |
-| v1.1 | Added required `task_id` field — first-class task identifier, aligns with blackboard contract |
+| v1 | Initial frozen schema — includes `task_id` as a required field |

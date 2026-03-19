@@ -7,8 +7,12 @@ namespace lift {
 
 namespace {
 
+// Use a portable constant — M_PI is not guaranteed by the C++ standard
+// (it requires _USE_MATH_DEFINES on MSVC or _GNU_SOURCE on some platforms).
+constexpr double kPi = 3.14159265358979323846;
+
 inline double disk_area(double radius_m) {
-  return M_PI * radius_m * radius_m;
+  return kPi * radius_m * radius_m;
 }
 
 }  // namespace

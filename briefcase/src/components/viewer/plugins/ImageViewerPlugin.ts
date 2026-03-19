@@ -50,7 +50,9 @@ export const ImageViewerPlugin: ViewerPlugin = {
     const ctx = canvas.getContext("2d")!;
     ctx.fillStyle = "#1a1a1a";
     ctx.fillRect(0, 0, 128, 96);
-    return new Promise((resolve) => canvas.toBlob((b) => resolve(b!), "image/png"));
+    return new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("canvas.toBlob returned null"))), "image/png")
+    );
   },
 
   dispose(): void {

@@ -162,8 +162,8 @@ export const ThreeViewerPlugin: ViewerPlugin = {
     ctx.fillStyle = "rgba(255,255,255,0.4)";
     ctx.font = "bold 9px sans-serif";
     ctx.fillText("3D", 56, 85);
-    return new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b!), "image/png")
+    return new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("canvas.toBlob returned null"))), "image/png")
     );
   },
 
