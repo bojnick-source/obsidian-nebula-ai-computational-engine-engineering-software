@@ -142,3 +142,28 @@ Gates: ruff PASS · pytest 478/478 PASS
 Verification: PASS — see .planning/5-VERIFICATION.md
 
 Next: /gsd:plan-phase 6
+
+## Phase 6 — Planned 2026-03-19
+
+Plans:
+- 6-001  Contradiction Gate + Assumption Gate (forge_agent/core/verifier.py)
+- 6-002  Adversarial Verifier + Confidence Calibration (forge_agent/core/adversarial_verifier.py)
+- 6-003  Synthesis Agent (forge_agent/agents/synthesis.py)
+- 6-004  Memory Decay Detection (forge_agent/core/memory_decay.py)
+- 6-005  Phoenix Thermal Re-entry Scaffold (forge_agent/agents/phoenix/, forge_agent/core/phoenix_pipeline.py)
+
+Research: (skipped — sufficient context from Phase 5 code + tiered-roadmap.md Tier 2 gaps)
+
+Dependency waves:
+  Wave 1 (parallel): 6-001, 6-002, 6-003, 6-004, 6-005
+
+Self-verification: PASS — no dependency cycles; Python-only (polyglot compliant);
+  P1 guard: run_all_gates() callers verified (pipeline.py:554 calls with positional arg only);
+  P1 guard: AntagonistAgent.__init__(agent_id, domain) verified;
+  P1 guard: LibrarianAgent.intake(note_dict: dict) verified;
+  P1 guard: upsert_note(path, markdown, frontmatter) signature verified;
+  P2 guard: all params used in each plan;
+  P7 guard: all error codes from docs/contracts/error-codes.md;
+  No new packages (P10/P11 N/A).
+
+Ready for: /gsd:execute-phase 6
