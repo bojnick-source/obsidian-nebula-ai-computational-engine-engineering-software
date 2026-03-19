@@ -128,3 +128,17 @@ Self-verification: PASS — no dependency cycles; Python-only (polyglot complian
   accepts specialist=None safely; PipelineRunner specialist_prompt is backward-compatible.
 
 Ready for: /gsd:execute-phase 5
+
+## Phase 5 — Completed 2026-03-19
+
+Plans executed:
+- 5-001: Synthmuscle specialist + antagonist — commit f827809
+- 5-002: MuJoCo simulation specialist + antagonist — commit abcb471
+- 5-003: CMA-ES optimization specialist + antagonist — commit f827809
+- 5-004: Actuator safety specialist + antagonist — commit a2cc4ed
+- 5-005: VanguardPipelineRunner + specialist_prompt param — commit 002690c
+
+Gates: ruff PASS · pytest 478/478 PASS
+Verification: PASS — see .planning/5-VERIFICATION.md
+
+Next: /gsd:plan-phase 6
